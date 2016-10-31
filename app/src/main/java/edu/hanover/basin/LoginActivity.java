@@ -46,8 +46,12 @@ public class LoginActivity extends Activity {
     private LoginButton loginButton;
     ProfilePictureView profilePic;
     TextView info;
+    TextView age;
+    TextView location;
 
     JSONObject likes;
+
+    private List<String> List_file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +60,15 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         callbackManager = CallbackManager.Factory.create();
 
+        List_file = new ArrayList<String>();
+
         info = (TextView) findViewById(R.id.info);
+        age = (TextView) findViewById(R.id.age);
+        location = (TextView) findViewById(R.id.location);
 
         loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions("public_profile");
-        //loginButton.setReadPermissions(Arrays.asList("user_likes"));
-        LoginManager.getInstance().logInWithReadPermissions(
-                LoginActivity.this,
-                Arrays.asList("user_likes"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes"));
+
 
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
 
@@ -131,33 +136,42 @@ public class LoginActivity extends Activity {
     }
 
     public void RequestData(final AccessToken accessToken){
-        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject object,GraphResponse response) {
+        GraphRequest request = GraphRequest.newMeRequest(accessToken,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object,GraphResponse response) {
 
-                JSONObject json = response.getJSONObject();
-                try {
-                    if(json != null){
-                        String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Profile link :</b> "+json.getString("link");
-                        info.setText(json.getString("name"));
-                        profilePic.setProfileId(json.getString("id"));
-                    }
-                    else{
-                        info.setText("No user information to display");
-                    }
-                    likes = object.getJSONObject("likes");
-                    DisplayLikes();
+                        JSONObject json = response.getJSONObject();
+                        try {
+                            if(json != null){
+                                String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Profile link :</b> "+json.getString("link");
+                                info.setText(json.getString("name"));
+                                age.setText(json.getString("birthday"));
+                                profilePic.setProfileId(json.getString("id"));
+                                //location.setText(json.getString("location"));
+                                //likes = object.getJSONObject("likes");
+                                TextView test = (TextView) findViewById(R.id.test);
+                                //test.setText(json.getString("likes"));
+                                //DisplayLikes();
+                                getLikes(json.getString("id"));
+                            }
+                            else{
+                                info.setText("No user information to display");
+                            }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    info.setText(e.toString());
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            info.setText(e.toString());
+                        }
+                    }
                 }
-            }
-        });
+        );
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link,picture, likes{name, category}");
+        parameters.putString("fields", "id,name,link,picture,birthday, likes{name, category}");
         request.setParameters(parameters);
         request.executeAsync();
+
     }
 
 //    public void requestLikes(AccessToken accessToken, String id){
@@ -175,10 +189,49 @@ public class LoginActivity extends Activity {
 //        ).executeAsync();
 //    }
 //
+    private void getLikes(String id){
+        //make callback function
+        final GraphRequest.Callback graphCallback = new GraphRequest.Callback(){
+            @Override
+            public void onCompleted(GraphResponse response) {
+                try{
+                    JSONArray data = response.getJSONObject().getJSONArray("data");
+                    TextView test = (TextView) findViewById(R.id.test);
+                    test.setText(data.toString());
+                    for(int i = 0; i < data.length(); i++){
+                        JSONObject objectIn = data.getJSONObject(i);
+                        String like = objectIn.getString("name");
+                        List_file.add(like);
+                    }
+                   GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
+                    if(nextRequest != null){
+                        nextRequest.setCallback(this);
+                        nextRequest.executeAsync();
+                   }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        /* make the API call */
+
+        Bundle param = new Bundle();
+        param.putString("fields", "id,name,category");
+        //send first request, the rest should be called by the callback
+        GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(),
+                id+"/likes",param, HttpMethod.GET, graphCallback);
+
+        request.executeAsync();
+
+        ListView listView = (ListView)findViewById(R.id.likes_list);
+        listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1,List_file));
+
+    }
+
     public void DisplayLikes(){
         String like_list = "";
         String like = "";
-        List<String> List_file = new ArrayList<String>();
         ListView listView = (ListView)findViewById(R.id.likes_list);
         try {
             JSONArray data = likes.getJSONArray("data");
@@ -192,6 +245,7 @@ public class LoginActivity extends Activity {
             }
             Log.e("LIKES", like_list);
             List_file.add(like_list);
+            likes.getJSONObject("paging").getString("next");
             listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1,List_file));
         }
         catch (JSONException e) {
