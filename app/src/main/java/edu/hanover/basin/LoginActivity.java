@@ -40,7 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//insert javadoc stuff
 public class LoginActivity extends Activity {
+    private final String FACEBOOK_ID_EXTRA = "";
+
     private CallbackManager callbackManager;
 
     private LoginButton loginButton;
@@ -48,6 +51,7 @@ public class LoginActivity extends Activity {
     TextView info;
     TextView age;
     TextView location;
+    private User current;
 
     JSONObject likes;
 
@@ -55,6 +59,7 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
@@ -73,7 +78,8 @@ public class LoginActivity extends Activity {
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
 
         if(AccessToken.getCurrentAccessToken() != null){
-            RequestData(AccessToken.getCurrentAccessToken());
+            current = new User(AccessToken.getCurrentAccessToken());
+            Log.e("ACCESS TOKEN:", "NOT NULL");
         }
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
@@ -83,31 +89,43 @@ public class LoginActivity extends Activity {
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
-                RequestData(accessToken);
+                current = new User(accessToken);
+
 
             }
 
             @Override
             public void onCancel() {
                 info.setText("failed");
+                current = null;
             }
 
             @Override
             public void onError(FacebookException e) {
                 info.setText(e.toString());
+                current = null;
             }
         };
 
         loginButton.registerCallback(callbackManager, callback);
+        displayInfo();
 
+    }
 
+    private void displayInfo(){
+        if (current != null){
+            info.setText(current.getName());
+            age.setText(current.getBirthday());
+            profilePic.setProfileId(current.getFacebookID());
+            displayLikes();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //Facebook login
-
+        displayInfo();
         nextActivity();
 
     }
@@ -124,134 +142,27 @@ public class LoginActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        super.onActivityResult(requestCode, responseCode, intent);
+    protected void onActivityResult(int requestCode, int responseCode, Intent data) {
+        super.onActivityResult(requestCode, responseCode, data);
         //Facebook login
-        callbackManager.onActivityResult(requestCode, responseCode, intent);
+        Bundle d = data.getExtras();
+        callbackManager.onActivityResult(requestCode, responseCode, data);
 
     }
 
     private void nextActivity(){
 
     }
-
-    public void RequestData(final AccessToken accessToken){
-        GraphRequest request = GraphRequest.newMeRequest(accessToken,
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object,GraphResponse response) {
-
-                        JSONObject json = response.getJSONObject();
-                        try {
-                            if(json != null){
-                                String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Profile link :</b> "+json.getString("link");
-                                info.setText(json.getString("name"));
-                                age.setText(json.getString("birthday"));
-                                profilePic.setProfileId(json.getString("id"));
-                                //location.setText(json.getString("location"));
-                                //likes = object.getJSONObject("likes");
-                                TextView test = (TextView) findViewById(R.id.test);
-                                //test.setText(json.getString("likes"));
-                                //DisplayLikes();
-                                getLikes(json.getString("id"));
-                            }
-                            else{
-                                info.setText("No user information to display");
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            info.setText(e.toString());
-                        }
-                    }
-                }
-        );
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link,picture,birthday, likes{name, category}");
-        request.setParameters(parameters);
-        request.executeAsync();
-
-    }
-
-//    public void requestLikes(AccessToken accessToken, String id){
-//        new GraphRequest(
-//                AccessToken.getCurrentAccessToken(),
-//                "/" + id +" /likes",
-//                null,
-//                HttpMethod.GET,
-//                new GraphRequest.Callback() {
-//                    public void onCompleted(GraphResponse response) {
-//            /* handle the result */
-//                        info.setText(response.toString());
-//                    }
-//                }
-//        ).executeAsync();
-//    }
-//
-    private void getLikes(String id){
-        //make callback function
-        final GraphRequest.Callback graphCallback = new GraphRequest.Callback(){
-            @Override
-            public void onCompleted(GraphResponse response) {
-                try{
-                    JSONArray data = response.getJSONObject().getJSONArray("data");
-                    TextView test = (TextView) findViewById(R.id.test);
-                    test.setText(data.toString());
-                    for(int i = 0; i < data.length(); i++){
-                        JSONObject objectIn = data.getJSONObject(i);
-                        String like = objectIn.getString("name");
-                        List_file.add(like);
-                    }
-                   GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
-                    if(nextRequest != null){
-                        nextRequest.setCallback(this);
-                        nextRequest.executeAsync();
-                   }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        /* make the API call */
-
-        Bundle param = new Bundle();
-        param.putString("fields", "id,name,category");
-        //send first request, the rest should be called by the callback
-        GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(),
-                id+"/likes",param, HttpMethod.GET, graphCallback);
-
-        request.executeAsync();
+    private void displayLikes(){
 
         ListView listView = (ListView)findViewById(R.id.likes_list);
-        listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1,List_file));
+        if (current.getFacebookLikes() != null) {
+            listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1, current.getFacebookLikes()));
+        }
+        else{
+            Log.e("LISTVIEW ERROR: ", "NO LIKES TO DISPLAY");
 
+        }
     }
 
-    public void DisplayLikes(){
-        String like_list = "";
-        String like = "";
-        ListView listView = (ListView)findViewById(R.id.likes_list);
-        try {
-            JSONArray data = likes.getJSONArray("data");
-            for(int i = 0; i < data.length(); i++){
-                JSONObject objectIn = data.getJSONObject(i);
-                like = objectIn.getString("name");
-                List_file.add(like);
-                like_list +=", " + like;
-
-
-            }
-            Log.e("LIKES", like_list);
-            List_file.add(like_list);
-            likes.getJSONObject("paging").getString("next");
-            listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1,List_file));
-        }
-        catch (JSONException e) {
-            Log.e("MYAPP", "unexpected JSON exception", e);
-            // Do something to recover ... or kill the app.
-        }
-
-    }
 }
