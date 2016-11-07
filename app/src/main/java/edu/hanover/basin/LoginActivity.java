@@ -1,6 +1,7 @@
 package edu.hanover.basin;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,56 +49,53 @@ public class LoginActivity extends Activity {
     private CallbackManager callbackManager;
 
     private LoginButton loginButton;
-    ProfilePictureView profilePic;
-    TextView info;
-    TextView age;
-    TextView location;
+    private ProfilePictureView profilePic;
+    private TextView info;
+    private TextView age;
+    private TextView location;
+
     private User current;
 
-    JSONObject likes;
-
-    private List<String> List_file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         callbackManager = CallbackManager.Factory.create();
 
-        List_file = new ArrayList<String>();
-
         info = (TextView) findViewById(R.id.info);
         age = (TextView) findViewById(R.id.age);
         location = (TextView) findViewById(R.id.location);
-
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes"));
-
-
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
 
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes, user_location"));
+
+
         if(AccessToken.getCurrentAccessToken() != null){
-            current = new User(AccessToken.getCurrentAccessToken());
+//            current = new User(AccessToken.getCurrentAccessToken());
+//            displayInfo();
+//            displayLikes();
+            (new UpdateUserUI()).execute(AccessToken.getCurrentAccessToken());
             Log.e("ACCESS TOKEN:", "NOT NULL");
         }
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
-            TextView info = (TextView) findViewById(R.id.info);
-
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = loginResult.getAccessToken();
-                Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
-                current = new User(accessToken);
-
-
+//                current = new User(accessToken);
+//                displayInfo();
+//                displayLikes();
+                (new UpdateUserUI()).execute(accessToken);
+                //Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
+                //current = new User(accessToken);
             }
 
             @Override
             public void onCancel() {
-                info.setText("failed");
+                info.setText("Login Failed");
                 current = null;
             }
 
@@ -108,24 +107,28 @@ public class LoginActivity extends Activity {
         };
 
         loginButton.registerCallback(callbackManager, callback);
-        displayInfo();
+        //info.setText("PLEASE WORK");
 
     }
-
-    private void displayInfo(){
-        if (current != null){
-            info.setText(current.getName());
-            age.setText(current.getBirthday());
-            profilePic.setProfileId(current.getFacebookID());
-            displayLikes();
-        }
-    }
+//
+//    private void displayInfo(){
+//        if (current != null){
+//            info.setText(current.getName());
+//            age.setText(current.getBirthday());
+//            profilePic.setProfileId(current.getFacebookID());
+//            //displayLikes();
+//            String n = current.getName();
+//            Log.e("DISPLAYING INFO", n + "");
+//        }
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
         //Facebook login
-        displayInfo();
+        //(new UpdateUserUI()).execute(AccessToken.getCurrentAccessToken());
+//        displayInfo();
+//        displayLikes();
         nextActivity();
 
     }
@@ -153,14 +156,41 @@ public class LoginActivity extends Activity {
     private void nextActivity(){
 
     }
-    private void displayLikes(){
 
-        ListView listView = (ListView)findViewById(R.id.likes_list);
-        if (current.getFacebookLikes() != null) {
-            listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this, android.R.layout.simple_list_item_1, current.getFacebookLikes()));
+//    private void displayLikes(){
+//
+//        ListView listView = (ListView)findViewById(R.id.likes_list);
+//        if (current.getFacebookLikes() != null) {
+//            listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this,
+//                                android.R.layout.simple_list_item_1,
+//                                current.getFacebookLikes()));
+//        }
+//        else{
+//            Log.e("LISTVIEW ERROR: ", "NO LIKES TO DISPLAY");
+//        }
+//        Log.e("DISPLAYING LIKES", "DONE");
+//    }
+
+    private class UpdateUserUI extends AsyncTask<AccessToken, Void, String>{
+
+        @Override
+        protected String doInBackground(AccessToken... params){
+            current = new User(params[0]);
+            return "success";
         }
-        else{
-            Log.e("LISTVIEW ERROR: ", "NO LIKES TO DISPLAY");
+
+        @Override
+        protected void onPostExecute(String results){
+            ListView listView = (ListView)findViewById(R.id.likes_list);
+            listView.setAdapter(new ArrayAdapter<String>(LoginActivity.this,
+                    android.R.layout.simple_list_item_1,
+                    current.getFacebookLikes()));
+            info.setText(current.getName());
+            age.setText(current.getBirthday());
+            location.setText(current.getLocation());
+            profilePic.setProfileId(current.getFacebookID());
+
+            Log.e("UI UPDATED:", "SUCCESS");
 
         }
     }

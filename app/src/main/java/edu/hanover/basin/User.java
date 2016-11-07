@@ -27,6 +27,7 @@ public class User {
     private String name;
     private String birthday;
     private String link;
+    private String location;
 
     private List<String> FacebookLikes = new ArrayList<>();
 
@@ -37,6 +38,7 @@ public class User {
     }
 
     User(final AccessToken accessToken){
+        Log.e("CREATE USER", accessToken.toString());
         requestCurrentUserInfo(accessToken);
     }
 
@@ -49,11 +51,13 @@ public class User {
                         JSONObject json = response.getJSONObject();
                         try {
                             if(json != null){
-                                Log.e("RESPONSE :", json.toString());
+
                                 name = json.getString("name");
                                 birthday = json.getString("birthday");
                                 FacebookID = json.getString("id");
                                 link = json.getString("link");
+                                JSONObject objectIn = json.getJSONObject("location");
+                                location = objectIn.getString("name");
                                 requestLikes();
 
                             }
@@ -70,9 +74,10 @@ public class User {
                 }
         );
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link,birthday");
+        parameters.putString("fields", "id,name,link,birthday,location");
         request.setParameters(parameters);
-        request.executeAsync();
+        request.executeAndWait();
+        Log.e("REQUEST COMPLETE:", name + "");
 
     }
 
@@ -94,7 +99,7 @@ public class User {
                         GraphRequest nextRequest = response.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
                         if (nextRequest != null) {
                             nextRequest.setCallback(this);
-                            nextRequest.executeAsync();
+                            nextRequest.executeAndWait();
                         }
                     }
                     else{
@@ -111,11 +116,12 @@ public class User {
         Bundle param = new Bundle();
         param.putString("fields", "id,name,category");
         //send first request, the rest should be called by the callback
-        Log.e("this request:",  "/"+ FacebookID +"/likes");
         GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(),
                 "/"+ FacebookID +"/likes",param, HttpMethod.GET, graphCallback);
 
-        request.executeAsync();
+        request.executeAndWait();
+        Log.e("this request:",  "/"+ FacebookID +"/likes");
+
 
     }
 
@@ -135,6 +141,7 @@ public class User {
                             name = json.getString("name");
                             birthday = json.getString("birthday");
                             link = json.getString("link");
+                            requestLikes();
 
                         }
                         catch(JSONException e){
@@ -176,6 +183,10 @@ public class User {
 
     public int getDatabaseID(){
         return id;
+    }
+
+    public String getLocation(){
+        return location;
     }
 }
 
