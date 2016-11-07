@@ -14,7 +14,7 @@ import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
 public class ProfileActivity extends Activity {
-    private final String EXTRA_FACEBOOK_ID = "";
+    public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
 
     private ProfilePictureView profilePic;
     private TextView info;
@@ -28,12 +28,13 @@ public class ProfileActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        String id = (String)getIntent().getExtras().get(EXTRA_FACEBOOK_ID);
         info = (TextView) findViewById(R.id.info);
         age = (TextView) findViewById(R.id.age);
         location = (TextView) findViewById(R.id.location);
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
-
-        (new UpdateProfile()).execute(EXTRA_FACEBOOK_ID);
+        Log.e("FACEBOOK ID", id);
+        (new UpdateProfile()).execute(id);
     }
 
     private class UpdateProfile extends AsyncTask<String, Void, String> {
@@ -46,6 +47,7 @@ public class ProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String results){
+
             ListView listView = (ListView)findViewById(R.id.likes_list);
             listView.setAdapter(new ArrayAdapter<String>(ProfileActivity.this,
                     android.R.layout.simple_list_item_1,
@@ -53,6 +55,7 @@ public class ProfileActivity extends Activity {
             info.setText(current.getName());
             age.setText(current.getBirthday());
             profilePic.setProfileId(current.getFacebookID());
+            location.setText(current.getLocation());
 
             Log.e("UI UPDATED:", "SUCCESS");
 

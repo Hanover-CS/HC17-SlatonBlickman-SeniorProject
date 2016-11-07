@@ -33,6 +33,7 @@ public class User {
 
     User(String id){
         this.FacebookID = id;
+        Log.e("REGISTER NEW USER:", id);
         requestUserInfo();
 
     }
@@ -81,6 +82,39 @@ public class User {
 
     }
 
+    private void requestUserInfo(){
+        Log.e("REQUEST INFO", "REQUESTING FOR " + FacebookID);
+        Bundle param = new Bundle();
+        param.putString("fields", "id,name,link,birthday,location");
+
+        GraphRequest request = new GraphRequest(
+                AccessToken.getCurrentAccessToken(), "/"+ FacebookID,
+                param, HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try{
+                            JSONObject json = response.getJSONObject();
+                            Log.e("RETURN JSON", json.toString());
+
+                            name = json.getString("name");
+                            birthday = json.getString("birthday");
+                            link = json.getString("link");
+                            JSONObject objectIn = json.getJSONObject("location");
+                            location = objectIn.getString("name");
+
+                            requestLikes();
+
+
+                        }
+                        catch(JSONException e){
+//                            Log.e("JSON EXCEPTION!", e.toString());
+                        }
+
+                    }
+                }
+        );
+        request.executeAndWait();
+    }
 
     private void requestLikes(){
         //make callback function
@@ -125,33 +159,7 @@ public class User {
 
     }
 
-    private void requestUserInfo(){
-        Bundle param = new Bundle();
-        param.putString("fields", "id,name,link,birthday");
 
-        GraphRequest request = new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/"+ FacebookID,
-                param,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        try{
-                            JSONObject json = response.getJSONObject();
-                            name = json.getString("name");
-                            birthday = json.getString("birthday");
-                            link = json.getString("link");
-                            requestLikes();
-
-                        }
-                        catch(JSONException e){
-                            Log.e("JSON EXCEPTION!", e.toString());
-                        }
-
-                    }
-                }
-        );
-    }
 
     public List<String> commonLikes(User user2){
         return FacebookLikes;
