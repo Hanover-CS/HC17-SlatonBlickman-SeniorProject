@@ -70,7 +70,7 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
     $id = $args['id'];
     $params = $request->getQueryParams();
     $method = $request->getMethod();
-    if(validGET("users/id", $params)){
+    if(validGET("/users/id", $params)){
         try{
             $user_query = (new dbOperation($this->db))->getUser($id); 
             $response->getBody()->write(json_encode($user_query));
