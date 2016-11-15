@@ -5,6 +5,7 @@
 
 //including the required files
 require_once '../include/dbOperation.php';
+require_once '../include/validateRequest.php';
 require '../vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -47,18 +48,18 @@ $container['db'] = function ($c) {
  * Helper functions
 */
 
-function validateParams($app, $route, $method, $params){
-    $db = new dbOperation($app->db);
-    //use validate request file instead
-    if($route == "users"){
-       $cols = $db->getUserFields(); 
-    }
-    else{
-        $cols = $db->getEventFields();
-    }
-    $validParams = ["sort", "direction", "filters"];
-    return true;
-};
+// function validateParams($app, $route, $method, $params){
+//     $db = new dbOperation($app->db);
+//     //use validate request file instead
+//     if($route == "users"){
+//        $cols = $db->getUserFields(); 
+//     }
+//     else{
+//         $cols = $db->getEventFields();
+//     }
+//     $validParams = ["sort", "direction", "filters"];
+//     return true;
+// };
 
 
 /*
@@ -69,7 +70,7 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
     $id = $args['id'];
     $params = $request->getQueryParams();
     $method = $request->getMethod();
-    if(validateParams($this, "users/id", $method, $params)){
+    if(validGET("users/id", $params)){
         try{
             $user_query = (new dbOperation($this->db))->getUser($id); 
             $response->getBody()->write(json_encode($user_query));
@@ -77,6 +78,9 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
         catch(PDOexception $e){
             $response->getBody()->write($e->getMessage());
         }
+    }
+    else{
+        $response->getBody()->write("Invalid");
     }
     return $response;
 });

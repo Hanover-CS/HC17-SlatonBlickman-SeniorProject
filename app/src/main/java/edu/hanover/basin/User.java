@@ -52,7 +52,6 @@ public class User {
                         JSONObject json = response.getJSONObject();
                         try {
                             if(json != null){
-
                                 name = json.getString("name");
                                 birthday = json.getString("birthday");
                                 FacebookID = json.getString("id");
