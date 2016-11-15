@@ -29,10 +29,15 @@ class dbOperation
         return $field_names;
     }
 
+    private function buildSQL($initQuery, $params){
+        return "";
+    }
 
     /*
      * Getters and Setters
      */
+
+
 
     public function getUserFields(){
         return $this->getTableFields("users");
@@ -56,6 +61,9 @@ class dbOperation
     }
 
     public function updateUser($id, $params){
+        $sql = "UPDATE users SET fname = :fname, lname= :lname, nickname= :nickname, about= :about";
+        $query = $this->conn->prepare($sql);
+        $query->execute($params);
         return null;
 
     }
@@ -89,7 +97,7 @@ class dbOperation
         return null;
     }
 
-    public function getUserEvents($user_FB_id, $params){
+    public function getUserEvents($user_id, $params){
         return null;
     }
 
@@ -98,7 +106,9 @@ class dbOperation
         return null;
     }
 
-    public function insertEventAttendee($event_id, $user_FB_id, $params){
+    public function insertEventAttendee($event_id, $user_id, $params){
+        $sql = ("INSERT INTO attendees (event_id, user_id) VALUES (:e_id, :u_id)");
+        $vals = ["e_id" => $event_id, "u_id" => $user_id];
         return null;
     }
 

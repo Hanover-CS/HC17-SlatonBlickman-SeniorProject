@@ -1,6 +1,6 @@
 <?php
 
-function validateGET($params, $validParams, $defaults){
+function validateGET($params, $validParams){
     foreach($params as $key => $value){
         if (!array_key_exists($key, $validParams)){
             return false;
@@ -15,12 +15,49 @@ function validateGET($params, $validParams, $defaults){
     return true;
 }
 
+function addDefaults($route, $params){
+    $defaults = getDefaults($route);
+    foreach($defaults as $default => $val){
+        if(!array_key_exists($default, $params)){
+            $params[$default] = $val;
+        }
+    }
+    return $params;
+}
+
+function getDefaults($route){
+
+    switch($route){
+        case "/users/id":
+            $defaults = ['facebook_id' => 'false'];
+            break;
+        case "/users":
+            $defaults = ['sort' => 'fname', 'direction' => 'asc'];
+            break;
+        case "/events":
+            $defaults = [];
+            break;
+        case "/events/id":
+            $defaults = [];
+            break;
+        case "/events/id/attendees":
+            $defaults = [];
+            break;
+        default:
+            $defaults = [];
+            break;
+    }
+    //$params = addDefaults($params, $defaults);
+    return $defaults;
+}
+
+
 function validGET($route, $params){
 
     switch($route){
         case "/users/id":
             $validParams = ['facebook_id' => ['true', 'false']];
-            $defaults = [];
+            $defaults = ['facebook_id' => 'false'];
             break;
         case "/users":
             $validParams = ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']];
@@ -42,7 +79,8 @@ function validGET($route, $params){
             return false;
             break;
     }
-    return validateGET($params, $validParams, $defaults);
+    //$params = addDefaults($params, $defaults);
+    return validateGET($params, $validParams);
 }
 
 function validPOST($route, $params){

@@ -33,13 +33,13 @@ public class User {
 
     User(String id){
         this.FacebookID = id;
-        Log.e("REGISTER NEW USER:", id);
+        Log.e("NEW USER(id):", id);
         requestUserInfo();
 
     }
 
     User(final AccessToken accessToken){
-        Log.e("CREATE USER", accessToken.toString());
+        Log.e("NEW USER(token)", accessToken.toString());
         requestCurrentUserInfo(accessToken);
     }
 
