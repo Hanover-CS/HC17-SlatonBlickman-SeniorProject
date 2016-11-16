@@ -70,10 +70,20 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
     $id = $args['id'];
     $params = $request->getQueryParams();
     $method = $request->getMethod();
+    $params = addDefaults("/users/id", $params);
     if(validGET("/users/id", $params)){
         try{
-            $user_query = (new dbOperation($this->db))->getUser($id); 
-            $response->getBody()->write(json_encode($user_query));
+            $user_query = new dbOperation($this->db); 
+            $results = $user_query->getUser($id, $params["facebook_id"]);
+            //$results['success'] = ($user_query->success());
+            if($user_query->success()){
+                $response->getBody()->write(json_encode($results));
+            }
+            else{
+                $response = $response->withStatus(404);
+                $response->getBody()
+                    ->write(json_encode(["code"=> 404, "error" => "No user with that id was found", "used_facebook_id" => $params["facebook_id"]]));
+            }
         }
         catch(PDOexception $e){
             $response->getBody()->write($e->getMessage());
@@ -104,9 +114,10 @@ $app->post('/users/{id}', function (Request $request, Response $response, $args)
 
 
 $app->get('/users', function (Request $request, Response $response, $args) {
-    $name = $request->getAttribute('facebook_id');
+    $params = $request->getQueryParams();
+    $params = addDefaults('/users', $params);
     try{
-        $users_query = (new dbOperation($this->db))->getUsers($args);
+        $users_query = (new dbOperation($this->db))->getUsers($params);
          $response->getBody()->write(json_encode($users_query));
     }
     catch(PDOexception $e){
