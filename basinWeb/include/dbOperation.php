@@ -5,6 +5,8 @@ class dbOperation
 {
     //Database connection link
     private $conn;
+    private $results;
+    private $verb;
  
     //Class constructor
     function __construct($db)
@@ -33,6 +35,34 @@ class dbOperation
         return "";
     }
 
+    public function getResults(){
+        if(count($this->results) >= 1){
+            return $this->results;
+        }
+        else{
+            return [];
+        }
+    }
+
+    public function successfulGET(){
+        if($this->results == false){
+            return false;
+        }
+        else{
+            return true;
+        }
+        
+    }
+
+    private function setResults($results){
+        $this->results = $results;
+        return null;
+    }
+
+    private function setVerb($verb){
+        $this->verb = $verb;
+        return null;
+    }
     /*
      * Getters and Setters
      */
@@ -40,36 +70,48 @@ class dbOperation
 
 
     public function getUserFields(){
-        return $this->getTableFields("users");
+        $this->results = $this->getTableFields("users");
+        return $this->results;
     }
 
     public function getUsers($params){
         $sql = 'SELECT * FROM users_test';
         $query = $this->conn->prepare($sql);
-        $query->execute();
+        $query->execute($params);
         echo "<br>Selecting all users";
-        return $query->fetchAll();
+        $results = $query->fetchAll();
+        return $results;
     }
 
-    public function getUser($id){
-        $sql = "SELECT * FROM users_test WHERE _id = ?";
+    public function getUser($id, $facebook_id){
+        if($facebook_id == "true"){
+            $sql = "SELECT * FROM users_test WHERE facebook_id = ?";
+        }
+        else{
+            $sql = "SELECT * FROM users_test WHERE _id = ?";
+        }
+
         $query = $this->conn->prepare($sql);
         $query->execute([$id]);
         //echo "Selecting all users with _id" + $id;
-        $q = $query->fetchAll();
-        return $q;
+        $this->setResults($query->fetch());
+        return $this->getResults();
     }
 
     public function updateUser($id, $params){
         $sql = "UPDATE users SET fname = :fname, lname= :lname, nickname= :nickname, about= :about";
         $query = $this->conn->prepare($sql);
-        $query->execute($params);
-        return null;
+        $results = $query->execute($params);
+        return $results;
 
     }
 
-    public function insertUser($id, $params){
-        return null;
+    public function insertUser($body){
+        $sql = "INSERT INTO users_test (facebook_id, fullname) VALUES
+                (:facebook_id, :fullname)";
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($body);
+        return $this->results;
     }
 
     public function deleteUser($id){

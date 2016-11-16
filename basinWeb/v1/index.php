@@ -61,11 +61,17 @@ $container['db'] = function ($c) {
 //     return true;
 // };
 
-
+// function writeResponse(Response $response, $code, $body, $body_extras, $headers){
+//     $response = $response->withStatus($code);
+//     $response->write(["code"=>$code, ]);    
+    
+// }
 /*
  * Routes
 */
 
+//GET USER AT ID
+//COMPLETE
 $app->get('/users/{id}', function (Request $request, Response $response, $args) {
     $id = $args['id'];
     $params = $request->getQueryParams();
@@ -76,17 +82,18 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
             $user_query = new dbOperation($this->db); 
             $results = $user_query->getUser($id, $params["facebook_id"]);
             //$results['success'] = ($user_query->success());
-            if($user_query->success()){
+            if($user_query->successfulGET()){
                 $response->getBody()->write(json_encode($results));
             }
-            else{
+            else{   
                 $response = $response->withStatus(404);
                 $response->getBody()
                     ->write(json_encode(["code"=> 404, "error" => "No user with that id was found", "used_facebook_id" => $params["facebook_id"]]));
             }
         }
         catch(PDOexception $e){
-            $response->getBody()->write($e->getMessage());
+            $response = $response->withStatus(500); 
+            $response->getBody()->write(["code" =>500, "error"=>$e->getMessage()]);
         }
     }
     else{
@@ -95,12 +102,14 @@ $app->get('/users/{id}', function (Request $request, Response $response, $args) 
     return $response;
 });
 
-$app->post('/users/{id}', function (Request $request, Response $response, $args) {
+//UPDATE USER AT ID
+//TODO
+$app->put('/users/{id}', function (Request $request, Response $response, $args) {
     $id = $args['id'];
     $body = $request->getParsedBody();
     $params = $request->getQueryParams();
     $method = $request->getMethod();
-    if(validateParams($this, "users/id", $method, $params)){
+    if(validPUT("users/id", $params, $body)){
         try{
             $user_update = (new dbOperation($this->db))->updateUser($id, $body, $params); 
             $response->getBody()->write(json_encode($user_update));
@@ -112,7 +121,8 @@ $app->post('/users/{id}', function (Request $request, Response $response, $args)
     return $response;
 });
 
-
+//GET ALL USERS
+//MOSTLY COMPLETE; TODO: response for no users
 $app->get('/users', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
     $params = addDefaults('/users', $params);
@@ -127,8 +137,26 @@ $app->get('/users', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+//ADD NEW USER
+//TODO
+$app->post('/users', function (Request $request, Response $response, $args) {
+    $params = $request->getQueryParams();
+    $body = $request->getParsedBody();
+    try{
+        $user_insert = new dbOperation($this->db);
+        $results = $user_insert->insertUser($body);
+        $response->getBody()->write(json_encode($body));
+    }
+    catch(PDOexception $e){
+        $response->getBody()->write($e->getMessage());
+    }
+    $this->logger->addInfo("Getting all users");
+    return $response;
+});
 
 
+//DEFAULT PAGE
+//RETURN LINKS TO OTHER PAGES
 $app->get('/', function($request, $response, $args) {
     //$query_c = new dbOperation($this->db);
    $response->getBody()->write( "Default page for http requests");

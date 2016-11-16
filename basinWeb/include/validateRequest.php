@@ -32,7 +32,8 @@ function getDefaults($route){
             $defaults = ['facebook_id' => 'false'];
             break;
         case "/users":
-            $defaults = ['sort' => 'fname', 'direction' => 'asc'];
+            //$defaults = ['sort' => 'fname', 'direction' => 'asc'];
+            $defaults = [];
             break;
         case "/events":
             $defaults = [];
@@ -83,11 +84,11 @@ function validGET($route, $params){
     return validateGET($params, $validParams);
 }
 
-function validPOST($route, $params){
+function validPOST($route, $params, $body){
     return false;
 }
 
-function validPUT($route, $params){
+function validPUT($route, $params, $body){
     return false;
 }
 
