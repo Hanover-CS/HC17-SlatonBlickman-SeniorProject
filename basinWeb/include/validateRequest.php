@@ -15,6 +15,15 @@ function validateGET($params, $validParams){
     return true;
 }
 
+function validateBody($body, $validBody){
+    foreach($body as $key => $value){
+        if(!in_array($key, $validBody)){
+            return false;
+        }
+    }
+    return true;
+}
+
 function addDefaults($route, $params){
     $defaults = getDefaults($route);
     foreach($defaults as $default => $val){
@@ -58,23 +67,18 @@ function validGET($route, $params){
     switch($route){
         case "/users/id":
             $validParams = ['facebook_id' => ['true', 'false']];
-            $defaults = ['facebook_id' => 'false'];
             break;
         case "/users":
             $validParams = ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']];
-            $defaults = [];
             break;
         case "/events":
             $validParams = [];
-            $defaults = [];
             break;
         case "/events/id":
             $validParams = [];
-            $defaults = [];
             break;
         case "/events/id/attendees":
             $validParams = [];
-            $defaults = [];
             break;
         default:
             return false;
@@ -84,12 +88,53 @@ function validGET($route, $params){
     return validateGET($params, $validParams);
 }
 
-function validPOST($route, $params, $body){
-    return false;
+function validPOST($route, $body){
+
+    switch($route){
+        case "/users/id":
+            return false;
+            break;
+        case "/users":
+            $validBody = ['facebook_id', 'fname', 'lname'];;
+            break;
+        case "/events":
+            $validBody = [];
+            break;
+        case "/events/id":
+            return false;
+            break;
+        case "/events/id/attendees":
+            return false;
+            break;
+        default:
+            return false;
+            break;
+    }
+    return validateBody($body, $validBody);
 }
 
-function validPUT($route, $params, $body){
-    return false;
+function validPUT($route, $body){
+    switch($route){
+        case "/users/id":
+            $validBody = ["fname", "lname", "about"];
+            break;
+        case "/users":
+            return false;
+            break;
+        case "/events":
+            return false;
+            break;
+        case "/events/id":
+            $validBody = [];
+            break;
+        case "/events/id/attendees":
+            return false;
+            break;
+        default:
+            return false;
+            break;
+    }
+    return validateBody($body, $validBody);
 }
 
 function validDELETE($route, $params){

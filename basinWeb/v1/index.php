@@ -10,7 +10,7 @@ require '../vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-//
+
 
 /* 
  * Configure application settings
@@ -48,24 +48,20 @@ $container['db'] = function ($c) {
  * Helper functions
 */
 
-// function validateParams($app, $route, $method, $params){
-//     $db = new dbOperation($app->db);
-//     //use validate request file instead
-//     if($route == "users"){
-//        $cols = $db->getUserFields(); 
-//     }
-//     else{
-//         $cols = $db->getEventFields();
-//     }
-//     $validParams = ["sort", "direction", "filters"];
-//     return true;
-// };
-
-// function writeResponse(Response $response, $code, $body, $body_extras, $headers){
-//     $response = $response->withStatus($code);
-//     $response->write(["code"=>$code, ]);    
+function error(Response $response, $code, $msg, $info){
+    $e = ["code"=>$code, "error" => $msg];
+    if($info != null){
+        $e['information'] = $info;
+    }
+    $response = $response->withJSON($e, $code);    
+    return $response;
     
-// }
+}
+
+function new_response(Response $response, $code, $body){
+    $response = $response->withJSON($body, $code);
+    return $response;
+}
 /*
  * Routes
 */
@@ -75,29 +71,26 @@ $container['db'] = function ($c) {
 $app->get('/users/{id}', function (Request $request, Response $response, $args) {
     $id = $args['id'];
     $params = $request->getQueryParams();
-    $method = $request->getMethod();
     $params = addDefaults("/users/id", $params);
     if(validGET("/users/id", $params)){
         try{
             $user_query = new dbOperation($this->db); 
             $results = $user_query->getUser($id, $params["facebook_id"]);
-            //$results['success'] = ($user_query->success());
-            if($user_query->successfulGET()){
-                $response->getBody()->write(json_encode($results));
+            if($user_query->isSuccessful()){
+                //$response->getBody()->write(json_encode($results));
+                $response = $response->withJSON($results, 200);
             }
-            else{   
-                $response = $response->withStatus(404);
-                $response->getBody()
-                    ->write(json_encode(["code"=> 404, "error" => "No user with that id was found", "used_facebook_id" => $params["facebook_id"]]));
+            else{  
+                $response = error($response, 404, "No user with that id was found", ["used_facebook_id" => $params["facebook_id"]]);
             }
         }
         catch(PDOexception $e){
-            $response = $response->withStatus(500); 
-            $response->getBody()->write(["code" =>500, "error"=>$e->getMessage()]);
+            $response = error($response, 500, $e->getMessage(), null);
         }
     }
     else{
-        $response->getBody()->write("Invalid");
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", $acceptedParams);
     }
     return $response;
 });
@@ -108,52 +101,112 @@ $app->put('/users/{id}', function (Request $request, Response $response, $args) 
     $id = $args['id'];
     $body = $request->getParsedBody();
     $params = $request->getQueryParams();
-    $method = $request->getMethod();
-    if(validPUT("users/id", $params, $body)){
+    $params = addDefaults("/users/id", $params);
+    if(validPUT("/users/id", $body) and validGET("/users/id", $params)){
         try{
-            $user_update = (new dbOperation($this->db))->updateUser($id, $body, $params); 
-            $response->getBody()->write(json_encode($user_update));
+            $user_update = new dbOperation($this->db);
+            $results = $user_update->updateUser($id, $body, $params["facebook_id"]); 
+            if($user_update->isSuccessful()){
+                $response = $response->withJSON(["success" => $results], 200);
+            }
+            else{
+                $response = error($response, 500, "PUT failed", null);
+            }
         }
         catch(PDOexception $e){
-            $response->getBody()->write($e->getMessage());
+             $response = error($response, 500, $e->getMessage(), null);
         }
+    }
+    else{
+        $acceptable = ["body_given" => $body, "params_given" => $params];
+        $response = error($response, 400, "Invalid content in body or parameters!", $acceptable);
     }
     return $response;
 });
 
 //GET ALL USERS
-//MOSTLY COMPLETE; TODO: response for no users
+//COMPLETE
 $app->get('/users', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
     $params = addDefaults('/users', $params);
-    try{
-        $users_query = (new dbOperation($this->db))->getUsers($params);
-         $response->getBody()->write(json_encode($users_query));
+    if(validGET("/users", $params)){
+        try{
+            $users_query = new dbOperation($this->db);
+            $results = $users_query->getUsers($params);
+            if($users_query->isSuccessful()){
+                $response = $response->withJSON($results, 200);
+            }
+            else{
+                $response = error($response, 404, "No users matching the given parameters were found.", []);
+            }
+        }
+        catch(PDOexception $e){
+            $response = error($response, 500, $e->getMessage());
+        }
+        $this->logger->addInfo("Getting all users");
     }
-    catch(PDOexception $e){
-        $response->getBody()->write($e->getMessage());
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", $acceptedParams);
     }
-    $this->logger->addInfo("Getting all users");
     return $response;
 });
 
 //ADD NEW USER
-//TODO
+//COMPLETE
 $app->post('/users', function (Request $request, Response $response, $args) {
-    $params = $request->getQueryParams();
     $body = $request->getParsedBody();
-    try{
-        $user_insert = new dbOperation($this->db);
-        $results = $user_insert->insertUser($body);
-        $response->getBody()->write(json_encode($body));
+    if(validPOST('/users', $body)){
+        try{
+            $user_insert = new dbOperation($this->db);
+            $results = $user_insert->insertUser($body);
+            if($user_insert->isSuccessful()){
+                $body = ["success" => $results, "location" => '/users/' . $body['facebook_id'] . '?facebook_id=true'];
+                $response = $response->withJSON($body, 201);
+            }
+            else{
+                $response = error($response, "Problem executing POST.", ["success" => $results]);
+            }   
+        }
+        catch(PDOexception $e){
+            $response = error($response, 500, $e->getMessage(), null);
+        }
     }
-    catch(PDOexception $e){
-        $response->getBody()->write($e->getMessage());
+    else{
+        $response = error($response, 400, "Invalid body!", ["accepted_body" => "facebook_id, fname, lname" ]);
     }
     $this->logger->addInfo("Getting all users");
     return $response;
 });
 
+//get the events the user has attended 
+$app->get('/users/{id}/attendence', function (Request $request, Response $response, $args) {
+    $id = $args['id'];
+    $params = $request->getQueryParams();
+    $method = $request->getMethod();
+    $params = addDefaults("/users/id", $params);
+    if(validGET("/users/id", $params)){
+        try{
+            $user_query = new dbOperation($this->db); 
+            $results = $user_query->getUser($id, $params["facebook_id"]);
+            if($user_query->isSuccessful()){
+                //$response->getBody()->write(json_encode($results));
+                $response = new_response($response, 200, $results);
+            }
+            else{  
+                $response = error($response, 404, "No user with that id was found", ["used_facebook_id" => $params["facebook_id"]]);
+            }
+        }
+        catch(PDOexception $e){
+            $response = error($response, 500, $e->getMessage(), null);
+        }
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", $acceptedParams);
+    }
+    return $response;
+});
 
 //DEFAULT PAGE
 //RETURN LINKS TO OTHER PAGES
@@ -162,132 +215,5 @@ $app->get('/', function($request, $response, $args) {
    $response->getBody()->write( "Default page for http requests");
 });     
  
-// \Slim\Slim::registerAutoloader();
- 
-// //Creating a slim instance
-// $app = new \Slim\Slim();
- 
-
-//  $app->get('/users', 'authenticateStudent', function() use ($app){
-//     //$db = new DbOperation();
-//     // $result = $db->getAssignments($student_id);
-//     // $response = array();
-//     // $response['error'] = false;
-//     // $response['assignments'] = array();
-//     // while($row = $result->fetch_assoc()){
-//     //     $temp = array();
-//     //     $temp['id']=$row['id'];
-//     //     $temp['name'] = $row['name'];
-//     //     $temp['details'] = $row['details'];
-//     //     $temp['completed'] = $row['completed'];
-//     //     $temp['faculty']= $db->getFacultyName($row['faculties_id']);
-//     //     array_push($response['assignments'],$temp);
-//     // }
-//     echoResponse(200,$response);
-// });
-
-//Method to display response
-// function echoResponse($status_code, $response)
-// {
-//     //Getting app instance
-//     $app = \Slim\Slim::getInstance();
- 
-//     //Setting Http response code
-//     $app->status($status_code);
- 
-//     //setting response content type to json
-//     $app->contentType('application/json');
- 
-//     //displaying the response in json format
-//     echo json_encode($response);
-// }
- 
- 
-// function verifyRequiredParams($required_fields)
-// {
-//     //Assuming there is no error
-//     $error = false;
- 
-//     //Error fields are blank
-//     $error_fields = "";
- 
-//     //Getting the request parameters
-//     $request_params = $_REQUEST;
- 
-//     //Handling PUT request params
-//     if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-//         //Getting the app instance
-//         $app = \Slim\Slim::getInstance();
- 
-//         //Getting put parameters in request params variable
-//         parse_str($app->request()->getBody(), $request_params);
-//     }
- 
-//     //Looping through all the parameters
-//     foreach ($required_fields as $field) {
- 
-//         //if any requred parameter is missing
-//         if (!isset($request_params[$field]) || strlen(trim($request_params[$field])) <= 0) {
-//             //error is true
-//             $error = true;
- 
-//             //Concatnating the missing parameters in error fields
-//             $error_fields .= $field . ', ';
-//         }
-//     }
- 
-//     //if there is a parameter missing then error is true
-//     if ($error) {
-//         //Creating response array
-//         $response = array();
- 
-//         //Getting app instance
-//         $app = \Slim\Slim::getInstance();
- 
-//         //Adding values to response array
-//         $response["error"] = true;
-//         $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
- 
-//         //Displaying response with error code 400
-//         echoResponse(400, $response);
- 
-//         //Stopping the app
-//         $app->stop();
-//     }
-// }
- 
-// //Method to authenticate a student 
-// function authenticateStudent(\Slim\Route $route)
-// {
-//     //Getting request headers
-//     $headers = apache_request_headers();
-//     $response = array();
-//     $app = \Slim\Slim::getInstance();
- 
-//     //Verifying the headers
-//     if (isset($headers['Authorization'])) {
- 
-//         //Creating a DatabaseOperation boject
-//         $db = new DbOperation();
- 
-//         //Getting api key from header
-//         $api_key = $headers['Authorization'];
- 
-//         //Validating apikey from database
-//         if (!$db->isValidStudent($api_key)) {
-//             $response["error"] = true;
-//             $response["message"] = "Access Denied. Invalid Api key";
-//             echoResponse(401, $response);
-//             $app->stop();
-//         }
-//     } else {
-//         // api key is missing in header
-//         $response["error"] = true;
-//         $response["message"] = "Api key is misssing";
-//         echoResponse(400, $response);
-//         $app->stop();
-//     }
-// }
-
 
 $app->run();

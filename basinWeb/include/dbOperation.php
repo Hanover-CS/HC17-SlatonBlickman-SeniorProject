@@ -44,7 +44,7 @@ class dbOperation
         }
     }
 
-    public function successfulGET(){
+    public function isSuccessful(){
         if($this->results == false){
             return false;
         }
@@ -75,42 +75,59 @@ class dbOperation
     }
 
     public function getUsers($params){
-        $sql = 'SELECT * FROM users_test';
+        $sql = 'SELECT * FROM users';
         $query = $this->conn->prepare($sql);
         $query->execute($params);
-        echo "<br>Selecting all users";
-        $results = $query->fetchAll();
-        return $results;
+        //echo "<br>Selecting all users";
+        $this->results = $query->fetchAll();
+        return $this->results;
     }
 
     public function getUser($id, $facebook_id){
         if($facebook_id == "true"){
-            $sql = "SELECT * FROM users_test WHERE facebook_id = ?";
+            $sql = "SELECT * FROM users WHERE facebook_id = ? AND _id != ?";
         }
         else{
-            $sql = "SELECT * FROM users_test WHERE _id = ?";
+            $sql = "SELECT * FROM users WHERE _id = ? AND facebook_id != ?";
         }
-
+        $params = [$id, $id];
         $query = $this->conn->prepare($sql);
-        $query->execute([$id]);
+        $query->execute($params);
         //echo "Selecting all users with _id" + $id;
         $this->setResults($query->fetch());
-        return $this->getResults();
+        return $this->results;
     }
 
-    public function updateUser($id, $params){
-        $sql = "UPDATE users SET fname = :fname, lname= :lname, nickname= :nickname, about= :about";
+    public function updateUser($id, $body, $facebook_id){
+        $sql = "UPDATE users SET ";
+        $i = 0;
+        foreach($body as $key => $value){
+            $i += 1;
+            $sql = $sql . $key . " = " . ":" . $key;
+            if($i < count($body)){
+                $sql = $sql . ", ";
+            }
+
+        }
+        if($facebook_id == "true"){
+            $sql = $sql . " WHERE facebook_id = :id AND _id != :id";
+        }
+        else{
+            $sql = $sql . " WHERE facebook_id != :id AND _id = :id";
+        }
+        $body["id"] = $id;
         $query = $this->conn->prepare($sql);
-        $results = $query->execute($params);
+        $results = $query->execute($body);
+        $this->setResults($results);
         return $results;
 
     }
 
     public function insertUser($body){
-        $sql = "INSERT INTO users_test (facebook_id, fullname) VALUES
-                (:facebook_id, :fullname)";
+        $sql = "INSERT INTO users (facebook_id, fname, lname) VALUES
+                (:facebook_id, :fname, :lname)";
         $insert = $this->conn->prepare($sql);
-        $this->results = $insert->execute($body);
+        $this->setResults($insert->execute($body));
         return $this->results;
     }
 

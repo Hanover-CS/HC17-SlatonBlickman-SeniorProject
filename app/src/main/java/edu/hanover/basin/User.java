@@ -79,7 +79,7 @@ public class User {
         request.executeAndWait();
         Log.e("REQUEST COMPLETE:", name + "");
 
-    }   
+    }
 
     private void requestUserInfo(){
         Log.e("REQUEST INFO", "REQUESTING FOR " + FacebookID);
