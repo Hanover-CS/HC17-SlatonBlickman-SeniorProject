@@ -41,8 +41,7 @@ function getDefaults($route){
             $defaults = ['facebook_id' => 'false'];
             break;
         case "/users":
-            //$defaults = ['sort' => 'fname', 'direction' => 'asc'];
-            $defaults = [];
+            $defaults = ['sort' => 'fname', 'direction' => 'asc'];
             break;
         case "/events":
             $defaults = [];
@@ -137,8 +136,9 @@ function validPUT($route, $body){
     return validateBody($body, $validBody);
 }
 
+//TODO
 function validDELETE($route, $params){
-    return false;
+    return true;
 }
 
 

@@ -7,6 +7,7 @@ class dbOperation
     private $conn;
     private $results;
     private $verb;
+    private $fields;
  
     //Class constructor
     function __construct($db)
@@ -35,14 +36,9 @@ class dbOperation
         return "";
     }
 
-    public function getResults(){
-        if(count($this->results) >= 1){
-            return $this->results;
-        }
-        else{
-            return [];
-        }
-    }
+    /*
+     * Public helper functions
+     */
 
     public function isSuccessful(){
         if($this->results == false){
@@ -54,24 +50,17 @@ class dbOperation
         
     }
 
-    private function setResults($results){
-        $this->results = $results;
-        return null;
-    }
-
-    private function setVerb($verb){
-        $this->verb = $verb;
-        return null;
-    }
     /*
      * Getters and Setters
      */
-
+    public function getResults(){
+        return $this->results;
+    }
 
 
     public function getUserFields(){
-        $this->results = $this->getTableFields("users");
-        return $this->results;
+        $this->fields = $this->getTableFields("users");
+        return $this->fields;
     }
 
     public function getUsers($params){
@@ -94,7 +83,7 @@ class dbOperation
         $query = $this->conn->prepare($sql);
         $query->execute($params);
         //echo "Selecting all users with _id" + $id;
-        $this->setResults($query->fetch());
+        $this->results = $query->fetch();
         return $this->results;
     }
 
@@ -117,9 +106,8 @@ class dbOperation
         }
         $body["id"] = $id;
         $query = $this->conn->prepare($sql);
-        $results = $query->execute($body);
-        $this->setResults($results);
-        return $results;
+        $this->results = $query->execute($body);
+        return $this->results;
 
     }
 
@@ -127,12 +115,22 @@ class dbOperation
         $sql = "INSERT INTO users (facebook_id, fname, lname) VALUES
                 (:facebook_id, :fname, :lname)";
         $insert = $this->conn->prepare($sql);
-        $this->setResults($insert->execute($body));
+        $this->results = $insert->execute($body);
         return $this->results;
     }
 
-    public function deleteUser($id){
-        return null;
+    public function deleteUser($id, $facebook_id){
+        $sql = "DELETE FROM users";
+        if($facebook_id == "true"){
+            $sql = $sql . " WHERE facebook_id = :id AND _id != :id";
+        }
+        else{
+            $sql = $sql . " WHERE facebook_id != :id AND _id = :id";
+        }
+
+        $delete = $this->conn->prepare($sql);
+        $this->results = $delete->execute(["id" => $id]);
+
     }
 
 
