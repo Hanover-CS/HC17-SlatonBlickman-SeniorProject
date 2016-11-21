@@ -114,7 +114,7 @@ function validPOST($route, $body){
             return false;
             break;
         case "/events/id/attendees":
-            return false;
+            $validBody = ['user_id'];
             break;
         default:
             return false;
