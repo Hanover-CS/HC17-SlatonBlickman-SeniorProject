@@ -149,11 +149,32 @@ class dbOperation
     }
 
     public function getEvent($id, $params){
-        return null;
+        $sql = "SELECT * FROM events WHERE _id = ?";
+        $query = $this->conn->prepare($sql);
+        $query->execute([$id]);
+        $this->results = $query->fetchAll();
+        return $this->results;
     }
 
-    public function insertEvent($id, $params){
-        return null;
+    public function insertEvent($body){
+        $sql_vals = "INSERT INTO events (";
+        $sql_vars = ") VALUES (";
+        $i = 0;
+        foreach($body as $key => $value){
+            $i += 1;
+            $sql_vals .= $key;
+            $sql_vars .= ":" . $key;
+            if($i != count($body)){
+                $sql_vals .= ", ";
+                $sql_vars .= ", ";
+            }
+
+        }
+        $sql_vars = $sql_vars . ")";
+        $sql = $sql_vals . $sql_vars;
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($body);
+        return $this->results;
     }
 
     public function deleteEVent($id){
@@ -161,21 +182,39 @@ class dbOperation
     }
 
     public function getUserEvents($id, $params){
-        $sql = "SELECT * FROM users ";
+       $results = $this->getUserEventsCreated($id, $params);
+       $results2 = $this->getUserEventsAttending($id, $params);
+       $this->results = ["created" => $results, "attending" => $results2];
+       return $this->results;
+    }
 
-        if($params['created_by'] == 'true'){
-            $sql = $sql . "JOIN events ON events.created_by = users._id ";
-        }
-        if($params['attending'] == 'true'){
-            $sql = $sql . "JOIN attendees ON attendees.user_id = users._id ";
-        }
+    public function getUserEventsCreated($id, $params){
+        $sql = "SELECT events.* FROM events INNER JOIN users ON events.created_by = users._id ";
+
         if($params['facebook_id'] == 'true'){
-            $sql = $sql . "WHERE users.facebook_id = ?";
+            $sql .=  "WHERE users.facebook_id = ? ";
         }
         else{
-            $sql = $sql . "WHERE users._id = ?";
+            $sql .=  "WHERE users._id = ? ";
         }
-        
+        //echo $sql;
+        $select = $this->conn->prepare($sql);
+        $select->execute([$id]);
+        $this->results = $select->fetchAll();
+        return $this->results;
+
+    }
+
+    public function getUserEventsAttending($id, $params){
+        $sql = "SELECT events.* FROM attendees INNER JOIN events ON attendees.event_id = events._id INNER JOIN users ON users._id = attendees.user_id ";
+
+        if($params['facebook_id'] == 'true'){
+            $sql .= "WHERE users.facebook_id = ? ";
+        }
+        else{
+            $sql .= "WHERE users._id = ? ";
+        }
+        //echo $sql;
         $select = $this->conn->prepare($sql);
         $select->execute([$id]);
         $this->results = $select->fetchAll();

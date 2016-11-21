@@ -183,7 +183,7 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
             }
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         $this->logger->addInfo("Getting all users");
     }
@@ -196,19 +196,19 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
 
 //ADD NEW USER
 //COMPLETE
-$app->post('/users', function (Request $request, Response $response, $args) {
+$app->post('/users[/]', function (Request $request, Response $response, $args) {
     $body = $request->getParsedBody();
     if(validPOST('/users', $body)){
         try{
             $user_insert = new dbOperation($this->db);
             $results = $user_insert->insertUser($body);
-            $user_uri = $request->getUri() . '/' . $body['facebook_id'] . '?facebook_id=true';
+            $user_uri = $request->getUri() . $body['facebook_id'] . '?facebook_id=true';
             if($user_insert->isSuccessful()){
                 $body = ["success" => true, "location" => $user_uri];
                 $response = $response->withJSON($body, 201);
             }
             else{
-                $response = error($response, "Problem executing POST.", ["success" => $results]);
+                $response = error($response,500, "Problem executing POST.", ["success" => $results]);
             }   
         }
         catch(PDOexception $e){
@@ -252,6 +252,31 @@ $app->get('/users/{id}/events[/]', function (Request $request, Response $respons
 //What to do to check whether or not a user is attending a specific event
 
 // .../events
+$app->post('/events[/]', function($request, $response, $args) {
+    $body = $request->getParsedBody();
+    if(validPOST("/events", $body)){
+        try{
+            $events_query = new dbOperation($this->db);
+            $results = $events_query->insertEvent($body);
+            if($events_query->isSuccessful()){
+                $response = $response->withJSON([], 201);
+            }
+            else{
+                $response = error($response, 500, "Unknown problem when executing POST", null);
+            }
+        }
+        catch(PDOexception $e){
+            $response = error($response, 500, $e->getMessage());
+        }
+        $this->logger->addInfo("Getting all users");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events")]);
+    }
+    return $response;
+});  
+
 $app->get('/events[/]', function($request, $response, $args) {
     $params = $request->getQueryParams();
     $params = addDefaults('/events', $params);
@@ -267,21 +292,46 @@ $app->get('/events[/]', function($request, $response, $args) {
             }
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         $this->logger->addInfo("Getting all users");
     }
     else{
         $acceptedParams = [];
-        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/users")]);
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events")]);
     }
     return $response;
 });   
 
 // .../events/{event_id}
 $app->get('/events/{id}[/]', function($request, $response, $args) {
-    //$query_c = new dbOperation($this->db);
-   $response->getBody()->write( "Default page for specific http event requests");
+    $id = $args["id"];
+    $params = $request->getQueryParams();
+    $params = addDefaults('/events/id', $params);
+    if(validGET("/events/id", $params)){
+        try{
+            $events_query = new dbOperation($this->db);
+            $results = $events_query->getEvent($id, $params);
+            if($events_query->isSuccessful()){
+                $response = $response->withJSON($results, 200);
+                //$response->getBody()->write($results);
+            }
+            else{
+                $response = $response->withJSON([], 200);
+                //$response->getBody()->write($results);
+            }
+        }
+        catch(PDOexception $e){
+            //$response->getBody()->write($e);
+            $response = error($response, 500, $e->getMessage());
+        }
+        //$this->logger->addInfo("Getting all events");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
 });   
 
 // .../events/{event_id}/attendees
