@@ -43,7 +43,7 @@ function getValidParams($route){
             $validParams = ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']];
             break;
         case "/users/id/events":
-            $validParams = ['created_by' => ['true', 'false'], 'attending' => ['true', 'false'], 'facebook_id' => ['true', 'false']];
+            $validParams = ['created' => ['true', 'false'], 'attending' => ['true', 'false'], 'facebook_id' => ['true', 'false']];
             break;
         case "/events":
             $validParams = [];
@@ -73,7 +73,7 @@ function getDefaults($route){
             $defaults = ['sort' => 'fname', 'direction' => 'asc'];
             break;
         case "/users/id/events":
-            $defaults = ['created_by' => 'true', 'attending' => 'true', 'facebook_id' => 'false'];
+            $defaults = ['created' => 'true', 'attending' => 'true', 'facebook_id' => 'false'];
             break;
         case "/events":
             $defaults = [];

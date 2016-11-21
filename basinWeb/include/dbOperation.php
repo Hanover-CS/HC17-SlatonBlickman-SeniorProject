@@ -177,15 +177,22 @@ class dbOperation
         return $this->results;
     }
 
-    public function deleteEVent($id){
+    public function deleteEvent($id){
         return null;
     }
 
     public function getUserEvents($id, $params){
-       $results = $this->getUserEventsCreated($id, $params);
-       $results2 = $this->getUserEventsAttending($id, $params);
-       $this->results = ["created" => $results, "attending" => $results2];
-       return $this->results;
+        $results = [];
+        $results2 = [];
+        if($params["created"] == "true"){
+            $results = ["created" => $this->getUserEventsCreated($id, $params)];
+        }
+        if($params['attending'] == "true"){
+            $results2 = ["attending" => $this->getUserEventsAttending($id, $params)];
+        }
+
+        $this->results = array_merge($results, $results2);
+        return $this->results;
     }
 
     public function getUserEventsCreated($id, $params){
