@@ -42,4 +42,12 @@
         android:layout_toEndOf="@+id/picture"
         android:onClick="onClickViewProfile"/>
 
+    <Button
+        android:text="basinWeb Tests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileButton"
+        android:layout_toEndOf="@+id/picture"
+        android:id="@+id/basinWebTests" />
+
 </RelativeLayout>

@@ -234,10 +234,12 @@ class dbOperation
         return null;
     }
 
-    public function insertEventAttendee($event_id, $user_id, $params){
+    public function insertEventAttendee($event_id, $body){
         $sql = ("INSERT INTO attendees (event_id, user_id) VALUES (:e_id, :u_id)");
-        $vals = ["e_id" => $event_id, "u_id" => $user_id];
-        return null;
+        $vals = ["e_id" => $event_id, "u_id" => $body['user_id']];
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($vals);
+        return $this->results;
     }
 
     public function deleteEventAttendee($event_id, $user_FB_id, $params){
