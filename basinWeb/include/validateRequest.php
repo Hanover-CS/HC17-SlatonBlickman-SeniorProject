@@ -34,6 +34,35 @@ function addDefaults($route, $params){
     return $params;
 }
 
+function getValidParams($route){
+    switch($route){
+        case "/users/id":
+            $validParams = ['facebook_id' => ['true', 'false']];
+            break;
+        case "/users":
+            $validParams = ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']];
+            break;
+        case "/users/id/events":
+            $validParams = ['created_by' => ['true', 'false'], 'attending' => ['true', 'false'], 'facebook_id' => ['true', 'false']];
+            break;
+        case "/events":
+            $validParams = [];
+            break;
+        case "/events/id":
+            $validParams = [];
+            break;
+        case "/events/id/attendees":
+            $validParams = [];
+            break;
+        default:
+            $validParams = [];
+            break;
+    }
+    //$params = addDefaults($params, $defaults);
+    return $validParams;
+
+}
+
 function getDefaults($route){
 
     switch($route){
@@ -42,6 +71,9 @@ function getDefaults($route){
             break;
         case "/users":
             $defaults = ['sort' => 'fname', 'direction' => 'asc'];
+            break;
+        case "/users/id/events":
+            $defaults = ['created_by' => 'true', 'attending' => 'true', 'facebook_id' => 'false'];
             break;
         case "/events":
             $defaults = [];
@@ -61,30 +93,9 @@ function getDefaults($route){
 }
 
 
-function validGET($route, $params){
 
-    switch($route){
-        case "/users/id":
-            $validParams = ['facebook_id' => ['true', 'false']];
-            break;
-        case "/users":
-            $validParams = ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']];
-            break;
-        case "/events":
-            $validParams = [];
-            break;
-        case "/events/id":
-            $validParams = [];
-            break;
-        case "/events/id/attendees":
-            $validParams = [];
-            break;
-        default:
-            return false;
-            break;
-    }
-    //$params = addDefaults($params, $defaults);
-    return validateGET($params, $validParams);
+function validGET($route, $params){ 
+    return validateGET($params, getValidParams($route));
 }
 
 function validPOST($route, $body){
@@ -115,7 +126,7 @@ function validPOST($route, $body){
 function validPUT($route, $body){
     switch($route){
         case "/users/id":
-            $validBody = ["fname", "lname", "about"];
+            $validBody = ["fname", "lname", "about", "nickname"];
             break;
         case "/users":
             return false;

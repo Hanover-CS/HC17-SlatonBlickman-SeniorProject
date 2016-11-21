@@ -130,6 +130,7 @@ class dbOperation
 
         $delete = $this->conn->prepare($sql);
         $this->results = $delete->execute(["id" => $id]);
+        return $this->results;
 
     }
 
@@ -139,7 +140,12 @@ class dbOperation
     }
 
     public function getEvents($params){
-        return null;
+        $sql = 'SELECT * FROM events';
+        $query = $this->conn->prepare($sql);
+        $query->execute($params);
+        //echo "<br>Selecting all users";
+        $this->results = $query->fetchAll();
+        return $this->results;
     }
 
     public function getEvent($id, $params){
@@ -154,8 +160,27 @@ class dbOperation
         return null;
     }
 
-    public function getUserEvents($user_id, $params){
-        return null;
+    public function getUserEvents($id, $params){
+        $sql = "SELECT * FROM users ";
+
+        if($params['created_by'] == 'true'){
+            $sql = $sql . "JOIN events ON events.created_by = users._id ";
+        }
+        if($params['attending'] == 'true'){
+            $sql = $sql . "JOIN attendees ON attendees.user_id = users._id ";
+        }
+        if($params['facebook_id'] == 'true'){
+            $sql = $sql . "WHERE users.facebook_id = ?";
+        }
+        else{
+            $sql = $sql . "WHERE users._id = ?";
+        }
+        
+        $select = $this->conn->prepare($sql);
+        $select->execute([$id]);
+        $this->results = $select->fetchAll();
+        return $this->results;
+
     }
 
 
