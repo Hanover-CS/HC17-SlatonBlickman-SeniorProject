@@ -9,16 +9,22 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.hanover.basin.BasinWebTestActivity">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get all basin users"
-        android:onClick="onClickRequest"
-        android:id="@+id/button_users"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Results"
         android:id="@+id/results"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get all basin users"
+        android:onClick="onClickUsers"
+        android:id="@+id/button_users"
+        android:layout_below="@+id/results"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="194dp"
+        android:layout_marginTop="34dp" />
 
 </RelativeLayout>

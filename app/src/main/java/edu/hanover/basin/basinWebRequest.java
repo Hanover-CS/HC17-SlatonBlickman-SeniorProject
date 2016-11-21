@@ -1,5 +1,10 @@
 package edu.hanover.basin;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,12 +17,16 @@ import java.net.URL;
  */
 
 public class basinWebRequest {
-    private static final String OPEN_BASINWEB = "http://localhost/basinWeb/v1/index.php/";
+    private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php/";
+    //FIX THE OPEN_BASINWEB to go to the correct IP when not in emulator
 
-    public boolean getUsers(){
+    public JSONObject results;
+
+    public String getUsers(){
         try {
             URL url = new URL(OPEN_BASINWEB + "users");
             try {
+                Log.i("EXECUTING GET USERS", url.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.connect();
@@ -29,16 +38,22 @@ public class basinWebRequest {
                     sb.append(line+"\n");
                 }
                 br.close();
-                return true;
+                try{
+                    this.results = new JSONObject(sb.toString());
+                }
+                catch(JSONException e){
+                    return e.toString();
+                }
+                return sb.toString();
 
 
             }
             catch(IOException e){
-                return false;
+                return e.toString();
             }
         }
         catch(MalformedURLException e){
-            return false;
+            return e.toString();
         }
 
 

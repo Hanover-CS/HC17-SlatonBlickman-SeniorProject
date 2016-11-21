@@ -149,6 +149,11 @@ public class LoginActivity extends Activity {
 
     }
 
+    public void onClickGoToRequests(View v){
+        Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
+        //intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+        startActivity(intent);
+    }
 
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
 
@@ -167,5 +172,7 @@ public class LoginActivity extends Activity {
 
         }
     }
+
+
 
 }

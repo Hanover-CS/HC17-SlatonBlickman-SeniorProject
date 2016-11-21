@@ -48,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileButton"
         android:layout_toEndOf="@+id/picture"
+        android:onClick="onClickGoToRequests"
         android:id="@+id/basinWebTests" />
 
 </RelativeLayout>
