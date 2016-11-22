@@ -78,6 +78,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
+                info.setText("Logging in...");
                 AccessToken accessToken = loginResult.getAccessToken();
 //                current = new User(accessToken);
 //                displayInfo();
@@ -151,7 +152,7 @@ public class LoginActivity extends Activity {
 
     public void onClickGoToRequests(View v){
         Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
-        //intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+        intent.putExtra(BasinWebTestActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
         startActivity(intent);
     }
 

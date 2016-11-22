@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:id="@+id/info"
-        android:text="Please wait..."
+        android:text="Please login..."
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/picture" />

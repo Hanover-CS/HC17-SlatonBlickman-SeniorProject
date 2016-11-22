@@ -20,17 +20,28 @@ public class basinWebRequest {
     private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php/";
     //FIX THE OPEN_BASINWEB to go to the correct IP when not in emulator
 
-    public JSONObject results;
+    private JSONObject results;
 
-    public String getUsers(){
+    public JSONObject getJSON(){
+        return results;
+    }
+
+
+    public String GET(String route){
         try {
-            URL url = new URL(OPEN_BASINWEB + "users");
+            URL url = new URL(OPEN_BASINWEB + route);
             try {
-                Log.i("EXECUTING GET USERS", url.toString());
+                Log.i("EXECUTING GET " + route, url.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
+
+                //may
                 conn.connect();
+                //do stuff with
                 int status = conn.getResponseCode();
+
+                //do stuff with different statuses
+
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
@@ -40,11 +51,11 @@ public class basinWebRequest {
                 br.close();
                 try{
                     this.results = new JSONObject(sb.toString());
+                    return this.results.toString(3);
                 }
                 catch(JSONException e){
                     return e.toString();
                 }
-                return sb.toString();
 
 
             }

@@ -266,7 +266,7 @@ $app->post('/events[/]', function($request, $response, $args) {
             }
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         $this->logger->addInfo("adding new user");
     }

@@ -108,7 +108,7 @@ function validPOST($route, $body){
             $validBody = ['facebook_id', 'fname', 'lname'];;
             break;
         case "/events":
-            $validBody = ['created_by', 'lat_coord', 'long_coord', 'description', 'created_at', 'time_start', 'duration', ];
+            $validBody = ['created_by', 'lat_coord', 'long_coord', 'description', 'created_at', 'time_start', 'duration', 'title'];
             break;
         case "/events/id":
             return false;
