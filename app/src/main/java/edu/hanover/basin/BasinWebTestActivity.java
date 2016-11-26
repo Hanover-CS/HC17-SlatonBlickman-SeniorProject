@@ -17,6 +17,7 @@ public class BasinWebTestActivity extends Activity {
     String fb_id;
     TextView test;
     basinWebRequest request;
+    basinWebRequest volleyTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class BasinWebTestActivity extends Activity {
         setContentView(R.layout.activity_basin_web_test);
         test = (TextView)findViewById(R.id.results);
         fb_id = (String)getIntent().getExtras().get(EXTRA_FACEBOOK_ID);
+        volleyTest = new basinWebRequest(this);
     }
 
     public void onClickUsers(View v){
@@ -35,6 +37,16 @@ public class BasinWebTestActivity extends Activity {
     public void onClickMyEvents(View v){
         test.setText("executing task");
         (new GetAllUsers()).execute("events");
+    }
+
+    public void onClickVolley(View v){
+        test.setText("executing task");
+        volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
+        Log.i("BUTTON RESPONSE", volleyTest.getJSON().toString());
+        while(volleyTest.getJSON().toString().equals("{empty: empty}")){
+            volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
+            test.setText(volleyTest.getJSON().toString());
+        }
     }
 
     private class GetAllUsers extends AsyncTask<String, Void, String> {

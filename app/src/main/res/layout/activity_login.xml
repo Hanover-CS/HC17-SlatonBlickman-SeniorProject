@@ -51,4 +51,12 @@
         android:onClick="onClickGoToRequests"
         android:id="@+id/basinWebTests" />
 
+    <Button
+        android:text="VIEW MY EVENTS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/basinWebTests"
+        android:layout_toEndOf="@+id/picture"
+        android:id="@+id/button_event" />
+
 </RelativeLayout>

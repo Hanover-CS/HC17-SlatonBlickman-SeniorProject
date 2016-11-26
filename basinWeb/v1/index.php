@@ -371,7 +371,7 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
     }
     else{
         $acceptedContent = ["accepted_params" => getValidParams("/events/id")];
-        $response = error($response, 400, "Invalid parameters or body!", $acceptedParams);
+        $response = error($response, 400, "Invalid parameters or body!", $acceptedContent);
     }
     return $response;
 });  

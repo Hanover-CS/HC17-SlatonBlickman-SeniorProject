@@ -30,6 +30,7 @@
         android:layout_marginEnd="194dp"
         android:layout_marginTop="34dp" />
 
+
     <Button
         android:text="GET MY EVENTS"
         android:layout_width="wrap_content"
@@ -39,4 +40,10 @@
         android:onClick = "onClickMyEvents"
         android:id="@+id/button_myevents" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volley test"
+        android:layout_below = "@+id/button_myevents"
+        android:onClick="onClickVolley"/>
 </RelativeLayout>
