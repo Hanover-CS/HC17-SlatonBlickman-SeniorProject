@@ -7,10 +7,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class BasinWebTestActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
@@ -40,15 +49,60 @@ public class BasinWebTestActivity extends Activity {
     }
 
     public void onClickVolley(View v){
-        test.setText("executing task");
-        volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
-        Log.i("BUTTON RESPONSE", volleyTest.getJSON().toString());
-        while(volleyTest.getJSON().toString().equals("{empty: empty}")){
-            volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
-            test.setText(volleyTest.getJSON().toString());
-        }
+//        test.setText("executing task");
+//        volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
+//        Log.i("BUTTON RESPONSE", volleyTest.getJSON().toString());
+//        while(volleyTest.getJSON().toString().equals("{empty: empty}")){
+//            volleyTest.VolleyData("users/" + fb_id + "/events?facebook_id=true");
+//            test.setText(volleyTest.getJSON().toString());
+//        }
+
+        basinURL burl = new basinURL();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("facebook_id", "true");
+        burl.getUserEventsURL(fb_id, params);
+        Log.i("BASIN URL", burl.toString());
+        request(burl.toString());
+
+
     }
 
+    private void request(String url){
+        // Request a string response
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // Result handling
+                        try {
+                            test.setText(response.toString(3));
+                            Log.i("Volley Response", response.toString());
+                        }
+                        catch(JSONException e){
+                            Log.e("JSON EXCEPTION", e.toString());
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                // Error handling
+                test.setText("Error Processing Request");
+                Log.e("Volley error", "Something went wrong!");
+                error.printStackTrace();
+
+            }
+
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(this).add(stringRequest);
+
+    }
     private class GetAllUsers extends AsyncTask<String, Void, String> {
 
         @Override

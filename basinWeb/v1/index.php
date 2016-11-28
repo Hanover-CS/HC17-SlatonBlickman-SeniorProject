@@ -233,8 +233,14 @@ $app->get('/users/{id}/events[/]', function (Request $request, Response $respons
     if(validGET("/users/id/events", $params)){
         try{
             $user_query = new dbOperation($this->db); 
-            $results = $user_query->getUserEvents($id, $params);
-            $response = $response->withJSON(["events" => $results], 200);
+            $user_query->getUser($id, $params['facebook_id']);
+            if($user_query->isSuccessful()){
+                $results = $user_query->getUserEvents($id, $params);
+                $response = $response->withJSON(["events" => $results], 200);
+            }
+            else{
+                $response = error($response, 404, "No user with that id was found.",  ["used_facebook_id" => $params["facebook_id"]]);
+            }
 
         }
         catch(PDOexception $e){
