@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 public class userEventsActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
-    String fb_id;
+    String fb_id; 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
