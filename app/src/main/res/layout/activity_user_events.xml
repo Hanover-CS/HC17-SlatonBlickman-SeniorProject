@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_user_events"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="edu.hanover.basin.userEvents">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Created Events"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <ListView
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="200dip"
+        android:id="@+id/created_list"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attended Events"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+    <ListView
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="200dip"
+        android:id="@+id/attended_list"/>
+
+</LinearLayout>
