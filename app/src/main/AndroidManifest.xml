@@ -36,7 +36,9 @@
         <activity
             android:name=".BasinWebTestActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".userEvents"></activity>
+        <activity
+            android:name=".userEventsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

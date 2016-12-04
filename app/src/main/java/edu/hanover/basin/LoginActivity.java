@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
 //            displayInfo();
 //            displayLikes();
             (new GetCurrentUser()).execute(AccessToken.getCurrentAccessToken());
-            Log.e("ACCESS TOKEN:", "NOT NULL");
+            Log.i("ACCESS TOKEN:", "NOT NULL");
         }
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
@@ -122,6 +122,14 @@ public class LoginActivity extends Activity {
         startActivity(intent);
 
     }
+
+    public void onClickMyEvents(View v){
+        Intent intent = new Intent(LoginActivity.this, userEventsActivity.class);
+        intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+        startActivity(intent);
+
+    }
+
 
 
     @Override

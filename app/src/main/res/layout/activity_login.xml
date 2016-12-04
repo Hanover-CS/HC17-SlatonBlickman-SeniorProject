@@ -57,6 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/basinWebTests"
         android:layout_toEndOf="@+id/picture"
-        android:id="@+id/button_event" />
+        android:id="@+id/button_event"
+        android:onClick="onClickMyEvents"/>
 
 </RelativeLayout>

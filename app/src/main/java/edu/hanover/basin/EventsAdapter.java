@@ -43,10 +43,12 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
             title.setText(event.getString("title"));
 
             picture.setProfileId(event.getString("facebook_created_by"));
+            picture.setPresetSize(ProfilePictureView.SMALL);
 
-            coordinator.setText(event.getString("coordinator name here"));
+            coordinator.setText("coordinator name here");
 
-            date_time.setText(event.getString("time_start"));
+            //date_time.setText(event.getString("time_start"));
+            date_time.setText("some time here");
             // Return the completed view to render on screen
         }
         catch(JSONException e){

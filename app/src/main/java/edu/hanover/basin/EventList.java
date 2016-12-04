@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.util.ArrayList;
 
@@ -13,13 +14,16 @@ import java.util.ArrayList;
  */
 
 public class EventList {
-    private ArrayList eventsArrayList;
+    private ArrayList<JSONObject> eventsArrayList;
 
-    ArrayList EventList(JSONArray events){
+    EventList(JSONArray events){
         JSONObject objIn;
+        eventsArrayList = new ArrayList<JSONObject>();
+
         try {
             for (int i = 0; i < events.length(); i++) {
                 objIn = events.getJSONObject(i);
+
                 eventsArrayList.add(objIn);
 
             }
@@ -27,6 +31,9 @@ public class EventList {
         catch(JSONException e){
             Log.e("eventList constructor", e.toString());
         }
+    }
+
+    ArrayList<JSONObject> toArrayList(){
         return eventsArrayList;
     }
 }
