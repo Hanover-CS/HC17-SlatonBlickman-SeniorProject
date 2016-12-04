@@ -23,7 +23,6 @@ import java.util.HashMap;
 public class userEventsActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
     String fb_id;
-    JSONObject events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +52,17 @@ public class userEventsActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try{
-                            events = response.getJSONObject("events");
-                            JSONArray created = events.getJSONArray("created");
-
-                            Log.e("created", created.toString());
-
+                            JSONObject events = response.getJSONObject("events");
+                            Log.i("user events", events.toString());
                             EventList created_events = new EventList(events.getJSONArray("created"));
-                            ArrayList<JSONObject> created_arrayList = created_events.toArrayList();
-                            // Create the adapter to convert the array to views
-                            EventsAdapter adapter = new EventsAdapter(getApplicationContext(), created_arrayList);
-                            // Attach the adapter to a ListView
-                            ListView listView = (ListView) findViewById(R.id.created_list);
-                            listView.setAdapter(adapter);
+                            setAdapters(created_events, R.id.created_list);
+
+                            EventList attended_events = new EventList(events.getJSONArray("attending"));
+                            setAdapters(attended_events, R.id.attended_list);
 
                         }
                         catch(JSONException e){
-                            Log.e("userEvents error", e.toString());
+                            Log.e("userEventsActivityerror", e.toString());
                             e.printStackTrace();
                         }
 
@@ -90,5 +84,14 @@ public class userEventsActivity extends Activity {
         // Add the request to the queue
         Volley.newRequestQueue(this).add(stringRequest);
 
+    }
+
+    private void setAdapters(EventList events, int listViewId){
+        ArrayList<JSONObject> arrayList = events.toArrayList();
+        // Create the adapter to convert the array to views
+        EventsAdapter adapter = new EventsAdapter(getApplicationContext(), arrayList);
+        // Attach the adapter to a ListView
+        ListView listView = (ListView) findViewById(listViewId);
+        listView.setAdapter(adapter);
     }
 }
