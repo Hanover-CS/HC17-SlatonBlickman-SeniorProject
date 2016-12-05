@@ -18,6 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -33,6 +38,9 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -72,12 +80,13 @@ public class LoginActivity extends Activity {
 //            displayInfo();
 //            displayLikes();
             (new GetCurrentUser()).execute(AccessToken.getCurrentAccessToken());
-            Log.e("ACCESS TOKEN:", "NOT NULL");
+            Log.i("ACCESS TOKEN:", "NOT NULL");
         }
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
+                info.setText("Logging in...");
                 AccessToken accessToken = loginResult.getAccessToken();
 //                current = new User(accessToken);
 //                displayInfo();
@@ -85,6 +94,8 @@ public class LoginActivity extends Activity {
                 (new GetCurrentUser()).execute(accessToken);
                 //Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
                 //current = new User(accessToken);
+
+
             }
 
             @Override
@@ -111,6 +122,14 @@ public class LoginActivity extends Activity {
         startActivity(intent);
 
     }
+
+    public void onClickMyEvents(View v){
+        Intent intent = new Intent(LoginActivity.this, userEventsActivity.class);
+        intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+        startActivity(intent);
+
+    }
+
 
 
     @Override
@@ -149,7 +168,63 @@ public class LoginActivity extends Activity {
 
     }
 
+    public void onClickGoToRequests(View v){
+        Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
+        intent.putExtra(BasinWebTestActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+        startActivity(intent);
+    }
 
+    private void insertUser(String url){
+
+    }
+
+    private void getUser( int method, JSONObject body ){
+        basinURL dbUser = new basinURL();
+        String url = dbUser.getUserURL(current.getFacebookID(), "true");
+
+        if(body == null || body.length() == 0){
+            body = null;
+        }
+        // Request a string response
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url, body,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // Result handling
+                        Log.i("Volley Response", response.toString());
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        // Error handling
+                        JSONObject body = new JSONObject();
+                        String[] names = current.getName().split(" ");
+                        try {
+                            body.put("fname", names[0]);
+                            body.put("lname", names[1]);
+                            body.put("facebook_id", current.getFacebookID());
+                        }
+                        catch(JSONException e2){
+                            Log.e("JSON EXCEPTION", e2.toString());
+                        }
+                        getUser(Request.Method.POST, body);
+                        Log.e("Volley error", "Something went wrong!");
+                        error.printStackTrace();
+
+                    }
+
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(this).add(jsonRequest);
+    }
+    //For graph requests
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
 
         @Override
@@ -163,9 +238,13 @@ public class LoginActivity extends Activity {
             info.setText("Welcome, " + current.getName() + "!");
             profilePic.setProfileId(current.getFacebookID());
 
+            getUser(Request.Method.GET, null);
+
             Log.e("UI UPDATED:", "SUCCESS");
 
         }
     }
+
+
 
 }

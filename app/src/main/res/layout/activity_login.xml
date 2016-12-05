@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:id="@+id/info"
-        android:text="Please wait..."
+        android:text="Please login..."
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/picture" />
@@ -41,5 +41,23 @@
         android:text="View My Profile"
         android:layout_toEndOf="@+id/picture"
         android:onClick="onClickViewProfile"/>
+
+    <Button
+        android:text="basinWeb Tests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileButton"
+        android:layout_toEndOf="@+id/picture"
+        android:onClick="onClickGoToRequests"
+        android:id="@+id/basinWebTests" />
+
+    <Button
+        android:text="VIEW MY EVENTS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/basinWebTests"
+        android:layout_toEndOf="@+id/picture"
+        android:id="@+id/button_event"
+        android:onClick="onClickMyEvents"/>
 
 </RelativeLayout>

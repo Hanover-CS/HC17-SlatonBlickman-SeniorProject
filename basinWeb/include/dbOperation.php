@@ -5,6 +5,9 @@ class dbOperation
 {
     //Database connection link
     private $conn;
+    private $results;
+    private $verb;
+    private $fields;
  
     //Class constructor
     function __construct($db)
@@ -29,43 +32,106 @@ class dbOperation
         return $field_names;
     }
 
+    private function buildSQL($initQuery, $params){
+        return "";
+    }
+
+    /*
+     * Public helper functions
+     */
+
+    public function isSuccessful(){
+        if($this->results == false){
+            return false;
+        }
+        else{
+            return true;
+        }
+        
+    }
 
     /*
      * Getters and Setters
      */
+    public function getResults(){
+        return $this->results;
+    }
+
 
     public function getUserFields(){
-        return $this->getTableFields("users");
+        $this->fields = $this->getTableFields("users");
+        return $this->fields;
     }
 
     public function getUsers($params){
-        $sql = 'SELECT * FROM users_test';
+        $sql = 'SELECT * FROM users';
         $query = $this->conn->prepare($sql);
-        $query->execute();
-        echo "<br>Selecting all users";
-        return $query->fetchAll();
+        $query->execute($params);
+        //echo "<br>Selecting all users";
+        $this->results = $query->fetchAll();
+        return $this->results;
     }
 
-    public function getUser($id){
-        $sql = "SELECT * FROM users_test WHERE _id = ?";
+    public function getUser($id, $facebook_id){
+        if($facebook_id == "true"){
+            $sql = "SELECT * FROM users WHERE facebook_id = ? AND _id != ?";
+        }
+        else{
+            $sql = "SELECT * FROM users WHERE _id = ? AND facebook_id != ?";
+        }
+        $params = [$id, $id];
         $query = $this->conn->prepare($sql);
-        $query->execute([$id]);
+        $query->execute($params);
         //echo "Selecting all users with _id" + $id;
-        $q = $query->fetchAll();
-        return $q;
+        $this->results = $query->fetch();
+        return $this->results;
     }
 
-    public function updateUser($id, $params){
-        return null;
+    public function updateUser($id, $body, $facebook_id){
+        $sql = "UPDATE users SET ";
+        $i = 0;
+        foreach($body as $key => $value){
+            $i += 1;
+            $sql = $sql . $key . " = " . ":" . $key;
+            if($i < count($body)){
+                $sql = $sql . ", ";
+            }
+
+        }
+        if($facebook_id == "true"){
+            $sql = $sql . " WHERE facebook_id = :id AND _id != :id";
+        }
+        else{
+            $sql = $sql . " WHERE facebook_id != :id AND _id = :id";
+        }
+        $body["id"] = $id;
+        $query = $this->conn->prepare($sql);
+        $this->results = $query->execute($body);
+        return $this->results;
 
     }
 
-    public function insertUser($id, $params){
-        return null;
+    public function insertUser($body){
+        $sql = "INSERT INTO users (facebook_id, fname, lname) VALUES
+                (:facebook_id, :fname, :lname)";
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($body);
+        return $this->results;
     }
 
-    public function deleteUser($id){
-        return null;
+    public function deleteUser($id, $facebook_id){
+        $sql = "DELETE FROM users";
+        if($facebook_id == "true"){
+            $sql = $sql . " WHERE facebook_id = :id AND _id != :id";
+        }
+        else{
+            $sql = $sql . " WHERE facebook_id != :id AND _id = :id";
+        }
+
+        $delete = $this->conn->prepare($sql);
+        $this->results = $delete->execute(["id" => $id]);
+        return $this->results;
+
     }
 
 
@@ -74,23 +140,93 @@ class dbOperation
     }
 
     public function getEvents($params){
-        return null;
+        $sql = 'SELECT * FROM events';
+        $query = $this->conn->prepare($sql);
+        $query->execute($params);
+        //echo "<br>Selecting all users";
+        $this->results = $query->fetchAll();
+        return $this->results;
     }
 
     public function getEvent($id, $params){
+        $sql = "SELECT * FROM events WHERE _id = ?";
+        $query = $this->conn->prepare($sql);
+        $query->execute([$id]);
+        $this->results = $query->fetchAll();
+        return $this->results;
+    }
+
+    public function insertEvent($body){
+        $sql_vals = "INSERT INTO events (";
+        $sql_vars = ") VALUES (";
+        $i = 0;
+        foreach($body as $key => $value){
+            $i += 1;
+            $sql_vals .= $key;
+            $sql_vars .= ":" . $key;
+            if($i != count($body)){
+                $sql_vals .= ", ";
+                $sql_vars .= ", ";
+            }
+
+        }
+        $sql_vars = $sql_vars . ")";
+        $sql = $sql_vals . $sql_vars;
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($body);
+        return $this->results;
+    }
+
+    public function deleteEvent($id){
         return null;
     }
 
-    public function insertEvent($id, $params){
-        return null;
+    public function getUserEvents($id, $params){
+        $results = [];
+        $results2 = [];
+        if($params["created"] == "true"){
+            $results = ["created" => $this->getUserEventsCreated($id, $params)];
+        }
+        if($params['attending'] == "true"){
+            $results2 = ["attending" => $this->getUserEventsAttending($id, $params)];
+        }
+
+        $this->results = array_merge($results, $results2);
+        return $this->results;
     }
 
-    public function deleteEVent($id){
-        return null;
+    public function getUserEventsCreated($id, $params){
+        $sql = "SELECT events.* FROM events INNER JOIN users ON events.created_by = users._id ";
+
+        if($params['facebook_id'] == 'true'){
+            $sql .=  "WHERE users.facebook_id = ? ";
+        }
+        else{
+            $sql .=  "WHERE users._id = ? ";
+        }
+        //echo $sql;
+        $select = $this->conn->prepare($sql);
+        $select->execute([$id]);
+        $this->results = $select->fetchAll();
+        return $this->results;
+
     }
 
-    public function getUserEvents($user_FB_id, $params){
-        return null;
+    public function getUserEventsAttending($id, $params){
+        $sql = "SELECT events.* FROM attendees INNER JOIN events ON attendees.event_id = events._id INNER JOIN users ON users._id = attendees.user_id ";
+
+        if($params['facebook_id'] == 'true'){
+            $sql .= "WHERE users.facebook_id = ? ";
+        }
+        else{
+            $sql .= "WHERE users._id = ? ";
+        }
+        //echo $sql;
+        $select = $this->conn->prepare($sql);
+        $select->execute([$id]);
+        $this->results = $select->fetchAll();
+        return $this->results;
+
     }
 
 
@@ -98,8 +234,12 @@ class dbOperation
         return null;
     }
 
-    public function insertEventAttendee($event_id, $user_FB_id, $params){
-        return null;
+    public function insertEventAttendee($event_id, $body){
+        $sql = ("INSERT INTO attendees (event_id, user_id) VALUES (:e_id, :u_id)");
+        $vals = ["e_id" => $event_id, "u_id" => $body['user_id']];
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($vals);
+        return $this->results;
     }
 
     public function deleteEventAttendee($event_id, $user_FB_id, $params){
