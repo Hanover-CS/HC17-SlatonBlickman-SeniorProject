@@ -1,8 +1,10 @@
 package edu.hanover.basin;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -22,12 +24,13 @@ import java.util.HashMap;
 
 public class userEventsActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
-    String fb_id; 
+    String fb_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_events);
+
         AccessToken token =  AccessToken.getCurrentAccessToken();
         if(token != null){
             fb_id = token.getUserId();
@@ -39,10 +42,13 @@ public class userEventsActivity extends Activity {
         burl.getUserEventsURL(fb_id, params);
         Log.i("BASIN URL", burl.toString());
         request(burl.toString());
-
-
-        // Attach the adapter to a ListView
     }
+
+    public void onClickAddEvent(View v){
+        Intent intent = new Intent(userEventsActivity.this, EventCreationActivity.class);
+        startActivity(intent);
+    }
+
 
     private void request(String url){
         // Request a string response
