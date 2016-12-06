@@ -1,6 +1,7 @@
 package edu.hanover.basin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +22,15 @@ import java.util.ArrayList;
  */
 
 public class EventsAdapter extends ArrayAdapter<JSONObject> {
+
     public EventsAdapter(Context context, ArrayList<JSONObject> events) {
-        super(context, 0, events);
+        super(context, 0, events);;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        JSONObject event = getItem(position);
+        final JSONObject event = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_event, parent, false);
@@ -51,10 +53,23 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
             //date_time.setText(event.getString("time_start"));
             date_time.setText("some time here");
             // Return the completed view to render on screen
+
         }
         catch(JSONException e){
             Log.e("EventsAdapter error", e.toString());
         }
+        convertView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(final View v) {
+                try {
+                    Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
+                    intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("_id"));
+                    v.getContext().startActivity(intent);
+                }
+                catch(JSONException e){
+                    Log.e("JSON EXCEPTION", e.toString());
+                }
+            }
+        });
         return convertView;
     }
 }
