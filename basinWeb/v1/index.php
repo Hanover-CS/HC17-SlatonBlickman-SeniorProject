@@ -239,7 +239,8 @@ $app->get('/users/{id}/events[/]', function (Request $request, Response $respons
                 $response = $response->withJSON(["events" => $results], 200);
             }
             else{
-                $response = error($response, 404, "No user with that id was found.",  ["used_facebook_id" => $params["facebook_id"]]);
+                $response = error($response, 404, "No user with that id was found.", 
+                                   ["used_facebook_id" => $params["facebook_id"]]);
             }
 
         }
@@ -254,8 +255,6 @@ $app->get('/users/{id}/events[/]', function (Request $request, Response $respons
     return $response;
 });
  
- 
-//What to do to check whether or not a user is attending a specific event
 
 // .../events
 $app->post('/events[/]', function($request, $response, $args) {
@@ -383,17 +382,124 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
 });  
 
 //GET  .../events/{event_id}/attendees
-
 $app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
     //$query_c = new dbOperation($this->db);
-   $response->getBody()->write( "Default page for specific http event attendees requests");
+    $id = $args["id"];
+    $params = $request->getQueryParams();
+    $params = addDefaults('/events/id', $params);
+    if(validGET("/events/id", $params)){
+        try{
+            $events_query = new dbOperation($this->db);
+            $events_query->getEvent($id, $params);
+            if($events_query->isSuccessful()){
+                $results = $events_query->getEventAttendance($id, $params);
+                $response = $response->withJSON($results, 200);
+                //$response->getBody()->write($results);
+            }
+            else{
+                $response = error($response, 404, "No event was found with that id", null);
+                //$response->getBody()->write($results);
+            }
+        }
+        catch(PDOexception $e){
+            //$response->getBody()->write($e);
+            $response = error($response, 500, $e->getMessage());
+        }
+        //$this->logger->addInfo("Getting all events");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
 });   
 
-//DELETE .../events/id/attendees
-//deletes user from attending list for event
 
 //GET  .../events/{event_id}/attendees/{user_id}
 //checks whether or not this user is attending this event
+$app->get('/events/{event_id}/attendees/{user_id}[/]', function($request, $response, $args) {
+    //$query_c = new dbOperation($this->db);
+    $event_id = $args["event_id"];
+    $user_id = $args["user_id"];
+    $params = $request->getQueryParams();
+    $params = addDefaults('/events/id', $params);
+    if(validGET("/events/id", $params)){
+        try{
+            $query = new dbOperation($this->db);
+            $query->getEvent($event_id, $params);
+            if($query->isSuccessful()){
+                $query->getUser($user_id, $params);
+                $query->isSuccessful();
+                if($query->isSuccessful()){
+                    $results = $query->isAttending($event_id, $user_id, $params);
+                    $response = $response->withJSON(["attending" => $results], 200);
+                    //$response->getBody()->write($results);
+                }
+                else{
+                    $response = error($response, 404, "No user was found with that id", null);
+                }
+            }
+            else{
+                $response = error($response, 404, "No event was found with that id", null);
+                //$response->getBody()->write($results);
+            }
+        }
+        catch(PDOexception $e){
+            //$response->getBody()->write($e);
+            $response = error($response, 500, $e->getMessage());
+        }
+        //$this->logger->addInfo("Getting all events");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
+});   
+
+
+//DELETE .../events/id/attendees/id
+//deletes user from attending list for event
+$app->delete('/events/{event_id}/attendees/{user_id}[/]', function($request, $response, $args) {
+    //$query_c = new dbOperation($this->db);
+    $event_id = $args["event_id"];
+    $user_id = $args["user_id"];
+    $params = $request->getQueryParams();
+    $params = addDefaults('/events/id', $params);
+    if(validGET("/events/id", $params)){
+        try{
+            $query = new dbOperation($this->db);
+            $query->getEvent($event_id, $params);
+            if($query->isSuccessful()){
+                $query->getUser($user_id, $params);
+                $query->isSuccessful();
+                if($query->isSuccessful()){
+                    $results = $query->deleteEventAttendee($event_id, $user_id, $params);
+                    $results = ["success" => $results];
+                    $response = $response->withJSON($results, 200);
+                    //$response->getBody()->write($results);
+                }
+                else{
+                    $response = error($response, 404, "No user was found with that id", null);
+                }
+            }
+            else{
+                $response = error($response, 404, "No event was found with that id", null);
+                //$response->getBody()->write($results);
+            }
+        }
+        catch(PDOexception $e){
+            //$response->getBody()->write($e);
+            $response = error($response, 500, $e->getMessage());
+        }
+        //$this->logger->addInfo("Getting all events");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
+});   
 
 //DEFAULT PAGE
 //RETURN LINKS TO OTHER PAGES

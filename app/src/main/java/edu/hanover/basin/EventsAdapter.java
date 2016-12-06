@@ -45,7 +45,8 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
             picture.setProfileId(event.getString("facebook_created_by"));
             picture.setPresetSize(ProfilePictureView.SMALL);
 
-            coordinator.setText("coordinator name here");
+            String coordinator_name = event.getString("fname") + " " + event.getString("lname");
+            coordinator.setText(coordinator_name);
 
             //date_time.setText(event.getString("time_start"));
             date_time.setText("some time here");

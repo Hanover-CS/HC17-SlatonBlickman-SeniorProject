@@ -178,7 +178,8 @@ class dbOperation
     }
 
     public function deleteEvent($id){
-        return null;
+        $this->results = false;
+        return false;
     }
 
     public function getUserEvents($id, $params){
@@ -196,7 +197,8 @@ class dbOperation
     }
 
     public function getUserEventsCreated($id, $params){
-        $sql = "SELECT events.* FROM events INNER JOIN users ON events.created_by = users._id ";
+        $sql = "SELECT * FROM events 
+                INNER JOIN users ON events.created_by = users._id ";
 
         if($params['facebook_id'] == 'true'){
             $sql .=  "WHERE users.facebook_id = ? ";
@@ -213,7 +215,9 @@ class dbOperation
     }
 
     public function getUserEventsAttending($id, $params){
-        $sql = "SELECT events.* FROM attendees INNER JOIN events ON attendees.event_id = events._id INNER JOIN users ON users._id = attendees.user_id ";
+        $sql = "SELECT * FROM attendees 
+                INNER JOIN events ON attendees.event_id = events._id 
+                INNER JOIN users ON users._id = attendees.user_id ";
 
         if($params['facebook_id'] == 'true'){
             $sql .= "WHERE users.facebook_id = ? ";
@@ -231,7 +235,17 @@ class dbOperation
 
 
     public function getEventAttendance($id, $params){
-        return null;
+        $sql = "SELECT users.* FROM attendees 
+                INNER JOIN events ON attendees.event_id = events._id 
+                INNER JOIN users ON users._id = attendees.user_id 
+                WHERE events._id = ? ";
+
+        //echo $sql;
+        $select = $this->conn->prepare($sql);
+        $select->execute([$id]);
+        $this->results = $select->fetchAll();
+        return $this->results;
+
     }
 
     public function insertEventAttendee($event_id, $body){
@@ -242,10 +256,30 @@ class dbOperation
         return $this->results;
     }
 
-    public function deleteEventAttendee($event_id, $user_FB_id, $params){
-        return null;
+    public function deleteEventAttendee($event_id, $user_id, $params){
+        $sql = "DELETE FROM attendees WHERE event_id = :event_id AND user_id = :user_id";
+        $vals = ["event_id" => $event_id, "user_id" => $user_id];
+        $insert = $this->conn->prepare($sql);
+        $this->results = $insert->execute($vals);
+        return $this->results;
     }
 
+    public function isAttending($event_id, $user_id, $params){
+        $sql = "SELECT * FROM attendees 
+                WHERE event_id = :event_id AND user_id = :user_id ";
+        $vals = ["event_id" => $event_id, "user_id" => $user_id];
+        //echo $sql;
+        $select = $this->conn->prepare($sql);
+        $select->execute($vals);
+        $results = $select->fetchAll();
+        if(sizeof($results) > 0){
+            $this->results = true;
+        }
+        else{
+            $this->results = false;
+        }
+        return $this->results;
+    }
 
     public function getEventsByLocation($lat, $long, $place){
         return null;
