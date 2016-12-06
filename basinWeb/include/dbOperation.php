@@ -155,7 +155,7 @@ class dbOperation
                 WHERE events._id = ?";
         $query = $this->conn->prepare($sql);
         $query->execute([$id]);
-        $this->results = $query->fetchAll();
+        $this->results = $query->fetchAll()[0];
         return $this->results;
     }
 

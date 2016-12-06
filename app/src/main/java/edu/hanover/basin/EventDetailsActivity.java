@@ -39,12 +39,12 @@ public class EventDetailsActivity extends Activity {
         Log.e("why no event id", event_id);
         basinURL url = new basinURL();
         url.getEventURL(event_id);
-        request(url.toString());
+        request(Request.Method.GET, url.toString());
     }
 
-    private void request(String url){
+    private void request(int method, String url){
         // Request a string response
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -53,24 +53,22 @@ public class EventDetailsActivity extends Activity {
                         try{
                             Log.i("event response", event.toString());
                             title.setText(event.getString("title"));
+                            picture.setProfileId(event.getString("facebook_created_by"));
+                            coordinator.setText(event.getString("fname") + event.getString("lname"));
+                         //   description.setText(event.getString("description"));
                         }
                         catch(JSONException e){
                             Log.e("JSON EXCEPTION", e.toString());
                         }
-
-
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 // Error handling
                 Log.e("Volley error", error.toString());
                 error.printStackTrace();
-
             }
-
         });
 
         // Add the request to the queue
