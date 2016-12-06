@@ -61,6 +61,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
         convertView.setOnClickListener(new View.OnClickListener() {
             public void onClick(final View v) {
                 try {
+                    Log.e("event", event.toString());
                     Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
                     intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("_id"));
                     v.getContext().startActivity(intent);

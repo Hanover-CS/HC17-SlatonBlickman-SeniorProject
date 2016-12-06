@@ -1,5 +1,7 @@
 package edu.hanover.basin;
 
+import android.content.ServiceConnection;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +12,15 @@ import java.util.Map;
 public class basinURL {
     private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php";
     private String buildURL = "";
+
+    basinURL(){
+        buildURL = OPEN_BASINWEB;
+    }
+
+    public String getEventURL(String id){
+        buildURL = OPEN_BASINWEB + "/events/" + id;
+        return buildURL;
+    }
 
     public String getUserURL(String id, String is_Facebook_id){
         buildURL = OPEN_BASINWEB + "/users/" + id + "?facebook_id=" + is_Facebook_id;
@@ -33,7 +44,6 @@ public class basinURL {
                 i++;
             }
         }
-
         return buildURL;
     }
 

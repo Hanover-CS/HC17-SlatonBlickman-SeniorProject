@@ -328,7 +328,7 @@ $app->get('/events/{id}[/]', function($request, $response, $args) {
         }
         catch(PDOexception $e){
             //$response->getBody()->write($e);
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         //$this->logger->addInfo("Getting all events");
     }

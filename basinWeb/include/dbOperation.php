@@ -149,7 +149,10 @@ class dbOperation
     }
 
     public function getEvent($id, $params){
-        $sql = "SELECT * FROM events WHERE _id = ?";
+        $sql = "SELECT events.*, users.fname, users.lname, users.facebook_id
+                FROM events 
+                INNER JOIN users on users.facebook_id = events.facebook_created_by
+                WHERE events._id = ?";
         $query = $this->conn->prepare($sql);
         $query->execute([$id]);
         $this->results = $query->fetchAll();
@@ -197,7 +200,8 @@ class dbOperation
     }
 
     public function getUserEventsCreated($id, $params){
-        $sql = "SELECT * FROM events 
+        $sql = "SELECT events.*, users.fname, users.lname, users.facebook_id 
+                FROM events 
                 INNER JOIN users ON events.created_by = users._id ";
 
         if($params['facebook_id'] == 'true'){
