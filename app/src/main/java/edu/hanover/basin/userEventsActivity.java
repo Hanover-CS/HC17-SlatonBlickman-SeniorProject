@@ -1,6 +1,7 @@
 package edu.hanover.basin;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -95,7 +96,7 @@ public class userEventsActivity extends Activity {
     private void setAdapters(EventList events, int listViewId){
         ArrayList<JSONObject> arrayList = events.toArrayList();
         // Create the adapter to convert the array to views
-        EventsAdapter adapter = new EventsAdapter(getApplicationContext(), arrayList);
+        EventsAdapter adapter = new EventsAdapter(this, arrayList);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(listViewId);
         listView.setAdapter(adapter);
