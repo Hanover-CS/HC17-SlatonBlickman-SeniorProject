@@ -130,6 +130,10 @@ public class LoginActivity extends Activity {
 
     }
 
+    public void onClickMyMap(View v){
+        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+        startActivity(intent);
+    }
 
 
     @Override
@@ -214,7 +218,7 @@ public class LoginActivity extends Activity {
                             Log.e("JSON EXCEPTION", e2.toString());
                         }
                         getUser(Request.Method.POST, body);
-                        Log.e("Volley error", "Something went wrong!");
+                        //Log.e("Volley error", Log.getStackTraceString(error));
                         error.printStackTrace();
 
                     }
