@@ -64,7 +64,6 @@ function getValidParams($route){
 }
 
 function getDefaults($route){
-
     switch($route){
         case "/users/id":
             $defaults = ['facebook_id' => 'false'];
@@ -93,13 +92,11 @@ function getDefaults($route){
 }
 
 
-
 function validGET($route, $params){ 
     return validateGET($params, getValidParams($route));
 }
 
 function validPOST($route, $body){
-
     switch($route){
         case "/users/id":
             return false;

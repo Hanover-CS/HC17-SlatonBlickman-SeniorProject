@@ -351,7 +351,7 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
         try{
             $events_query = new dbOperation($this->db);
             $users_query = new dbOperation($this->db);
-            $user_results = $users_query->getUser($body['user_id'], 'false');
+            $user_results = $users_query->getUser($body['user_id'], 'true');
             $event_results = $events_query->getEvent($id, $params);
             if($events_query->isSuccessful() && $users_query->isSuccessful()){
                 $insert_attendee = $events_query;
@@ -393,7 +393,7 @@ $app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
             $events_query->getEvent($id, $params);
             if($events_query->isSuccessful()){
                 $results = $events_query->getEventAttendance($id, $params);
-                $response = $response->withJSON($results, 200);
+                $response = $response->withJSON(["users" => $results], 200);
                 //$response->getBody()->write($results);
             }
             else{
@@ -428,7 +428,7 @@ $app->get('/events/{event_id}/attendees/{user_id}[/]', function($request, $respo
             $query = new dbOperation($this->db);
             $query->getEvent($event_id, $params);
             if($query->isSuccessful()){
-                $query->getUser($user_id, $params);
+                $query->getUser($user_id, 'true');
                 $query->isSuccessful();
                 if($query->isSuccessful()){
                     $results = $query->isAttending($event_id, $user_id, $params);
@@ -471,8 +471,7 @@ $app->delete('/events/{event_id}/attendees/{user_id}[/]', function($request, $re
             $query = new dbOperation($this->db);
             $query->getEvent($event_id, $params);
             if($query->isSuccessful()){
-                $query->getUser($user_id, $params);
-                $query->isSuccessful();
+                $query->getUser($user_id, 'true');
                 if($query->isSuccessful()){
                     $results = $query->deleteEventAttendee($event_id, $user_id, $params);
                     $results = ["success" => $results];
