@@ -8,11 +8,15 @@ import android.os.Bundle;
 
 
 import android.location.LocationListener;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -43,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         //Get event data. Locations are all that's needed for now.
         //How do I start around a location?
         //Will need to limit based on proximity
@@ -51,9 +55,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
         getLocation();
         LatLng cameraPos = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPos));
+        LatLng testLoc = new LatLng(mLastLocation.getLatitude() + 0.0001, mLastLocation.getLongitude() + 0.0001);
+        //LatLng cameraPos = new LatLng(30.0, -85.0);
+        Log.i("CAMERA POS", cameraPos.toString());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPos, 16.6f));
+
+        //LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(cameraPos).title("Me"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPos));
+        Marker testMark = mMap.addMarker(new MarkerOptions()
+                .position(testLoc)
+                .title("test title")
+                .snippet("6:00"));
+
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+//        {
+//
+//            @Override
+//            public boolean onMarkerClick(Marker arg0) {
+//                if(arg0.getTitle().equals("Me")) // if marker source is clicked
+//                    Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+//                return true;
+//            }
+//
+//        });
     }
 
     //add listener for adding events (long tap)
@@ -62,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager getLocation(){
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         // Define a listener that responds to location updates
         LocationListener listener = new LocationListener() {
@@ -82,9 +108,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         long minTime = 1000;
         float minDistance = 1;
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, listener);
 
-        mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Log.i("LAST KNOWN LOCATION", mLastLocation.toString());
         return locationManager;
     }
 
