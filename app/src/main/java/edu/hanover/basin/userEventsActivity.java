@@ -69,7 +69,7 @@ public class userEventsActivity extends Activity {
 
                         }
                         catch(JSONException e){
-                            Log.e("userEventsActivityerror", e.toString());
+                            Log.e("userEventsActivityError", e.toString());
                             e.printStackTrace();
                         }
 

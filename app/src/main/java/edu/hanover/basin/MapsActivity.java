@@ -1,6 +1,7 @@
 package edu.hanover.basin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +12,12 @@ import android.location.LocationListener;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,10 +26,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Location mLastLocation;
+    private Map<Marker, JSONObject> allMarkerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,17 +81,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .title("test title")
                 .snippet("6:00"));
 
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
-//        {
-//
-//            @Override
-//            public boolean onMarkerClick(Marker arg0) {
-//                if(arg0.getTitle().equals("Me")) // if marker source is clicked
-//                    Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
-//                return true;
-//            }
-//
-//        });
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                Log.d("", marker.getTitle());
+            }
+        });
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
+
+            @Override public void onMapLongClick(LatLng latlng){
+                //need to make confirmation box
+                Intent intent = new Intent(MapsActivity.this, EventCreationActivity.class);
+                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LATLNG, latlng);
+                startActivity(intent);
+            }
+        });
     }
 
     //add listener for adding events (long tap)
@@ -113,5 +133,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("LAST KNOWN LOCATION", mLastLocation.toString());
         return locationManager;
     }
+
+    private void request(int method, String url){
+        // Request a string response
+        JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //event = response;
+                        try{
+                            Log.i("event response", response.toString());
+                            response.getString("title");
+                            //title.setText(event.getString("title"));
+                            //picture.setProfileId(event.getString("facebook_created_by"));
+                            //coordinator.setText(event.getString("fname") + event.getString("lname"));
+                            //   description.setText(event.getString("description"));
+                        }
+                        catch(JSONException e){
+                            Log.e("JSON EXCEPTION", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Error handling
+                Log.e("Volley error", error.toString());
+                error.printStackTrace();
+            }
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(this).add(stringRequest);
+
+    }
+
 
 }
