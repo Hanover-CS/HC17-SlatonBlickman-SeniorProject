@@ -76,6 +76,4 @@ public class EventDetailsActivity extends Activity {
 
     }
 
-    //take body and parameters as well
-
 }

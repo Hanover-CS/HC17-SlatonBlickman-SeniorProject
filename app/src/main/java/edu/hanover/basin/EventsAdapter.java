@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class EventsAdapter extends ArrayAdapter<JSONObject> {
 
     public EventsAdapter(Context context, ArrayList<JSONObject> events) {
-        super(context, 0, events);;
+        super(context, 0, events);
     }
 
     @Override
