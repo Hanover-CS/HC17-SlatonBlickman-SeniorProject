@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.event.Event;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +46,7 @@ public class MapsActivity extends FragmentActivity
     private LatLng mLastLatLng;
     private GoogleApiClient mGoogleApiClient;
     private Map<Marker, JSONObject> allMarkerMap;
+    private Marker mMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class MapsActivity extends FragmentActivity
         // Add a marker in Sydney and move the camera
         //getLocation();
 
+        //mMap.setMaxZoomPreference(20.0f);
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
             @Override
@@ -108,7 +111,10 @@ public class MapsActivity extends FragmentActivity
             @Override public void onMapLongClick(LatLng latlng){
                 //need to make confirmation box
                 Intent intent = new Intent(MapsActivity.this, EventCreationActivity.class);
-                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LATLNG, latlng);
+                Double lat = latlng.latitude;
+                Double lng = latlng.longitude;
+                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
+                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
                 startActivity(intent);
             }
         });
@@ -134,7 +140,7 @@ public class MapsActivity extends FragmentActivity
     }
     protected  void createLocationRequest(){
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1);
+        mLocationRequest.setInterval(500);
         mLocationRequest.setFastestInterval(1);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -190,6 +196,8 @@ public class MapsActivity extends FragmentActivity
         //test location
         //mLastLatLng = new LatLng(38.713, -85.459 );
         if(mLastLatLng != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
             Toast.makeText(this, "location :"+ mLastLatLng, Toast.LENGTH_SHORT).show();
             Log.i("LAST", mLastLatLng.toString());
             LatLng cameraPos = mLastLatLng;
@@ -199,7 +207,12 @@ public class MapsActivity extends FragmentActivity
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPos, 16.6f));
 
             //LatLng sydney = new LatLng(-34, 151);
-            mMap.addMarker(new MarkerOptions().position(cameraPos).title("Me"));
+            if(mMe != null){
+                mMe.setPosition(cameraPos);
+            }
+            else{
+                mMe = mMap.addMarker(new MarkerOptions().position(cameraPos).title("Me"));
+            }
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPos));
             Marker testMark = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(30.0, -85.0))

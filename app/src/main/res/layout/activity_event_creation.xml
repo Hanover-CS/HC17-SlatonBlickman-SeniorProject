@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:inputType="time"
         android:ems="10"
-        android:id="@+id/Time"
+        android:id="@+id/time"
         android:hint="Time" />
 
     <DatePicker
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine|textPersonName"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/description"
         android:hint="Description"
         android:singleLine="false" />
 
