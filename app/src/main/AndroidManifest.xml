@@ -25,44 +25,49 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
 
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ProfileActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".BasinWebTestActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userEventsActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".EventDetailsActivity" />
-        <activity android:name=".EventCreationActivity" />
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".BasinWebTestActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".userEventsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".EventDetailsActivity" />
+
+        <activity android:name=".EventCreationActivity" />
 
         <activity
             android:name=".MapsActivity"
@@ -71,6 +76,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.hanover.basin.LoginActivity" />
         </activity>
+
     </application>
 
 </manifest>
