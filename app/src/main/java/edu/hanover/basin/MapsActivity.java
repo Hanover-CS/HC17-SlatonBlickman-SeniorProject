@@ -222,7 +222,7 @@ public class MapsActivity extends FragmentActivity
         }
         else{
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
-            mLastLatLng = new LatLng(38.713, -85.459 );
+            mLastLatLng = new LatLng(38.713, -85.459 ); //Default is Hanover
             updateUI();
 
         }
