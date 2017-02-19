@@ -2,6 +2,8 @@ package edu.hanover.basin;
 
 import android.content.ServiceConnection;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +46,10 @@ public class basinURL {
                 i++;
             }
         }
+        return buildURL;
+    }
+
+    public String postEventURL(String title, String time, String date, String description, Double lat, Double lon){
         return buildURL;
     }
 
