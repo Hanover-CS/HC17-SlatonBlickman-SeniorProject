@@ -3,13 +3,21 @@ package edu.hanover.basin;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.Profile;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static edu.hanover.basin.EventDetailsActivity.EXTRA_EVENT_ID;
 
@@ -59,6 +67,41 @@ public class EventCreationActivity extends Activity {
 
     public void onClickCreate(View v){
 
+
+    }
+
+    private void request(int method, String url, JSONObject body){
+        // Request a string response
+        JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, body,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //event = response;
+                        try{
+                            title.setText(response.toString());
+//                            Log.i("event response", event.toString());
+//                            title.setText(event.getString("title"));
+//                            picture.setProfileId(event.getString("facebook_created_by"));
+//                            coordinator.setText(event.getString("fname") + event.getString("lname"));
+//                            //   description.setText(event.getString("description"));
+                        }
+                        catch(JSONException e){
+                            Log.e("JSON EXCEPTION", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Error handling
+                Log.e("Volley error", error.toString());
+                error.printStackTrace();
+            }
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(this).add(stringRequest);
 
     }
 
