@@ -160,20 +160,22 @@ class dbOperation
     }
 
     public function insertEvent($body){
-        $sql_vals = "INSERT INTO events (";
-        $sql_vars = ") VALUES (";
-        $i = 0;
-        foreach($body as $key => $value){
-            $i += 1;
-            $sql_vals .= $key;
-            $sql_vars .= ":" . $key;
-            if($i != count($body)){
-                $sql_vals .= ", ";
-                $sql_vars .= ", ";
-            }
+        $sql_vals = "INSERT INTO events (facebook_created_by, title, description, lat_coord, long_coord, time_start, date) ";
+        $sql_vars = "VALUES ( :facebook_created_by, :title, :description, :lat_coord, :long_coord, :time_start, :date)"
+        // $sql_vals = "INSERT INTO events (";
+        // $sql_vars = ") VALUES (";
+        // $i = 0;
+        // foreach($body as $key => $value){
+        //     $i += 1;
+        //     $sql_vals .= $key;
+        //     $sql_vars .= ":" . $key;
+        //     if($i != count($body)){
+        //         $sql_vals .= ", ";
+        //         $sql_vars .= ", ";
+        //     }
 
-        }
-        $sql_vars = $sql_vars . ")";
+        // }
+        // $sql_vars = $sql_vars . ")";
         $sql = $sql_vals . $sql_vars;
         $insert = $this->conn->prepare($sql);
         $this->results = $insert->execute($body);
