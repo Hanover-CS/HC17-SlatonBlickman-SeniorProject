@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -20,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static edu.hanover.basin.EventDetailsActivity.EXTRA_EVENT_ID;
+import static edu.hanover.basin.R.id.datePicker;
 
 public class EventCreationActivity extends Activity {
 
@@ -45,7 +48,7 @@ public class EventCreationActivity extends Activity {
         description = (EditText)findViewById(R.id.description);
         Time = (EditText)findViewById(R.id.time);
         //duration
-        date = (DatePicker)findViewById(R.id.datePicker);
+        date = (DatePicker)findViewById(datePicker);
 
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
@@ -65,7 +68,24 @@ public class EventCreationActivity extends Activity {
 
     }
 
-    public void onClickCreate(View v){
+    public void onClickCreateEvent(View v){
+        JSONObject body = new JSONObject();
+        basinURL url = new basinURL();
+
+        try{
+            body.put("facebook_created_by", facebook_id);
+            body.put("title", title.getText());
+            body.put("description", description.getText());
+            body.put("lat_coord", lat);
+            body.put("long_coord", lng);
+            body.put("date", date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDayOfMonth());
+            body.put("time_start", Time.getText());
+        }
+        catch(JSONException e){
+            Log.e("JSON EXCEPTION", e.toString());
+        }
+
+        request(Request.Method.POST, url.postEventURL(), body);
 
 
     }
@@ -79,15 +99,16 @@ public class EventCreationActivity extends Activity {
                     public void onResponse(JSONObject response) {
                         //event = response;
                         try{
-                            title.setText(response.toString());
+                            Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG);
+                            //description.setText(response.toString());
 //                            Log.i("event response", event.toString());
 //                            title.setText(event.getString("title"));
 //                            picture.setProfileId(event.getString("facebook_created_by"));
 //                            coordinator.setText(event.getString("fname") + event.getString("lname"));
 //                            //   description.setText(event.getString("description"));
                         }
-                        catch(JSONException e){
-                            Log.e("JSON EXCEPTION", e.toString());
+                        catch(Exception e){
+                            Log.e("JSON EXCEPTION", response.toString());
                         }
                     }
                 }, new Response.ErrorListener() {
