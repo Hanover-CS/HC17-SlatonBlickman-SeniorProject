@@ -1,6 +1,7 @@
 package edu.hanover.basin;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -100,6 +101,7 @@ public class EventCreationActivity extends Activity {
                         //event = response;
                         try{
                             Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG);
+                            finish();
                             //description.setText(response.toString());
 //                            Log.i("event response", event.toString());
 //                            title.setText(event.getString("title"));
