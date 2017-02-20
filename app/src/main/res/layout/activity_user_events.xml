@@ -9,6 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:weightSum="2.5"
     tools:context="edu.hanover.basin.userEventsActivity">
 
     <TextView
@@ -21,7 +22,8 @@
         android:scrollbars="vertical"
         android:layout_width="fill_parent"
         android:layout_height="130dp"
-        android:id="@+id/created_list"/>
+        android:id="@+id/created_list"
+        android:layout_weight="1"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,7 +36,8 @@
         android:scrollbars="vertical"
         android:layout_width="fill_parent"
         android:layout_height="200dip"
-        android:id="@+id/attended_list"/>
+        android:id="@+id/attended_list"
+        android:layout_weight="1"/>
 
     <Button
         android:text="Add Event"
