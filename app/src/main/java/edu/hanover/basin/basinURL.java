@@ -49,7 +49,8 @@ public class basinURL {
         return buildURL;
     }
 
-    public String postEventURL(String title, String time, String date, String description, Double lat, Double lon){
+    public String postEventURL(){
+        buildURL = OPEN_BASINWEB + "/events";
         return buildURL;
     }
 
