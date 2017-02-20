@@ -198,24 +198,25 @@ class dbOperation
         }
 
         $this->results = array_merge($results, $results2);
+        
         return $this->results;
     }
 
     public function getUserEventsCreated($id, $params){
         $sql = "SELECT events.*, users.fname, users.lname, users.facebook_id 
-                FROM events 
-                INNER JOIN users ON events.created_by = users._id ";
+                FROM events ";
 
         if($params['facebook_id'] == 'true'){
-            $sql .=  "WHERE users.facebook_id = ? ";
+            $sql .= "INNER JOIN users ON events.facebook_created_by = users.facebook_id WHERE users.facebook_id = ? ";
         }
         else{
-            $sql .=  "WHERE users._id = ? ";
+            $sql .= "INNER JOIN users ON events.created_by = users._id WHERE users._id = ?";
         }
         //echo $sql;
         $select = $this->conn->prepare($sql);
         $select->execute([$id]);
         $this->results = $select->fetchAll();
+
         return $this->results;
 
     }

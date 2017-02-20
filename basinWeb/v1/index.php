@@ -264,7 +264,8 @@ $app->post('/events[/]', function($request, $response, $args) {
             $events_query = new dbOperation($this->db);
             $results = $events_query->insertEvent($body);
             if($events_query->isSuccessful()){
-                $response = $response->withJSON([], 201);
+                $results = ["success" => $results];
+                $response = $response->withJSON($user_results, 201);
             }
             else{
                 $response = error($response, 500, "Unknown problem when executing POST", null);
