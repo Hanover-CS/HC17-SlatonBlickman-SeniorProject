@@ -161,7 +161,7 @@ class dbOperation
 
     public function insertEvent($body){
         $sql_vals = "INSERT INTO events (facebook_created_by, title, description, lat_coord, long_coord, time_start, date) ";
-        $sql_vars = "VALUES ( :facebook_created_by, :title, :description, :lat_coord, :long_coord, :time_start, :date)"
+        $sql_vars = "VALUES ( :facebook_created_by, :title, :description, :lat_coord, :long_coord, :time_start, :date)";
         // $sql_vals = "INSERT INTO events (";
         // $sql_vars = ") VALUES (";
         // $i = 0;
