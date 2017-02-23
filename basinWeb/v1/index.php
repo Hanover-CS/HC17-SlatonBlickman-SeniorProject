@@ -49,7 +49,7 @@ $container['db'] = function ($c) {
 */
 
 function error(Response $response, $code, $msg, $info){
-    $e = ["code"=>$code, "error" => $msg];
+    $e = ["code "=> $code, "error" => $msg];
     if($info != null){
         $e['information'] = $info;
     }
@@ -264,7 +264,8 @@ $app->post('/events[/]', function($request, $response, $args) {
             $events_query = new dbOperation($this->db);
             $results = $events_query->insertEvent($body);
             if($events_query->isSuccessful()){
-                $response = $response->withJSON([], 201);
+                $results = ["success" => $results];
+                $response = $response->withJSON($user_results, 201);
             }
             else{
                 $response = error($response, 500, "Unknown problem when executing POST", null);
@@ -364,13 +365,14 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
                 //$response->getBody()->write($results);
             }
             else{
-                $response = error($response, 404, "No event was found with that id", null);
+                $response = error($response, 404, "No event was found with that id", 
+                    ["event sucess" => $events_query->isSuccessful(), "user success" => $users_query->isSuccessful()], null);
                 //$response->getBody()->write($results);
             }
         }
         catch(PDOexception $e){
             //$response->getBody()->write($e);
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         //$this->logger->addInfo("Getting all events");
     }
@@ -403,7 +405,7 @@ $app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
         }
         catch(PDOexception $e){
             //$response->getBody()->write($e);
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         //$this->logger->addInfo("Getting all events");
     }
