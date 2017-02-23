@@ -54,6 +54,16 @@ public class basinURL {
         return buildURL;
     }
 
+    public String getEventAttendeesURL(String event_id){
+        buildURL = getEventURL(event_id) + "/attendees";
+        return buildURL;
+    }
+
+    public String getIsAttendingURL(String event_id, String user_id){
+        buildURL = getEventAttendeesURL(event_id) + "/" + user_id;
+        return buildURL;
+    }
+
 
     public String toString(){
         return buildURL;

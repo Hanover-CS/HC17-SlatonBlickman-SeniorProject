@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:weightSum="1"
     tools:context="edu.hanover.basin.EventDetailsActivity">
 
     <TextView
@@ -16,22 +17,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_weight="1"
         android:id="@+id/title" />
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
-        android:layout_width="20sp"
-        android:layout_height="20sp"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
         android:layout_below="@+id/title"
         android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
-        android:layout_toEndOf="@+id/title"
-        android:id="@+id/coordinator"
-        android:text="Coordinator" />
 
     <TextView
         android:text="Time: "
@@ -51,23 +45,6 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:id="@+id/description"
-        android:layout_below="@+id/time"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Duration: "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/coordinator"
-        android:layout_toEndOf="@+id/description"
-        android:id="@+id/duration" />
-
-    <TextView
         android:text="Attendees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,6 +58,31 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/attendees" />
+
+    <TextView
+        android:text="Date: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date"
+        android:layout_below="@+id/time"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/description"
+        android:layout_below="@+id/date"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/coordinator"
+        android:text="Coordinator"
+        android:layout_below="@+id/title"
+        android:layout_toEndOf="@+id/title" />
 
 
 </RelativeLayout>
