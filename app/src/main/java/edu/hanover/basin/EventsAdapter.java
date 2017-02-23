@@ -51,7 +51,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
             coordinator.setText(coordinator_name);
 
             //date_time.setText(event.getString("time_start"));
-            date_time.setText("some time here");
+            date_time.setText("Time: " + event.getString("time_start") + "\nDate: " + event.getString("date"));
             // Return the completed view to render on screen
 
         }
@@ -63,7 +63,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
                 try {
                     Log.e("event", event.toString());
                     Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
-                    intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("_id"));
+                    intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("event_id"));
                     v.getContext().startActivity(intent);
                 }
                 catch(JSONException e){
