@@ -49,7 +49,7 @@ $container['db'] = function ($c) {
 */
 
 function error(Response $response, $code, $msg, $info){
-    $e = ["code"=>$code, "error" => $msg];
+    $e = ["code "=> $code, "error" => $msg];
     if($info != null){
         $e['information'] = $info;
     }
@@ -365,13 +365,14 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
                 //$response->getBody()->write($results);
             }
             else{
-                $response = error($response, 404, "No event was found with that id", null);
+                $response = error($response, 404, "No event was found with that id", 
+                    ["event sucess" => $events_query->isSuccessful(), "user success" => $users_query->isSuccessful()], null);
                 //$response->getBody()->write($results);
             }
         }
         catch(PDOexception $e){
             //$response->getBody()->write($e);
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         //$this->logger->addInfo("Getting all events");
     }
@@ -404,7 +405,7 @@ $app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
         }
         catch(PDOexception $e){
             //$response->getBody()->write($e);
-            $response = error($response, 500, $e->getMessage());
+            $response = error($response, 500, $e->getMessage(), null);
         }
         //$this->logger->addInfo("Getting all events");
     }

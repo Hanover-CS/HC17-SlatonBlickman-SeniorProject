@@ -224,7 +224,7 @@ class dbOperation
     public function getUserEventsAttending($id, $params){
         $sql = "SELECT * FROM attendees 
                 INNER JOIN events ON attendees.event_id = events._id 
-                INNER JOIN users ON users._id = attendees.user_id ";
+                INNER JOIN users ON users.facebook_id = attendees.user_id ";
 
         if($params['facebook_id'] == 'true'){
             $sql .= "WHERE users.facebook_id = ? ";
@@ -244,7 +244,7 @@ class dbOperation
     public function getEventAttendance($id, $params){
         $sql = "SELECT users.* FROM attendees 
                 INNER JOIN events ON attendees.event_id = events._id 
-                INNER JOIN users ON users._id = attendees.user_id 
+                INNER JOIN users ON users.facebook_id = attendees.user_id 
                 WHERE events._id = ? ";
 
         //echo $sql;
@@ -256,10 +256,12 @@ class dbOperation
     }
 
     public function insertEventAttendee($event_id, $body){
-        $sql = ("INSERT INTO attendees (event_id, user_id) VALUES (:e_id, :u_id)");
-        $vals = ["e_id" => $event_id, "u_id" => $body['user_id']];
-        $insert = $this->conn->prepare($sql);
-        $this->results = $insert->execute($vals);
+        if(!$this->isAttending($event_id, $body['user_id'])){
+            $sql = ("INSERT INTO attendees (event_id, user_id) VALUES (:e_id, :u_id)");
+            $vals = ["e_id" => $event_id, "u_id" => $body['user_id']];
+            $insert = $this->conn->prepare($sql);
+            $this->results = $insert->execute($vals);
+        }
         return $this->results;
     }
 
@@ -271,7 +273,7 @@ class dbOperation
         return $this->results;
     }
 
-    public function isAttending($event_id, $user_id, $params){
+    public function isAttending($event_id, $user_id){
         $sql = "SELECT * FROM attendees 
                 WHERE event_id = :event_id AND user_id = :user_id ";
         $vals = ["event_id" => $event_id, "user_id" => $user_id];
@@ -279,12 +281,7 @@ class dbOperation
         $select = $this->conn->prepare($sql);
         $select->execute($vals);
         $results = $select->fetchAll();
-        if(sizeof($results) > 0){
-            $this->results = true;
-        }
-        else{
-            $this->results = false;
-        }
+        $this->results = (sizeof($results) > 0);
         return $this->results;
     }
 
