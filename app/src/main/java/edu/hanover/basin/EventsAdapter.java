@@ -60,15 +60,21 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
         }
         convertView.setOnClickListener(new View.OnClickListener() {
             public void onClick(final View v) {
+                Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
                 try {
                     Log.e("event", event.toString());
-                    Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
                     intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("event_id"));
-                    v.getContext().startActivity(intent);
                 }
                 catch(JSONException e){
                     Log.e("JSON EXCEPTION", e.toString());
+                    try{
+                        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("_id"));
+                    }
+                    catch (JSONException e2) {
+                        Log.e("JSON EXCEPTION", e2.toString());
+                    }
                 }
+                v.getContext().startActivity(intent);
             }
         });
         return convertView;
