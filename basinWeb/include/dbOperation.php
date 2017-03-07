@@ -111,6 +111,7 @@ class dbOperation
 
     }
 
+
     public function insertUser($body){
         $sql = "INSERT INTO users (facebook_id, fname, lname) VALUES
                 (:facebook_id, :fname, :lname)";
@@ -148,14 +149,16 @@ class dbOperation
         return $this->results;
     }
 
-    public function getEvent($id, $params){
+    public function getEvent($id){
         $sql = "SELECT events.*, users.fname, users.lname, users.facebook_id
                 FROM events 
                 INNER JOIN users on users.facebook_id = events.facebook_created_by
                 WHERE events._id = ?";
         $query = $this->conn->prepare($sql);
         $query->execute([$id]);
-        $this->results = $query->fetchAll()[0];
+        
+        $this->results = $query->fetch();
+        
         return $this->results;
     }
 
@@ -182,7 +185,20 @@ class dbOperation
         return $this->results;
     }
 
+    public function updateEvent($id, $body){
+        $body["id"] = $id;
+        $this->getEvent($id);
+        // if ($this->getEvent($id)->isSuccessful() && $this->getUser($body["facebook_created_by"], "true")->isSuccessful()){
+        $sql = "UPDATE events SET title = :title, facebook_created_by = :facebook_created_by, lat_coord = :lat_coord,
+            long_coord = :long_coord, description = :description, time_start = :time_start, date = :date
+            WHERE _id = :id";
+        $query = $this->conn->prepare($sql);
+        $this->results = $query->execute($body);
+        return $this->results;
+    }
+
     public function deleteEvent($id){
+
         $this->results = false;
         return false;
     }

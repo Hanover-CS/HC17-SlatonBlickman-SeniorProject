@@ -132,7 +132,7 @@ function validPUT($route, $body){
             return false;
             break;
         case "/events/id":
-            $validBody = [];
+            $validBody = ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date'];
             break;
         case "/events/id/attendees":
             return false;
