@@ -28,12 +28,12 @@ $app = new \Slim\App(["settings" => $config]);
 
 $container = $app->getContainer();  
 
-$container['logger'] = function($c) {
-    $logger = new \Monolog\Logger('my_logger');
-    $file_handler = new \Monolog\Handler\StreamHandler("../logs/app.log");
-    $logger->pushHandler($file_handler);
-    return $logger;
-};
+// $container['logger'] = function($c) {
+//     $logger = new \Monolog\Logger('my_logger');
+//     $file_handler = new \Monolog\Handler\StreamHandler("../logs/app.log");
+//     $logger->pushHandler($file_handler);
+//     return $logger;
+// };
 
 $container['db'] = function ($c) {
     $db = $c['settings']['db'];
@@ -184,7 +184,7 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
         catch(PDOexception $e){
             $response = error($response, 500, $e->getMessage(), []);
         }
-        $this->logger->addInfo("Getting all users");
+       // $this->logger->addInfo("Getting all users");
     }
     else{
         $acceptedParams = [];
@@ -217,7 +217,7 @@ $app->post('/users[/]', function (Request $request, Response $response, $args) {
     else{
         $response = error($response, 400, "Invalid body!", ["accepted_body" => "facebook_id, fname, lname" ]);
     }
-    $this->logger->addInfo("Getting all users");
+    //$this->logger->addInfo("Getting all users");
     return $response;
 });
 
@@ -274,7 +274,7 @@ $app->post('/events[/]', function($request, $response, $args) {
         catch(PDOexception $e){
             $response = error($response, 500, $e->getMessage(), null);
         }
-        $this->logger->addInfo("adding new user");
+        //$this->logger->addInfo("adding new user");
     }
     else{
         $acceptedParams = [];
@@ -302,7 +302,7 @@ $app->get('/events[/]', function($request, $response, $args) {
         catch(PDOexception $e){
             $response = error($response, 500, $e->getMessage(), null);
         }
-        $this->logger->addInfo("Getting all events");
+        //$this->logger->addInfo("Getting all events");
     }
     else{
         $acceptedParams = [];
