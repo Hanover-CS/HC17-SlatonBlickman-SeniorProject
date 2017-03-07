@@ -159,9 +159,8 @@ $app->delete('/users/{id}', function (Request $request, Response $response, $arg
         }
     }
     else{
-        //getvalidbody
         $acceptable = ["params_given" => $params];
-        $response = error($response, 400, "Invalid content in   parameters!", $acceptable);
+        $response = error($response, 400, "Invalid content in parameters!", $acceptable);
     }
     return $response;
 });
@@ -183,7 +182,7 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
             }
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage(), null);
+            $response = error($response, 500, $e->getMessage(), []);
         }
         $this->logger->addInfo("Getting all users");
     }
@@ -208,11 +207,11 @@ $app->post('/users[/]', function (Request $request, Response $response, $args) {
                 $response = $response->withJSON($body, 201);
             }
             else{
-                $response = error($response,500, "Problem executing POST.", ["success" => $results]);
+                $response = error($response, 500, "Problem executing POST.", ["success" => $results]);
             }   
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage(), null);
+            $response = error($response, 500, $e->getMessage(), []);
         }
     }
     else{
@@ -257,6 +256,7 @@ $app->get('/users/{id}/events[/]', function (Request $request, Response $respons
  
 
 // .../events
+//Add a new event
 $app->post('/events[/]', function($request, $response, $args) {
     $body = $request->getParsedBody();
     if(validPOST("/events", $body)){
@@ -265,7 +265,7 @@ $app->post('/events[/]', function($request, $response, $args) {
             $results = $events_query->insertEvent($body);
             if($events_query->isSuccessful()){
                 $results = ["success" => $results];
-                $response = $response->withJSON($user_results, 201);
+                $response = $response->withJSON($results, 201);
             }
             else{
                 $response = error($response, 500, "Unknown problem when executing POST", null);
@@ -283,6 +283,8 @@ $app->post('/events[/]', function($request, $response, $args) {
     return $response;
 });  
 
+
+//get all events
 $app->get('/events[/]', function($request, $response, $args) {
     $params = $request->getQueryParams();
     $params = addDefaults('/events', $params);
@@ -310,6 +312,7 @@ $app->get('/events[/]', function($request, $response, $args) {
 });   
 
 // .../events/{event_id}
+//get event at the id
 $app->get('/events/{id}[/]', function($request, $response, $args) {
     $id = $args["id"];
     $params = $request->getQueryParams();
@@ -317,7 +320,8 @@ $app->get('/events/{id}[/]', function($request, $response, $args) {
     if(validGET("/events/id", $params)){
         try{
             $events_query = new dbOperation($this->db);
-            $results = $events_query->getEvent($id, $params);
+            ///$results = $events_query->getEvent($id, $params);
+            $results = $events_query->getEvent($id);
             if($events_query->isSuccessful()){
                 $response = $response->withJSON($results, 200);
                 //$response->getBody()->write($results);
@@ -341,6 +345,41 @@ $app->get('/events/{id}[/]', function($request, $response, $args) {
 });   
 
 //PUT .../events/id to update information
+$app->put('/events/{id}[/]', function($request, $response, $args) {
+    $body = $request->getParsedBody();
+    $id = $args["id"];
+    if(validPUT("/events/id", $body)){
+        try{
+            $events_query = new dbOperation($this->db);
+            $events_query->getEvent($id);
+            $event_success = $events_query->isSuccessful();
+            $events_query->getUser($body["facebook_created_by"], "true");
+            $user_success = $events_query->isSuccessful();
+            if($event_success && $user_success) {
+                $results = $events_query->updateEvent($id, $body);
+                if($events_query->isSuccessful()){
+                    $results = ["success" => $results];
+                    $response = $response->withJSON($results, 200);
+                }
+                else{
+                    $response = error($response, 500, "PUT failed", null);
+                }
+            }
+            else{
+                $response = error($response, 404, "No event or user was found with that id", null);
+            }
+        }
+        catch(PDOexception $e){
+            $response = error($response, 500, $e->getMessage(), null);
+        }
+    }
+    else{
+        $response = error($response, 400, "Bad request!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
+});  
+
+
 
 //POST ../events/id/attendees to add a new attendee
 $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
