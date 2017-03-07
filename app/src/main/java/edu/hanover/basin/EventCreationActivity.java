@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -29,14 +30,22 @@ public class EventCreationActivity extends Activity {
 
     public static final String EXTRA_EVENT_LAT = "EventLat";
     public static final String EXTRA_EVENT_LNG = "EventLng";
+    public static final String EXTRA_METHOD = "EventMethod";
+    public static final String EXTRA_TITLE = "EventTitle";
+    public static final String EXTRA_DESCRIPTION = "EventDesc";
+    public static final String EXTRA_TIME = "EventTime";
+    public static final String EXTRA_DATE = "EventDate";
+
     private String location;
     private double lat;
     private double lng;
+
     private EditText title;
     private EditText description;
     private EditText Time;
     private DatePicker date;
     private String facebook_id;
+    private Button create;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +58,29 @@ public class EventCreationActivity extends Activity {
         description = (EditText)findViewById(R.id.description);
         Time = (EditText)findViewById(R.id.time);
         //duration
-        date = (DatePicker)findViewById(datePicker);
+        date = (DatePicker)findViewById(R.id.datePicker);
+        create = (Button)findViewById(R.id.create);
 
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
         location = String.valueOf(lat) + ", " + String.valueOf(lng);
         description.setText(location);
+
+        boolean updating;
+        updating = (Boolean)getIntent().getExtras().get(EXTRA_METHOD);
+        if(updating){
+            create.setText("SAVE!");
+            String editTitle, editDesc, editTime, editDate;
+            editDate =(String)getIntent().getExtras().get(EXTRA_DATE);
+            editTitle = (String)getIntent().getExtras().get(EXTRA_TITLE);
+            editDesc = (String)getIntent().getExtras().get(EXTRA_DESCRIPTION);
+            editTime = (String)getIntent().getExtras().get(EXTRA_TIME);
+
+            title.setText(editTitle);
+            description.setText(editDesc);
+            Time.setText(editTime);
+
+        }
 
 
 
@@ -93,6 +119,8 @@ public class EventCreationActivity extends Activity {
 
     private void request(int method, String url, JSONObject body){
         // Request a string response
+        Log.e("Requesting: ", url);
+        Log.e("Body:", body.toString());
         JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, body,
                 new Response.Listener<JSONObject>() {
 
@@ -102,15 +130,10 @@ public class EventCreationActivity extends Activity {
                         try{
                             Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG);
                             finish();
-                            //description.setText(response.toString());
-//                            Log.i("event response", event.toString());
-//                            title.setText(event.getString("title"));
-//                            picture.setProfileId(event.getString("facebook_created_by"));
-//                            coordinator.setText(event.getString("fname") + event.getString("lname"));
-//                            //   description.setText(event.getString("description"));
-                        }
+                       }
+
                         catch(Exception e){
-                            Log.e("JSON EXCEPTION", response.toString());
+                            Log.e("JSON EXCEPTION", e.toString());
                         }
                     }
                 }, new Response.ErrorListener() {
