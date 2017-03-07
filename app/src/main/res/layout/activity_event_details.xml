@@ -17,15 +17,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_weight="1"
         android:id="@+id/title" />
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
-        android:layout_width="30sp"
-        android:layout_height="30sp"
-        android:layout_below="@+id/title"
-        android:layout_alignParentStart="true" />
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/title" />
 
     <TextView
         android:text="Time: "
@@ -41,8 +40,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/attending"
-        android:layout_alignBottom="@+id/coordinator"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editButton"
+        android:text="Edit"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:text="Attendees"
@@ -55,7 +62,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/attendees" />
 
@@ -81,8 +88,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/coordinator"
         android:text="Coordinator"
-        android:layout_below="@+id/title"
-        android:layout_toEndOf="@+id/title" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
 
 
 </RelativeLayout>
