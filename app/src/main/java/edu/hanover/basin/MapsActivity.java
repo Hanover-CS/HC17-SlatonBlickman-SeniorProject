@@ -116,7 +116,7 @@ public class MapsActivity extends FragmentActivity
                 Double lng = latlng.longitude;
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
-                intent.putExtra(EventCreationActivity.EXTRA_METHOD, false);
+                intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
                 startActivity(intent);
             }
         });

@@ -30,7 +30,7 @@ public class EventCreationActivity extends Activity {
 
     public static final String EXTRA_EVENT_LAT = "EventLat";
     public static final String EXTRA_EVENT_LNG = "EventLng";
-    public static final String EXTRA_METHOD = "EventMethod";
+    public static final String EXTRA_UPDATING = "EventUpdate";
     public static final String EXTRA_TITLE = "EventTitle";
     public static final String EXTRA_DESCRIPTION = "EventDesc";
     public static final String EXTRA_TIME = "EventTime";
@@ -67,7 +67,7 @@ public class EventCreationActivity extends Activity {
         description.setText(location);
 
         boolean updating;
-        updating = (Boolean)getIntent().getExtras().get(EXTRA_METHOD);
+        updating = (Boolean)getIntent().getExtras().get(EXTRA_UPDATING);
         if(updating){
             create.setText("SAVE!");
             String editTitle, editDesc, editTime, editDate;
