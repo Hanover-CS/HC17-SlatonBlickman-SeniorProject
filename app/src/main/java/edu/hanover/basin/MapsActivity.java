@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -115,9 +116,14 @@ public class MapsActivity extends FragmentActivity
                 Double lng = latlng.longitude;
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
+                intent.putExtra(EventCreationActivity.EXTRA_METHOD, false);
                 startActivity(intent);
             }
         });
+
+        basinURL url = new basinURL();
+        url.getEventURL("");
+        request(Request.Method.GET, url.toString());
     }
 
     @Override
@@ -229,35 +235,39 @@ public class MapsActivity extends FragmentActivity
 
 
     }
-//    private LocationManager getLocation(){
-//        // Acquire a reference to the system Location Manager
-//        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//        mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//        // Define a listener that responds to location updates
-//        LocationListener listener = new LocationListener() {
-//            public void onLocationChanged(Location location) {
-//                // Called when a new location is found by the network location provider.
-//                //makeUseOfNewLocation(location);
-//                mLastLocation = location;
-//            }
-//
-//            public void onStatusChanged(String provider, int status, Bundle extras) {}
-//
-//            public void onProviderEnabled(String provider) {}
-//
-//            public void onProviderDisabled(String provider) {}
-//        };
-//
-//        // Register the listener with the Location Manager to receive location updates
-//
-//        long minTime = 1000;
-//        float minDistance = 1;
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, listener);
-//
-//        Log.i("LAST KNOWN LOCATION", mLastLocation.toString());
-//        return locationManager;
-//    }
+
+    private void addMarkers(JSONArray events){
+        JSONObject event;
+        Marker marker;
+        Double lat;
+        Double lng;
+        LatLng location;
+        String title, time_date;
+
+       try{
+           for(int i = 0; i < events.length(); i++){
+               event = events.getJSONObject(i);
+               lat = event.getDouble("lat_coord");
+               lng = event.getDouble("long_coord");
+               if(lat != null && lng != null) {
+                   location = new LatLng(lat, lng);
+                   title = event.getString("title");
+                   time_date = event.getString("time_start") + ", " + event.getString("date");
+
+
+                   marker = mMap.addMarker(new MarkerOptions()
+                           .position(location)
+                           .title(title)
+                           .snippet(time_date));
+                   allMarkerMap.put(marker, event);
+               }
+
+           }
+       }
+       catch(JSONException e){
+           Log.e("ERROR ADDING MARKERS", e.toString());
+       }
+    }
 
     private void request(int method, String url){
         // Request a string response
@@ -269,11 +279,9 @@ public class MapsActivity extends FragmentActivity
                         //event = response;
                         try{
                             Log.i("event response", response.toString());
-                            response.getString("title");
-                            //title.setText(event.getString("title"));
-                            //picture.setProfileId(event.getString("facebook_created_by"));
-                            //coordinator.setText(event.getString("fname") + event.getString("lname"));
-                            //   description.setText(event.getString("description"));
+                            JSONArray events = response.getJSONArray("events");
+
+
                         }
                         catch(JSONException e){
                             Log.e("JSON EXCEPTION", e.toString());
