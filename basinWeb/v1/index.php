@@ -19,10 +19,19 @@ use \Psr\Http\Message\ResponseInterface as Response;
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
-$config['db']['host']   = "localhost";
-$config['db']['user']   = "root";
-$config['db']['pass']   = "";
+//localhost info
+// $config['db']['host']   = "localhost";
+// $config['db']['user']   = "root";
+// $config['db']['pass']   = "";
+// $config['db']['dbname'] = "db_basin";
+
+
+//vault info
+$config['db']['host']   = "vault.hanover.edu";
+$config['db']['user']   = "blickmans15";
+$config['db']['pass']   = "HC_294541";
 $config['db']['dbname'] = "db_basin";
+
 
 $app = new \Slim\App(["settings" => $config]);
 
