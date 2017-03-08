@@ -12,7 +12,7 @@ import java.util.Map;
  */
 
 public class basinURL {
-    private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php";
+    private static final String OPEN_BASINWEB = "http://vault.hanover.edu/~blickmans15/services/basinWeb/v1/index.php";
     private String buildURL = "";
 
     basinURL(){
