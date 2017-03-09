@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 import com.google.android.gms.location.LocationListener;
 
@@ -121,9 +122,6 @@ public class MapsActivity extends FragmentActivity
             }
         });
 
-        basinURL url = new basinURL();
-        url.getEventURL("");
-        request(Request.Method.GET, url.toString());
     }
 
     @Override
@@ -144,7 +142,8 @@ public class MapsActivity extends FragmentActivity
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
-    protected  void createLocationRequest(){
+
+    protected void createLocationRequest(){
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
         mLocationRequest.setFastestInterval(1);
@@ -159,15 +158,28 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
+        catch(SecurityException e){
+            Log.e("Security exception", e.toString());
+        }
+
         if (mLastLocation != null) {
             mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
             updateUI();
+
+            //add rest of markers from database
+            basinURL url = new basinURL();
+            url.getEventURL("");
+            allMarkerMap =  new HashMap<>();
+            request(Request.Method.GET, url.toString());
         }
-        else{
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
+//        else{
+//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//        }
     }
 
     @Override
@@ -207,12 +219,13 @@ public class MapsActivity extends FragmentActivity
             Toast.makeText(this, "location :"+ mLastLatLng, Toast.LENGTH_SHORT).show();
             Log.i("LAST", mLastLatLng.toString());
             LatLng cameraPos = mLastLatLng;
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPos, 16.6f));
+
             //LatLng testLoc = new LatLng(mLastLocation.getLatitude() + 0.0001, mLastLocation.getLongitude() + 0.0001);
             //LatLng cameraPos = new LatLng(30.0, -85.0);
             //Log.i("CAMERA POS", cameraPos.toString());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPos, 16.6f));
-
             //LatLng sydney = new LatLng(-34, 151);
+
             if(mMe != null){
                 mMe.setPosition(cameraPos);
             }
@@ -224,13 +237,11 @@ public class MapsActivity extends FragmentActivity
                     .position(new LatLng(30.0, -85.0))
                     .title("test title")
                     .snippet("6:00"));
-
         }
         else{
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
             mLastLatLng = new LatLng(38.713, -85.459 ); //Default is Hanover
             updateUI();
-
         }
 
 
@@ -243,8 +254,7 @@ public class MapsActivity extends FragmentActivity
         Double lng;
         LatLng location;
         String title, time_date;
-
-       try{
+        try{
            for(int i = 0; i < events.length(); i++){
                event = events.getJSONObject(i);
                lat = event.getDouble("lat_coord");
@@ -253,8 +263,6 @@ public class MapsActivity extends FragmentActivity
                    location = new LatLng(lat, lng);
                    title = event.getString("title");
                    time_date = event.getString("time_start") + ", " + event.getString("date");
-
-
                    marker = mMap.addMarker(new MarkerOptions()
                            .position(location)
                            .title(title)
@@ -263,15 +271,15 @@ public class MapsActivity extends FragmentActivity
                }
 
            }
-       }
-       catch(JSONException e){
+        }
+        catch(JSONException e){
            Log.e("ERROR ADDING MARKERS", e.toString());
-       }
+        }
     }
 
     private void request(int method, String url){
-        // Request a string response
-        JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, null,
+        // Request a jsonObject response
+        JsonObjectRequest objRequest = new JsonObjectRequest(method, url, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -280,6 +288,7 @@ public class MapsActivity extends FragmentActivity
                         try{
                             Log.i("event response", response.toString());
                             JSONArray events = response.getJSONArray("events");
+                            addMarkers(events);
 
 
                         }
@@ -298,7 +307,7 @@ public class MapsActivity extends FragmentActivity
         });
 
         // Add the request to the queue
-        Volley.newRequestQueue(this).add(stringRequest);
+        Volley.newRequestQueue(this).add(objRequest);
 
     }
 
