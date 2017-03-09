@@ -2,6 +2,8 @@ package edu.hanover.basin;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -105,13 +107,14 @@ public class EventCreationActivity extends Activity {
             body.put("description", description.getText());
             body.put("lat_coord", lat);
             body.put("long_coord", lng);
-            body.put("date", date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDayOfMonth());
+            //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
+            body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
             body.put("time_start", Time.getText());
+
         }
         catch(JSONException e){
             Log.e("JSON EXCEPTION", e.toString());
         }
-
         request(Request.Method.POST, url.postEventURL(), body);
 
 

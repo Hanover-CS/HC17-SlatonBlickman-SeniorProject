@@ -13,11 +13,12 @@
     android:weightSum="1">
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/title"
+        android:maxLength="50"
         android:hint="Title" />
 
     <EditText
@@ -32,7 +33,7 @@
         android:datePickerMode="spinner"
         android:calendarViewShown="false"
         android:layout_width="wrap_content"
-        android:layout_height="154dp"
+        android:layout_height="wrap_content"
         android:id="@+id/datePicker" />
 
     <EditText
@@ -41,6 +42,7 @@
         android:inputType="textMultiLine|textPersonName"
         android:ems="10"
         android:id="@+id/description"
+        android:maxLength="750"
         android:hint="Description"
         android:singleLine="false" />
 
