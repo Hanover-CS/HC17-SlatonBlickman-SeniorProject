@@ -97,10 +97,10 @@ public class EventDetailsActivity extends Activity {
                                 case GET_EVENT://Log.i("event response", event.toString());
                                     title.setText(event.getString("title"));
                                     picture.setProfileId(event.getString("facebook_created_by"));
-                                    coordinator.setText("Coordinator: " + event.getString("fname") + " " + event.getString("lname"));
-                                    description.setText("Description:\n" + event.getString("description"));
-                                    time.setText("Time: " + event.getString("time_start"));
-                                    date.setText("Date: " + event.getString("date"));
+                                    coordinator.setText(event.getString("fname") + " " + event.getString("lname"));
+                                    description.setText(event.getString("description"));
+                                    time.setText(event.getString("time_start"));
+                                    date.setText(event.getString("date"));
                                     break;
                                 case IS_ATTENDING:
                                     if(event.getString("attending") == "true"){

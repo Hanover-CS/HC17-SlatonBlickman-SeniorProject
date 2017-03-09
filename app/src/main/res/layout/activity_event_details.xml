@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:weightSum="1"
+    android:layout_centerHorizontal="true"
     tools:context="edu.hanover.basin.EventDetailsActivity">
 
     <TextView
@@ -16,8 +16,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/title" />
+        android:id="@+id/title"
+        android:textAppearance="@android:style/TextAppearance.Large" />
+
+    <TextView
+        android:text="Coordinator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/coordinator"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
@@ -27,27 +35,44 @@
         android:layout_below="@+id/title" />
 
     <TextView
-        android:text="Time: "
+        android:text="Time "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/time"
-        android:layout_below="@+id/picture"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/attendees" />
+        android:layout_below="@+id/title" />
 
-    <CheckBox
-        android:text="Attending"
+    <TextView
+        android:text="Date "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/attending"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/date"
+        android:layout_below="@+id/time"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/date"
+        android:layout_centerVertical="true"
+        android:id="@+id/desc_title"
+        android:textAppearance="@android:style/TextAppearance.Large" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:id="@+id/description"
+        android:layout_below="@+id/desc_title"
+        android:layout_centerVertical="true" />
 
     <Button
+        android:text="Edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editButton"
-        android:text="Edit"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"/>
 
@@ -57,8 +82,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/attendees"
         android:layout_below="@+id/description"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="99dp" />
+        android:layout_centerVertical="true"
+        android:layout_marginTop="99dp"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
 
     <ListView
         android:layout_width="match_parent"
@@ -66,30 +92,15 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/attendees" />
 
-    <TextView
-        android:text="Date: "
+    <CheckBox
+        android:text="Attending"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/date"
-        android:layout_below="@+id/time"
+        android:id="@+id/attending"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:layout_alignBaseline="@+id/editButton"
+        android:layout_alignBottom="@+id/editButton"
         android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:id="@+id/description"
-        android:layout_below="@+id/date"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/coordinator"
-        android:text="Coordinator"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true" />
 
 
 </RelativeLayout>
