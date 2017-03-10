@@ -25,6 +25,9 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static edu.hanover.basin.EventDetailsActivity.EXTRA_EVENT_ID;
 import static edu.hanover.basin.R.id.datePicker;
 
@@ -98,6 +101,12 @@ public class EventCreationActivity extends Activity {
     }
 
     public void onClickCreateEvent(View v){
+        //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
+        Pattern pattern;
+        Matcher matcher;
+        String TIME24HOURS_PATTERN =
+                "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+        pattern = Pattern.compile(TIME24HOURS_PATTERN);
         JSONObject body = new JSONObject();
         basinURL url = new basinURL();
 
@@ -109,14 +118,19 @@ public class EventCreationActivity extends Activity {
             body.put("long_coord", lng);
             //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
             body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
-            body.put("time_start", Time.getText());
+            matcher = pattern.matcher(Time.getText());
+            if(matcher.matches()) {
+                body.put("time_start", Time.getText());
+                request(Request.Method.POST, url.postEventURL(), body);
+            }
+            else{
+                Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
+            }
 
         }
         catch(JSONException e){
             Log.e("JSON EXCEPTION", e.toString());
         }
-        request(Request.Method.POST, url.postEventURL(), body);
-
 
     }
 
