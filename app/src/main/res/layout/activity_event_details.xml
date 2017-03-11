@@ -79,6 +79,7 @@
         android:textAppearance="@android:style/TextAppearance.Large"/>
 
     <ListView
+        android:id="@+id/users_attending_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
