@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:background="#b5e2d9">
+    android:layout_margin="5dp">
 
     <com.facebook.login.widget.ProfilePictureView
-        android:id="@+id/picture"
+        android:id="@+id/attendee_picture"
+        android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"/>
@@ -15,7 +15,8 @@
         android:text="Attendee Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/picture"
+        android:layout_centerInParent="true"
+        android:layout_toEndOf="@+id/attendee_picture"
         android:id="@+id/attendee_name"/>
 
 </RelativeLayout>
