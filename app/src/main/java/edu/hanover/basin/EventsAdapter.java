@@ -68,6 +68,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
                 catch(JSONException e){
                     Log.e("JSON EXCEPTION", e.toString());
                     try{
+                        Log.e("event_id not found", "Using different ID field for event");
                         intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("_id"));
                     }
                     catch (JSONException e2) {
