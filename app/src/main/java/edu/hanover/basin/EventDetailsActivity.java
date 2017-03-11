@@ -84,18 +84,18 @@ public class EventDetailsActivity extends Activity {
         request(Request.Method.GET, url.toString(), null, GET_EVENT);
     }
 
-    private void onClickEdit(View v){
-
-        Intent intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
-        intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);
-        intent.putExtra(EventCreationActivity.EXTRA_TITLE, title.getText());
-        intent.putExtra(EventCreationActivity.EXTRA_DESCRIPTION, description.getText());
-        intent.putExtra(EventCreationActivity.EXTRA_TIME, time.getText());
-        intent.putExtra(EventCreationActivity.EXTRA_DATE, date.getText());
-
+    public void onClickEdit(View v){
+        //Log.e("event is: ", event.toString());
         try{
-            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getString("long_coord"));
-            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getString("lat_coord"));
+            Intent intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
+            intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);
+            intent.putExtra(EventCreationActivity.EXTRA_EVENT_ID, event.getString("_id"));
+            intent.putExtra(EventCreationActivity.EXTRA_TITLE, event.getString("title"));
+            intent.putExtra(EventCreationActivity.EXTRA_DESCRIPTION, event.getString("description"));
+            intent.putExtra(EventCreationActivity.EXTRA_TIME, event.getString("time_start"));
+            intent.putExtra(EventCreationActivity.EXTRA_DATE, event.getString("date"));
+            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getDouble("long_coord"));
+            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getDouble("lat_coord"));
             startActivity(intent);
         }
         catch(JSONException e){
@@ -110,12 +110,12 @@ public class EventDetailsActivity extends Activity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        event = response;
                         try{
                             Log.i("requested url", url);
-                            Log.i("event response", event.toString());
                             switch (type){
                                 case GET_EVENT://Log.i("event response", event.toString());
+                                    event = response;
+                                    Log.i("event response", event.toString());
                                     title.setText(event.getString("title"));
                                     picture.setProfileId(event.getString("facebook_created_by"));
                                     coordinator.setText(event.getString("fname") + " " + event.getString("lname"));
@@ -124,7 +124,7 @@ public class EventDetailsActivity extends Activity {
                                     date.setText(event.getString("date"));
                                     break;
                                 case IS_ATTENDING:
-                                    if(event.getString("attending") == "true"){
+                                    if(response.getString("attending") == "true"){
                                         attendingBox.setChecked(true);
                                     }
                                     else{
