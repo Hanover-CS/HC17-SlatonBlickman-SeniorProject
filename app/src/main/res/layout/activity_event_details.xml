@@ -97,7 +97,7 @@
     <Button
         android:text="Edit"
         android:layout_margin="10dp"
-        android:background="#b5e2d9"
+        android:background="#19b092"
         android:textColor="#ffffffff"
         android:textAppearance="@android:style/TextAppearance.Large"
         android:layout_width="wrap_content"
