@@ -1,8 +1,10 @@
 package edu.hanover.basin;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -80,6 +82,25 @@ public class EventDetailsActivity extends Activity {
         //Log.e("why no event id", event_id);
         url.getEventURL(event_id);
         request(Request.Method.GET, url.toString(), null, GET_EVENT);
+    }
+
+    private void onClickEdit(View v){
+
+        Intent intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
+        intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);
+        intent.putExtra(EventCreationActivity.EXTRA_TITLE, title.getText());
+        intent.putExtra(EventCreationActivity.EXTRA_DESCRIPTION, description.getText());
+        intent.putExtra(EventCreationActivity.EXTRA_TIME, time.getText());
+        intent.putExtra(EventCreationActivity.EXTRA_DATE, date.getText());
+
+        try{
+            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getString("long_coord"));
+            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getString("lat_coord"));
+            startActivity(intent);
+        }
+        catch(JSONException e){
+            Log.e("JSON EXCEPTION", e.toString());
+        }
     }
 
     private void request(final int method, final String url, JSONObject body, final String type){
