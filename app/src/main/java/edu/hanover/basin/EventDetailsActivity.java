@@ -22,6 +22,8 @@ import com.facebook.login.widget.ProfilePictureView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class EventDetailsActivity extends Activity {
     public static final String EXTRA_EVENT_ID = "EventID";
     public static final String GET_EVENT = "GetEvent";
@@ -101,6 +103,15 @@ public class EventDetailsActivity extends Activity {
         catch(JSONException e){
             Log.e("JSON EXCEPTION", e.toString());
         }
+    }
+
+    private void setAdapters(EventList events, int listViewId){
+        ArrayList<JSONObject> arrayList = events.toArrayList();
+        // Create the adapter to convert the array to views
+        EventsAdapter adapter = new EventsAdapter(this, arrayList);
+        // Attach the adapter to a ListView
+        ListView listView = (ListView) findViewById(listViewId);
+        listView.setAdapter(adapter);
     }
 
     private void request(final int method, final String url, JSONObject body, final String type){
