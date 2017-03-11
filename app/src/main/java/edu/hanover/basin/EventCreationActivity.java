@@ -161,7 +161,7 @@ public class EventCreationActivity extends Activity {
                     public void onResponse(JSONObject response) {
                         //event = response;
                         try{
-                            Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
                             finish();
                        }
 
