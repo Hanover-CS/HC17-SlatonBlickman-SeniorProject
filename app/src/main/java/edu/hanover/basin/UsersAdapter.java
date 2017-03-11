@@ -29,32 +29,32 @@ public class UsersAdapter extends ArrayAdapter<JSONObject> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        final JSONObject event = getItem(position);
+        final JSONObject user = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_event, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
         }
         // Lookup view for data population
-        ProfilePictureView picture = (ProfilePictureView) convertView.findViewById(R.id.picture);
-        TextView attendee_name = (TextView) convertView.findViewById(R.id.coordinator);
+        ProfilePictureView picture = (ProfilePictureView) convertView.findViewById(R.id.attendee_picture);
+        TextView attendee_name = (TextView) convertView.findViewById(R.id.attendee_name);
         // Populate the data into the template view using the data object
         try {
-            picture.setProfileId(event.getString("facebook_created_by"));
+            picture.setProfileId(user.getString("facebook_id"));
             picture.setPresetSize(ProfilePictureView.SMALL);
 
-            String attendee = event.getString("fname") + " " + event.getString("lname");
+            String attendee = user.getString("fname") + " " + user.getString("lname");
             attendee_name.setText(attendee);
 
         }
         catch(JSONException e){
-            Log.e("EventsAdapter error", e.toString());
+            Log.e("UsersAdapter error", e.toString());
         }
         convertView.setOnClickListener(new View.OnClickListener() {
             public void onClick(final View v) {
                 Intent intent = new Intent(v.getContext(), ProfileActivity.class);
                 try {
                    // Log.e("event", event.toString());
-                    intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getString("event_id"));
+                    intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, user.getString("facebook_id"));
                 }
                 catch(JSONException e){
                     Log.e("JSON EXCEPTION", e.toString());
