@@ -40,10 +40,15 @@ public class EventCreationActivity extends Activity {
     public static final String EXTRA_DESCRIPTION = "EventDesc";
     public static final String EXTRA_TIME = "EventTime";
     public static final String EXTRA_DATE = "EventDate";
+    public static final String EXTRA_EVENT_ID = "EventID";
 
+    private boolean updating;
     private String location;
     private double lat;
     private double lng;
+    private int requestMethod;
+    private basinURL url;
+    private String eventID;
 
     private EditText title;
     private EditText description;
@@ -69,22 +74,32 @@ public class EventCreationActivity extends Activity {
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
         location = String.valueOf(lat) + ", " + String.valueOf(lng);
-        description.setText(location);
-
-        boolean updating;
         updating = (Boolean)getIntent().getExtras().get(EXTRA_UPDATING);
+
+        //description.setText(location);
+        url = new basinURL();
+
         if(updating){
-            create.setText("SAVE!");
             String editTitle, editDesc, editTime, editDate;
+
             editDate =(String)getIntent().getExtras().get(EXTRA_DATE);
             editTitle = (String)getIntent().getExtras().get(EXTRA_TITLE);
             editDesc = (String)getIntent().getExtras().get(EXTRA_DESCRIPTION);
             editTime = (String)getIntent().getExtras().get(EXTRA_TIME);
+            eventID = (String)getIntent().getExtras().get(EXTRA_EVENT_ID);
 
+            create.setText("SAVE!");
             title.setText(editTitle);
             description.setText(editDesc);
             Time.setText(editTime);
 
+            requestMethod = Request.Method.PUT;
+            url.getEventURL(eventID);
+
+        }
+        else{
+            requestMethod = Request.Method.POST;
+            eventID = "";
         }
 
 
@@ -104,13 +119,12 @@ public class EventCreationActivity extends Activity {
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
         Pattern pattern;
         Matcher matcher;
-        String TIME24HOURS_PATTERN =
-                "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+        String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
         pattern = Pattern.compile(TIME24HOURS_PATTERN);
-        JSONObject body = new JSONObject();
-        basinURL url = new basinURL();
 
         try{
+            JSONObject body = new JSONObject();
+
             body.put("facebook_created_by", facebook_id);
             body.put("title", title.getText());
             body.put("description", description.getText());
@@ -118,10 +132,12 @@ public class EventCreationActivity extends Activity {
             body.put("long_coord", lng);
             //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
             body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
+
             matcher = pattern.matcher(Time.getText());
+
             if(matcher.matches()) {
                 body.put("time_start", Time.getText());
-                request(Request.Method.POST, url.postEventURL(), body);
+                request(requestMethod, url.toString(), body);
             }
             else{
                 Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
@@ -136,8 +152,8 @@ public class EventCreationActivity extends Activity {
 
     private void request(int method, String url, JSONObject body){
         // Request a string response
-        Log.e("Requesting: ", url);
-        Log.e("Body:", body.toString());
+        Log.i("Requesting: ", url);
+        Log.i("Body:", body.toString());
         JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, body,
                 new Response.Listener<JSONObject>() {
 
