@@ -96,9 +96,26 @@
 
     <Button
         android:text="Edit"
+        android:layout_margin="10dp"
+        android:background="#b5e2d9"
+        android:textColor="#ffffffff"
+        android:textAppearance="@android:style/TextAppearance.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editButton"
+        android:onClick="onClickEdit"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/deleteButton"/>
+
+    <Button
+        android:text="Delete"
+        android:layout_margin="10dp"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="#ffffff"
+        android:background="#ff0000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deleteButton"
         android:onClick="onClickEdit"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"/>
