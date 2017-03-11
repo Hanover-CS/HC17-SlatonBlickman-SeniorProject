@@ -19,6 +19,7 @@ import com.android.volley.toolbox.Volley;
 import com.facebook.Profile;
 import com.facebook.login.widget.ProfilePictureView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,16 +27,19 @@ import java.util.ArrayList;
 
 public class EventDetailsActivity extends Activity {
     public static final String EXTRA_EVENT_ID = "EventID";
-    public static final String GET_EVENT = "GetEvent";
-    public static final String IS_ATTENDING = "IsAttending";
-    public static final String POST_ATTENDING = "PostAttending";
+
+    private static final String GET_EVENT = "GetEvent";
+    private static final String IS_ATTENDING = "IsAttending";
+    private static final String POST_ATTENDING = "PostAttending";
+    private static final String GET_ATTENDEES = "GetAttendees";
 
     private String event_id;
     private JSONObject event;
+    private JSONArray attendees;
     private TextView title, coordinator, time, date, description;
     private ProfilePictureView picture;
     private CheckBox attendingBox;
-    private ListView attendees;
+    private ListView attendeesListView;
     private boolean checkOff;
 
 
@@ -105,10 +109,8 @@ public class EventDetailsActivity extends Activity {
         }
     }
 
-    private void setAdapters(EventList events, int listViewId){
-        ArrayList<JSONObject> arrayList = events.toArrayList();
-        // Create the adapter to convert the array to views
-        EventsAdapter adapter = new EventsAdapter(this, arrayList);
+    private void setAdapters(ArrayList<JSONObject> arrayList, int listViewId){
+        UsersAdapter adapter = new UsersAdapter(this, arrayList);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(listViewId);
         listView.setAdapter(adapter);
@@ -133,6 +135,9 @@ public class EventDetailsActivity extends Activity {
                                     description.setText(event.getString("description"));
                                     time.setText(event.getString("time_start"));
                                     date.setText(event.getString("date"));
+                                    basinURL aURL = new basinURL();
+                                    aURL.getEventAttendeesURL(event_id);
+                                    request(Request.Method.GET, aURL.toString(), null, GET_ATTENDEES);
                                     break;
                                 case IS_ATTENDING:
                                     if(response.getString("attending") == "true"){
@@ -142,7 +147,12 @@ public class EventDetailsActivity extends Activity {
                                         attendingBox.setChecked(false);
                                     }
                                     break;
-                                case POST_ATTENDING:
+                                case GET_ATTENDEES:
+                                    attendees = response.getJSONArray("users");
+                                    ArrayList<JSONObject> arrayListAttendees = ArrayUtil.toArrayList(attendees);
+                                    setAdapters(arrayListAttendees, R.id.users_attending_list);
+                                    break;
+                                default:
                                     break;
                             }
                          //   description.setText(event.getString("description"));
