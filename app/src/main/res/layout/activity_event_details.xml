@@ -68,14 +68,6 @@
         android:layout_below="@+id/desc_title"
         android:layout_centerVertical="true" />
 
-    <Button
-        android:text="Edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"/>
-
     <TextView
         android:text="Attendees"
         android:layout_width="wrap_content"
@@ -101,6 +93,15 @@
         android:layout_alignBaseline="@+id/editButton"
         android:layout_alignBottom="@+id/editButton"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editButton"
+        android:onClick="onClickEdit"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
