@@ -61,10 +61,12 @@ public class userEventsActivity extends Activity {
                         try{
                             JSONObject events = response.getJSONObject("events");
                             Log.i("user events", events.toString());
-                            EventList created_events = new EventList(events.getJSONArray("created"));
+                            //EventList created_events = new EventList(events.getJSONArray("created"));
+                            ArrayList<JSONObject> created_events = ArrayUtil.toArrayList(events.getJSONArray("created"));
                             setAdapters(created_events, R.id.created_list);
 
-                            EventList attended_events = new EventList(events.getJSONArray("attending"));
+                            //EventList attended_events = new EventList(events.getJSONArray("attending"));
+                            ArrayList<JSONObject> attended_events = ArrayUtil.toArrayList(events.getJSONArray("attending"));
                             setAdapters(attended_events, R.id.attended_list);
 
                         }
@@ -93,10 +95,9 @@ public class userEventsActivity extends Activity {
 
     }
 
-    private void setAdapters(EventList events, int listViewId){
-        ArrayList<JSONObject> arrayList = events.toArrayList();
+    private void setAdapters(ArrayList<JSONObject> events, int listViewId){
         // Create the adapter to convert the array to views
-        EventsAdapter adapter = new EventsAdapter(this, arrayList);
+        EventsAdapter adapter = new EventsAdapter(this, events);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(listViewId);
         listView.setAdapter(adapter);
