@@ -25,7 +25,10 @@ public class EventMarker implements ClusterItem {
         mTitle = title;
         mSnippet = snippet;
         mId = id;
+    }
 
+    public String getID(){
+        return mId;
     }
 
     @Override
