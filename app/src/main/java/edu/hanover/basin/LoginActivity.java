@@ -213,51 +213,58 @@ public class LoginActivity extends Activity {
 
     }
 
-    private void getUser( int method, JSONObject body ){
+    private void getUser( int method, JSONObject body, final int tries ){
         basinURL dbUser = new basinURL();
-        String url = dbUser.getUserURL(current.getFacebookID(), "true");
+        String url;
+        if(method == Request.Method.GET){
+            url = dbUser.getUserURL(current.getFacebookID(), "true");
+        }
+        else{
+            url = dbUser.getUserURL("");
+        }
 
         if(body == null || body.length() == 0){
             body = null;
         }
         // Request a string response
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url, body,
-                new Response.Listener<JSONObject>() {
+        if(tries < 3) {
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url, body,
+                    new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
+                        @Override
+                        public void onResponse(JSONObject response) {
 
-                        // Result handling
-                        Log.i("Volley Response", response.toString());
+                            // Result handling
+                            Log.i("Volley Response", response.toString());
 
 
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        // Error handling
-                        JSONObject body = new JSONObject();
-                        String[] names = current.getName().split(" ");
-                        try {
-                            body.put("fname", names[0]);
-                            body.put("lname", names[1]);
-                            body.put("facebook_id", current.getFacebookID());
                         }
-                        catch(JSONException e2){
-                            Log.e("JSON EXCEPTION", e2.toString());
-                        }
-                        getUser(Request.Method.POST, body);
-                        //Log.e("Volley error", Log.getStackTraceString(error));
-                        error.printStackTrace();
+                    }, new Response.ErrorListener() {
 
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    // Error handling
+                    JSONObject body = new JSONObject();
+                    String[] names = current.getName().split(" ");
+                    try {
+                        body.put("fname", names[0]);
+                        body.put("lname", names[1]);
+                        body.put("facebook_id", current.getFacebookID());
+                    } catch (JSONException e2) {
+                        Log.e("JSON EXCEPTION", e2.toString());
                     }
+                    getUser(Request.Method.POST, body, tries + 1);
+                    //Log.e("Volley error", Log.getStackTraceString(error));
+                    error.printStackTrace();
 
-        });
+                }
 
-        // Add the request to the queue
-        Volley.newRequestQueue(this).add(jsonRequest);
+            });
+
+            // Add the request to the queue
+            Volley.newRequestQueue(this).add(jsonRequest);
+        }
     }
     //For graph requests
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
@@ -273,7 +280,7 @@ public class LoginActivity extends Activity {
             info.setText("Welcome, " + current.getName() + "!");
             profilePic.setProfileId(current.getFacebookID());
 
-            getUser(Request.Method.GET, null);
+            getUser(Request.Method.GET, null, 0);
 
             Log.e("UI UPDATED:", "SUCCESS");
 
