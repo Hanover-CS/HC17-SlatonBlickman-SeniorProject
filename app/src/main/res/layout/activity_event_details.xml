@@ -78,6 +78,15 @@
         android:layout_marginTop="99dp"
         android:textAppearance="@android:style/TextAppearance.Large"/>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/event_map"
+        android:onClick="onClickGoToMaps"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/picture" />
+
     <ListView
         android:id="@+id/users_attending_list"
         android:layout_width="match_parent"
