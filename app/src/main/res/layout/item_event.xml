@@ -16,6 +16,7 @@
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
+        android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/coordinator"
@@ -25,9 +26,9 @@
         android:text="Coordinator name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/coordinator"/>
+        android:id="@+id/coordinator"
+        android:layout_centerInParent="true"
+        android:layout_toStartOf="@+id/picture"/>
 
     <TextView
         android:text="Date and Time"
