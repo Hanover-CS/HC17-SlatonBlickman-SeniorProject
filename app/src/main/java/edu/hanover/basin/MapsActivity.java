@@ -37,6 +37,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.android.gms.location.LocationListener;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 
 public class MapsActivity extends FragmentActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -47,8 +49,10 @@ public class MapsActivity extends FragmentActivity
     private Location mLastLocation;
     private LatLng mLastLatLng;
     private GoogleApiClient mGoogleApiClient;
-    private Map<Marker, JSONObject> allMarkerMap;
+    private Map<Marker, EventMarker> allMarkerMap;
     private Marker mMe;
+    // Declare a variable for the cluster manager.
+    private ClusterManager<EventMarker> mClusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +72,6 @@ public class MapsActivity extends FragmentActivity
 
         // Create an instance of GoogleAPIClient.
         getLocation();
-
 
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -121,6 +124,9 @@ public class MapsActivity extends FragmentActivity
                 startActivity(intent);
             }
         });
+
+//        mClusterManager.setOnClusterItemClickListener();
+
 
     }
 
@@ -210,10 +216,49 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    private void setupCluster(){
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<EventMarker>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+
+        //mClusterManager.setRenderer(new EventMarkerRenderer(this, mMap, mClusterManager));
+        mClusterManager
+                .setOnClusterClickListener(new ClusterManager.OnClusterClickListener<EventMarker>() {
+                    @Override
+                    public boolean onClusterClick(final Cluster<EventMarker> cluster) {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                cluster.getPosition(), (float) Math.floor(mMap
+                                        .getCameraPosition().zoom + 1)), 300,
+                                null);
+                        return true;
+                    }
+                });
+
+
+        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<EventMarker>() {
+            @Override
+            public void onClusterItemInfoWindowClick(EventMarker eventMarker) {
+                if(eventMarker.getID() != "-1"){
+                    Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
+                    intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventMarker.getID());
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
     private void updateUI(){
         //test location
         //mLastLatLng = new LatLng(38.713, -85.459 );
         if(mLastLatLng != null) {
+
+            setupCluster();
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
             Toast.makeText(this, "location :"+ mLastLatLng, Toast.LENGTH_SHORT).show();
@@ -230,13 +275,17 @@ public class MapsActivity extends FragmentActivity
                 mMe.setPosition(cameraPos);
             }
             else{
-                mMe = mMap.addMarker(new MarkerOptions().position(cameraPos).title("Me"));
+                EventMarker me = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
+                mClusterManager.addItem(me);
+                //mMe = mMap.addMarker(new MarkerOptions().position(cameraPos).title("Me"));
+
             }
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPos));
-            Marker testMark = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(30.0, -85.0))
-                    .title("test title")
-                    .snippet("6:00"));
+//            Marker testMark = mMap.addMarker(new MarkerOptions()
+//                    .position(new LatLng(30.0, -85.0))
+//                    .title("test title")
+//                    .snippet("6:00"));
+
         }
         else{
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
@@ -253,22 +302,24 @@ public class MapsActivity extends FragmentActivity
         Double lat;
         Double lng;
         LatLng location;
-        String title, time_date;
+        String title, time_date, id;
+        EventMarker eventMarker;
         try{
            for(int i = 0; i < events.length(); i++){
                event = events.getJSONObject(i);
                lat = event.getDouble("lat_coord");
                lng = event.getDouble("long_coord");
-               if(lat != null && lng != null) {
-                   location = new LatLng(lat, lng);
-                   title = event.getString("title");
-                   time_date = event.getString("time_start") + ", " + event.getString("date");
-                   marker = mMap.addMarker(new MarkerOptions()
-                           .position(location)
-                           .title(title)
-                           .snippet(time_date));
-                   allMarkerMap.put(marker, event);
-               }
+               id = event.getString("_id");
+               location = new LatLng(lat, lng);
+               title = event.getString("title");
+               time_date = event.getString("time_start") + ", " + event.getString("date");
+//                   marker = mMap.addMarker(new MarkerOptions()
+//                           .position(location)
+//                           .title(title)
+//                           .snippet(time_date));
+               eventMarker = new EventMarker(lat, lng, title, time_date, id);
+               //allMarkerMap.put(marker, event);
+               mClusterManager.addItem(eventMarker);
 
            }
         }
