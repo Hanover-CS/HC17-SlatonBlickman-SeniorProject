@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -56,7 +57,7 @@ import java.util.Arrays;
 import java.util.List;
 
 //insert javadoc stuff
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
 
@@ -64,6 +65,7 @@ public class LoginActivity extends Activity {
     private ProfilePictureView profilePic;
     private TextView info;
     private Button profileButton;
+    private Button mapsButton;
 
     private User current;
 
@@ -145,6 +147,8 @@ public class LoginActivity extends Activity {
         loginButton.registerCallback(callbackManager, callback);
         //info.setText("PLEASE WORK");
 
+        mapsButton = (Button)findViewById(R.id.button_maps);
+
     }
 
     public void onClickViewProfile(View v){
@@ -162,6 +166,7 @@ public class LoginActivity extends Activity {
     }
 
     public void onClickMyMap(View v){
+        mapsButton.setBackground(ContextCompat.getDrawable(this, R.drawable.g_maps_icon_clicked));
         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         startActivity(intent);
     }
@@ -170,6 +175,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        mapsButton.setBackground(ContextCompat.getDrawable(this, R.drawable.g_maps_icon));
         //Facebook login
         //(new UpdateUserUI()).execute(AccessToken.getCurrentAccessToken());
 //        displayInfo();

@@ -5,6 +5,7 @@
     android:id="@+id/loginGroup">
 
 
+
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
         android:layout_width="200sp"
@@ -61,11 +62,13 @@
         android:onClick="onClickMyEvents"/>
 
     <Button
-        android:text="VIEW EVENT MAP"
+        android:text=""
+        android:layout_margin="30dp"
+        android:background="@drawable/g_maps_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_event"
-        android:layout_toEndOf="@+id/login_button"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/login_button"
         android:id="@+id/button_maps"
         android:onClick="onClickMyMap"/>
 
