@@ -99,7 +99,7 @@ public class EventCreationActivity extends Activity {
         }
         else{
             requestMethod = Request.Method.POST;
-            eventID = "";
+            url.getEventURL("");
         }
 
 
