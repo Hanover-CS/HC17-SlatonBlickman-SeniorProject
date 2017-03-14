@@ -1,38 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/loginGroup">
+    android:orientation="vertical"
+    android:id="@+id/loginGroup"
+    android:weightSum="1">
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
-    <com.facebook.login.widget.ProfilePictureView
-        android:id="@+id/picture"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="200sp"
+    <RelativeLayout
+        android:id="@+id/welcomePanel"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_below="@id/picture"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_weight=".3">
+
+        <com.facebook.login.widget.ProfilePictureView
+            android:id="@+id/picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:id="@+id/greeting"
+            android:text=""
+            android:layout_gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/picture" />
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_weight=".3"
         android:id="@+id/info"
         android:text="Please login..."
+        android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/picture" />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -72,4 +98,13 @@
         android:id="@+id/button_maps"
         android:onClick="onClickMyMap"/>
 
-</RelativeLayout>
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_below="@id/picture"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>
