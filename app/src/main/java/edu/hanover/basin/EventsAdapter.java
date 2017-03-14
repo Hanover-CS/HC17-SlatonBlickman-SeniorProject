@@ -42,6 +42,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
         TextView date_time = (TextView) convertView.findViewById(R.id.date_time);
         // Populate the data into the template view using the data object
         try {
+            Log.i("Event list:", event.toString());
             title.setText(event.getString("title"));
 
             picture.setProfileId(event.getString("facebook_created_by"));
@@ -51,7 +52,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
             coordinator.setText(coordinator_name);
 
             //date_time.setText(event.getString("time_start"));
-            date_time.setText("Time: " + event.getString("time_start") + "\nDate: " + event.getString("date"));
+            date_time.setText(event.getString("time_start") + "\n" + event.getString("date"));
             // Return the completed view to render on screen
 
         }
