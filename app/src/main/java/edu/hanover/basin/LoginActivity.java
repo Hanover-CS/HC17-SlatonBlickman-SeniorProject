@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,12 +61,14 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
+    private AccessToken accessToken;
+    private AccessTokenTracker accessTokenTracker;
 
+    private RelativeLayout loadingPanel, welcomePanel;
     private LoginButton loginButton;
     private ProfilePictureView profilePic;
-    private TextView info;
-    private Button profileButton;
-    private Button mapsButton;
+    private TextView info, greeting;
+    private Button profileButton, mapsButton;
 
     private User current;
 
@@ -77,6 +80,11 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         //String s =  Manifest.permission.ACCESS_FINE_LOCATION;
+
+        loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
+        welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
+        loadingPanel.setVisibility(View.VISIBLE);
+
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
@@ -97,11 +105,25 @@ public class LoginActivity extends AppCompatActivity {
         } catch (NoSuchAlgorithmException e) {
 
         }
+
         callbackManager = CallbackManager.Factory.create();
 
-        info = (TextView) findViewById(R.id.info);
-        profilePic = (ProfilePictureView) findViewById(R.id.picture);
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
+                // Set the access token using
+                // currentAccessToken when it's loaded or set.
 
+            }
+        };
+        // If the access token is available already assign it.
+        accessToken = AccessToken.getCurrentAccessToken();
+
+        info = (TextView) findViewById(R.id.info);
+        greeting = (TextView)findViewById(R.id.greeting);
+        profilePic = (ProfilePictureView) findViewById(R.id.picture);
         profileButton = (Button)findViewById(R.id.profileButton);
 
         loginButton = (LoginButton)findViewById(R.id.login_button);
@@ -113,20 +135,23 @@ public class LoginActivity extends AppCompatActivity {
 //            displayInfo();
 //            displayLikes();
             (new GetCurrentUser()).execute(AccessToken.getCurrentAccessToken());
+            //loadingPanel.setVisibility(View.GONE);
             Log.i("ACCESS TOKEN:", "NOT NULL");
         }
+        else{
+            loadingPanel.setVisibility(View.GONE);
+        }
+
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
                 info.setText("Logging in...");
+                loadingPanel.setVisibility(View.VISIBLE);
                 AccessToken accessToken = loginResult.getAccessToken();
-//                current = new User(accessToken);
-//                displayInfo();
-//                displayLikes();
+
                 (new GetCurrentUser()).execute(accessToken);
-                //Toast.makeText(getApplicationContext(), "Logging in...", Toast.LENGTH_SHORT).show();
-                //current = new User(accessToken);
+
 
 
             }
@@ -149,6 +174,12 @@ public class LoginActivity extends AppCompatActivity {
 
         mapsButton = (Button)findViewById(R.id.button_maps);
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        accessTokenTracker.stopTracking();
     }
 
     public void onClickViewProfile(View v){
@@ -242,6 +273,10 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Result handling
                             Log.i("Volley Response", response.toString());
+                            info.setText(getResources().getString(R.string.about));
+                            welcomePanel.setVisibility(View.VISIBLE);
+                            loadingPanel.setVisibility(View.GONE);
+                            Log.e("UI UPDATED:", "SUCCESS");
 
 
                         }
@@ -271,6 +306,10 @@ public class LoginActivity extends AppCompatActivity {
             // Add the request to the queue
             Volley.newRequestQueue(this).add(jsonRequest);
         }
+        else{
+            info.setText("Something went wrong during login :(");
+            loadingPanel.setVisibility(View.GONE);
+        }
     }
     //For graph requests
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
@@ -283,13 +322,10 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String results){
-            info.setText("Welcome, " + current.getName() + "!");
+            greeting.setText("Welcome, " + current.getName() + "!");
             profilePic.setProfileId(current.getFacebookID());
 
             getUser(Request.Method.GET, null, 0);
-
-            Log.e("UI UPDATED:", "SUCCESS");
-
         }
     }
 
