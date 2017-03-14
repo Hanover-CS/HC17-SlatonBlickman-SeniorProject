@@ -43,6 +43,8 @@ import com.google.maps.android.clustering.ClusterManager;
 public class MapsActivity extends FragmentActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    public static final String EXTRA_EVENT_LAT = "EventLat";
+    public static final String EXTRA_EVENT_LNG = "EventLng";
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -149,6 +151,11 @@ public class MapsActivity extends FragmentActivity
                 mGoogleApiClient, this);
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+    }
+
     protected void createLocationRequest(){
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500);
@@ -175,13 +182,14 @@ public class MapsActivity extends FragmentActivity
         if (mLastLocation != null) {
             mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-            updateUI();
-
             //add rest of markers from database
             basinURL url = new basinURL();
             url.getEventURL("");
             allMarkerMap =  new HashMap<>();
             request(Request.Method.GET, url.toString());
+
+            updateUI();
+
         }
 //        else{
 //            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -262,17 +270,28 @@ public class MapsActivity extends FragmentActivity
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
             Toast.makeText(this, "location :"+ mLastLatLng, Toast.LENGTH_SHORT).show();
-            Log.i("LAST", mLastLatLng.toString());
-            LatLng cameraPos = mLastLatLng;
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPos, 16.6f));
+            Log.i("LAST LOCATION", mLastLatLng.toString());
+            try{
+                Double lat, lng;
+                LatLng startLocation;
 
+                lat = Double.parseDouble((String)getIntent().getExtras().get(EXTRA_EVENT_LAT));
+                lng = Double.parseDouble((String)getIntent().getExtras().get(EXTRA_EVENT_LNG));
+                startLocation = new LatLng(lat, lng);
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, 17f));
+                Log.i("LATLNG FOR EVENT", startLocation.toString());
+            }
+            catch(Exception e){
+                Log.i("SOME LATLNG", e.toString());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLastLatLng, 17f));
+            }
             //LatLng testLoc = new LatLng(mLastLocation.getLatitude() + 0.0001, mLastLocation.getLongitude() + 0.0001);
             //LatLng cameraPos = new LatLng(30.0, -85.0);
             //Log.i("CAMERA POS", cameraPos.toString());
             //LatLng sydney = new LatLng(-34, 151);
-
             if(mMe != null){
-                mMe.setPosition(cameraPos);
+                mMe.setPosition(mLastLatLng);
             }
             else{
                 EventMarker me = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
