@@ -123,6 +123,17 @@ public class EventDetailsActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onClickGoToProfile(View v){
+        try {
+            Intent intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
+            intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, event.getString("facebook_id"));
+            startActivity(intent);
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+
     private void setAdapters(ArrayList<JSONObject> arrayList, int listViewId){
         UsersAdapter adapter = new UsersAdapter(this, arrayList);
         // Attach the adapter to a ListView
