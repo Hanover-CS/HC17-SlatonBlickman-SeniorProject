@@ -29,6 +29,7 @@
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
+        android:onClick="onClickGoToProfile"
         android:layout_width="50sp"
         android:layout_height="50sp"
         android:layout_alignParentEnd="true"
