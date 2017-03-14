@@ -117,7 +117,10 @@ public class EventDetailsActivity extends Activity {
     }
 
     public void onClickGoToMaps(View v){
-
+        Intent intent = new Intent(EventDetailsActivity.this, MapsActivity.class);
+        intent.putExtra(MapsActivity.EXTRA_EVENT_LAT, lat);
+        intent.putExtra(MapsActivity.EXTRA_EVENT_LNG, lng);
+        startActivity(intent);
     }
 
     private void setAdapters(ArrayList<JSONObject> arrayList, int listViewId){
