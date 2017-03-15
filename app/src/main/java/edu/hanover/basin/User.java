@@ -99,11 +99,13 @@ public class User {
 
     private void requestUserInfo(){
         Log.e("REQUEST INFO", "REQUESTING FOR " + FacebookID);
+        Bundle param = new Bundle();
+        param.putString("fields", "id,link,name,birthday,location");
 
         GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 url,
-                null,
+                param,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     @Override
@@ -130,10 +132,6 @@ public class User {
                 }
         );
 
-        Bundle param = new Bundle();
-        param.putString("fields", "id,link,name,birthday,location");
-        //param.putString("fields","id,birthday,about");
-        request.setParameters(param);
         request.executeAndWait();
     }
 
