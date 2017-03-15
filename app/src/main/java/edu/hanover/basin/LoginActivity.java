@@ -202,7 +202,6 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -316,7 +315,9 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(AccessToken... params){
-            current = new User(params[0]);
+            current = new User(params[0].getUserId());
+            current.doLikes(false);
+            current.startRequest();
             return "success";
         }
 
