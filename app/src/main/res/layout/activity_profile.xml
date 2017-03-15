@@ -4,6 +4,18 @@
     android:layout_height="match_parent"
     android:id="@+id/loginGroup">
 
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
@@ -21,7 +33,6 @@
         android:layout_below="@id/picture"
         android:id="@+id/likes_list"/>
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,13 +42,14 @@
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_toEndOf="@+id/picture" />
+
     <TextView
         android:id="@+id/age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/info"
         android:layout_toEndOf="@+id/picture"
-        android:text="Age: "/>
+        android:text=""/>
 
     <TextView
         android:id="@+id/location"
@@ -45,14 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/age"
         android:layout_toEndOf="@+id/picture"
-
-        android:text="Location: "/>
-    <TextView
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/login_button"
-
         android:text=""/>
+
 
 </RelativeLayout>
