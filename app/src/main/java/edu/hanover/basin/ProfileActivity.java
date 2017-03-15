@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -20,6 +22,7 @@ public class ProfileActivity extends Activity {
     private TextView info;
     private TextView age;
     private TextView location;
+    private RelativeLayout loadingPanel;
 
     private User current;
 
@@ -29,25 +32,28 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.activity_profile);
 
         String id = (String)getIntent().getExtras().get(EXTRA_FACEBOOK_ID);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         info = (TextView) findViewById(R.id.info);
         age = (TextView) findViewById(R.id.age);
         location = (TextView) findViewById(R.id.location);
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
+
         Log.e("FACEBOOK ID", id);
         (new UpdateProfile()).execute(id);
     }
+
 
     private class UpdateProfile extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... id){
             current = new User(id[0]);
+            current.startRequest();
             return "success";
         }
 
         @Override
         protected void onPostExecute(String results){
-
             ListView listView = (ListView)findViewById(R.id.likes_list);
             listView.setAdapter(new ArrayAdapter<String>(ProfileActivity.this,
                     android.R.layout.simple_list_item_1,
@@ -56,9 +62,9 @@ public class ProfileActivity extends Activity {
             age.setText(current.getBirthday());
             profilePic.setProfileId(current.getFacebookID());
             location.setText(current.getLocation());
+            loadingPanel.setVisibility(View.GONE);
 
             Log.e("UI UPDATED:", "SUCCESS");
-
         }
     }
 }
