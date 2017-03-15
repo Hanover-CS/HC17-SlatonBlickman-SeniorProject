@@ -1,0 +1,23 @@
+<!-- Menu file for `activity_movies.xml` is located in a file
+     such as `res/menu/menu_movies.xml`  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/profile_menu"
+        android:icon="@drawable/user_icon"
+        app:showAsAction="ifRoom"
+        android:title="@string/profile_icon_title">
+    </item>
+    <item
+        android:id="@+id/lists_menu"
+        android:icon="@drawable/marker_icon"
+        app:showAsAction="ifRoom"
+        android:title="@string/lists_icon_title">
+    </item>
+    <item
+        android:id="@+id/map_menu"
+        android:icon="@drawable/map_icon"
+        app:showAsAction="ifRoom"
+        android:title="@string/map_icon_title">
+    </item>
+</menu>
