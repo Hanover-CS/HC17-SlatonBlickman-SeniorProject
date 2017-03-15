@@ -7,6 +7,7 @@ import android.icu.util.Calendar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -31,7 +32,7 @@ import java.util.regex.Pattern;
 import static edu.hanover.basin.EventDetailsActivity.EXTRA_EVENT_ID;
 import static edu.hanover.basin.R.id.datePicker;
 
-public class EventCreationActivity extends Activity {
+public class EventCreationActivity extends AppCompatActivity {
 
     public static final String EXTRA_EVENT_LAT = "EventLat";
     public static final String EXTRA_EVENT_LNG = "EventLng";
@@ -113,6 +114,13 @@ public class EventCreationActivity extends Activity {
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //        String dateString = sdf.format(date1);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        return true;
     }
 
     public void onClickCreateEvent(View v){

@@ -177,9 +177,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        accessTokenTracker.stopTracking();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.profile_menu:
+                intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+                startActivity(intent);
+                return true;
+            case R.id.lists_menu:
+                intent = new Intent(LoginActivity.this, userEventsActivity.class);
+                intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+                startActivity(intent);
+                return true;
+            case R.id.map_menu:
+                intent = new Intent(LoginActivity.this, MapsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void onClickViewProfile(View v){
@@ -200,6 +225,12 @@ public class LoginActivity extends AppCompatActivity {
         mapsButton.setBackground(ContextCompat.getDrawable(this, R.drawable.g_maps_icon_clicked));
         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        accessTokenTracker.stopTracking();
     }
 
     @Override

@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -30,7 +32,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class EventDetailsActivity extends Activity {
+public class EventDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_EVENT_ID = "EventID";
 
     private static final String GET_EVENT = "GetEvent";
@@ -95,6 +97,13 @@ public class EventDetailsActivity extends Activity {
         //Log.e("why no event id", event_id);
         url.getEventURL(event_id);
         request(Request.Method.GET, url.toString(), null, GET_EVENT);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     public void onClickEdit(View v){

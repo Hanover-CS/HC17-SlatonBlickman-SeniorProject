@@ -3,7 +3,9 @@ package edu.hanover.basin;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -15,7 +17,7 @@ import com.facebook.CallbackManager;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends AppCompatActivity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
 
     private ProfilePictureView profilePic;
@@ -40,6 +42,13 @@ public class ProfileActivity extends Activity {
 
         Log.e("FACEBOOK ID", id);
         (new UpdateProfile()).execute(id);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
 

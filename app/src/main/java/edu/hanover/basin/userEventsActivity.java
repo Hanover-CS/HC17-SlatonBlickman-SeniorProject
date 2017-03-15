@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -23,7 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class userEventsActivity extends Activity {
+public class userEventsActivity extends AppCompatActivity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
     String fb_id;
 
@@ -43,6 +45,13 @@ public class userEventsActivity extends Activity {
         burl.getUserEventsURL(fb_id, params);
         Log.i("BASIN URL", burl.toString());
         request(burl.toString());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     public void onClickAddEvent(View v){
