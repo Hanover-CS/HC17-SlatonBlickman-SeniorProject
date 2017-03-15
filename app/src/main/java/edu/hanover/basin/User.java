@@ -6,6 +6,7 @@ import android.util.Log;
 
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Slaton on 11/5/2016.
@@ -28,19 +31,32 @@ public class User {
     private String birthday;
     private String link;
     private String location;
+    private String url;
+    private boolean shouldGetLikes;
 
     private List<String> FacebookLikes = new ArrayList<>();
 
     User(String id){
+        shouldGetLikes = true;
         this.FacebookID = id;
         Log.e("NEW USER(id):", id);
-        requestUserInfo();
+        url ="/" + FacebookID;
 
     }
 
     User(final AccessToken accessToken){
         Log.e("NEW USER(token)", accessToken.toString());
+        shouldGetLikes = true;
         requestCurrentUserInfo(accessToken);
+    }
+
+    public void startRequest(){
+        requestUserInfo();
+    }
+
+    public boolean doLikes(boolean should){
+        shouldGetLikes = should;
+        return shouldGetLikes;
     }
 
     private void requestCurrentUserInfo(final AccessToken accessToken){
@@ -83,35 +99,41 @@ public class User {
 
     private void requestUserInfo(){
         Log.e("REQUEST INFO", "REQUESTING FOR " + FacebookID);
-        Bundle param = new Bundle();
-        param.putString("fields", "id,name,link,birthday,location");
 
         GraphRequest request = new GraphRequest(
-                AccessToken.getCurrentAccessToken(), "/"+ FacebookID,
-                param, HttpMethod.GET,
+                AccessToken.getCurrentAccessToken(),
+                url,
+                null,
+                HttpMethod.GET,
                 new GraphRequest.Callback() {
+                    @Override
                     public void onCompleted(GraphResponse response) {
                         try{
+                            Log.e("FACEBOOK ISSUE", response.toString());
                             JSONObject json = response.getJSONObject();
                             Log.e("RETURN JSON", json.toString());
+
+                            if(shouldGetLikes){
+                                requestLikes();
+                            }
 
                             name = json.getString("name");
                             birthday = json.getString("birthday");
                             link = json.getString("link");
                             JSONObject objectIn = json.getJSONObject("location");
                             location = objectIn.getString("name");
-
-                            requestLikes();
-
-
                         }
                         catch(JSONException e){
-//                            Log.e("JSON EXCEPTION!", e.toString());
+                            Log.e("FACEBOOK EXCEPTION!", e.toString());
                         }
-
                     }
                 }
         );
+
+        Bundle param = new Bundle();
+        param.putString("fields", "id,link,name,birthday,location");
+        //param.putString("fields","id,birthday,about");
+        request.setParameters(param);
         request.executeAndWait();
     }
 
@@ -120,7 +142,9 @@ public class User {
         final GraphRequest.Callback graphCallback = new GraphRequest.Callback(){
             @Override
             public void onCompleted(GraphResponse response) {
+                Log.e("Likes received", response.toString());
                 try{
+                    //Log.e("What's happening?", response.toString());
                     if (response.getJSONObject() != null) {
                         JSONArray data = response.getJSONObject().getJSONArray("data");
                         //Log.e("DATA LIKES: ", data.toString());
@@ -134,13 +158,14 @@ public class User {
                             nextRequest.setCallback(this);
                             nextRequest.executeAndWait();
                         }
+
                     }
                     else{
                         Log.e("RESPONSE ERROR: ", response.toString());
                     }
                 }
                 catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e("RESPONSE ERROR: ", response.toString());
                 }
             }
         };
@@ -153,11 +178,8 @@ public class User {
                 "/"+ FacebookID +"/likes",param, HttpMethod.GET, graphCallback);
 
         request.executeAndWait();
-        Log.e("this request:",  "/"+ FacebookID +"/likes");
-
-
+        //Log.e("this request:",  "/"+ FacebookID +"/likes");
     }
-
 
 
     public List<String> commonLikes(User user2){
