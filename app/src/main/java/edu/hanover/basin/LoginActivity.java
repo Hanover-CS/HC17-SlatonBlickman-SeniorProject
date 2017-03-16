@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private ProfilePictureView profilePic;
     private TextView info, greeting;
-    private Button profileButton, mapsButton;
+    private Button profileButton;
 
     private User current;
 
@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
-        //String s =  Manifest.permission.ACCESS_FINE_LOCATION;
 
         loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
         welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
@@ -100,9 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("YourKeyHash :", Base64.encodeToString(md.digest(), Base64.DEFAULT));
                 System.out.println("YourKeyHash: "+ Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
 
         }
 
@@ -172,7 +169,6 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, callback);
         //info.setText("PLEASE WORK");
 
-        mapsButton = (Button)findViewById(R.id.button_maps);
 
     }
 
@@ -207,26 +203,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickViewProfile(View v){
-        Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-        intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
-        startActivity(intent);
-
-    }
-
-    public void onClickMyEvents(View v){
-        Intent intent = new Intent(LoginActivity.this, userEventsActivity.class);
-        intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
-        startActivity(intent);
-
-    }
-
-    public void onClickMyMap(View v){
-        mapsButton.setBackground(ContextCompat.getDrawable(this, R.drawable.g_maps_icon_clicked));
-        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -236,13 +212,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mapsButton.setBackground(ContextCompat.getDrawable(this, R.drawable.g_maps_icon));
-        //Facebook login
-        //(new UpdateUserUI()).execute(AccessToken.getCurrentAccessToken());
-//        displayInfo();
-//        displayLikes();
-        nextActivity();
-
     }
 
     @Override
@@ -265,10 +234,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
-    private void nextActivity(){
-
-    }
 
     public void onClickGoToRequests(View v){
         Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
