@@ -10,7 +10,7 @@
     </item>
     <item
         android:id="@+id/lists_menu"
-        android:icon="@drawable/marker_icon"
+        android:icon="@drawable/list_icon_3"
         app:showAsAction="ifRoom"
         android:title="@string/lists_icon_title">
     </item>

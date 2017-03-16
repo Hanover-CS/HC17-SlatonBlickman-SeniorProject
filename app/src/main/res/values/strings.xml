@@ -8,6 +8,7 @@
     <string name="edit_event">Edit Event</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="title_activity_maps">Map</string>
+    <string name="login">Login</string>
     <string name="profile_icon_title">User Profile</string>
     <string name="map_icon_title">Event Map</string>
     <string name="lists_icon_title">My Events</string>
@@ -15,5 +16,10 @@
     <string name="delete_icon_title">Delete</string>
     <string name="cancel_icon_title">Cancel</string>
     <string name="gmaps_icon_title">Google Maps</string>
+    <string name="attending_q">Attending?</string>
+    <string name="attending_y">Attending!</string>
     <string name="about">This section is about me, Slaton Blickman! Wow!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

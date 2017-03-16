@@ -61,15 +61,6 @@
 
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/profileButton"
-        android:layout_below="@id/info"
-        android:text="View My Profile"
-        android:layout_toEndOf="@+id/picture"
-        android:onClick="onClickViewProfile"/>
-
-    <Button
         android:text="basinWeb Tests"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,25 +69,6 @@
         android:onClick="onClickGoToRequests"
         android:id="@+id/basinWebTests" />
 
-    <Button
-        android:text="VIEW MY EVENTS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/basinWebTests"
-        android:layout_toEndOf="@+id/picture"
-        android:id="@+id/button_event"
-        android:onClick="onClickMyEvents"/>
-
-    <Button
-        android:text=""
-        android:layout_margin="30dp"
-        android:background="@drawable/g_maps_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/login_button"
-        android:id="@+id/button_maps"
-        android:onClick="onClickMyMap"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

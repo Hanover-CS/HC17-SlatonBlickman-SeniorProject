@@ -3,21 +3,45 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_delete"
+        android:icon="@drawable/trash_icon"
+        android:orderInCategory="1"
+        android:visible="false"
+        app:showAsAction="always"
+        android:title="@string/delete_icon_title">
+    </item>
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="@drawable/pencil_icon"
+        android:visible="false"
+        android:orderInCategory="2"
+        app:showAsAction="always"
+        android:title="@string/edit_event">
+    </item>
+    <item
+        android:id="@+id/menu_check_attending"
+        android:icon="@drawable/heart_icon"
+        android:orderInCategory="3"
+        android:checked="false"
+        android:checkable="true"
+        app:showAsAction="always|withText"
+        android:title="@string/attending_q"/>
+    <item
         android:id="@+id/menu_profile"
         android:icon="@drawable/user_icon"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         android:title="@string/lists_icon_title">
     </item>
     <item
         android:id="@+id/menu_map"
         android:icon="@drawable/map_icon"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         android:title="@string/map_icon_title">
     </item>
     <item
         android:id="@+id/menu_googlemap"
         android:icon="@drawable/g_maps_icon"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         android:title="@string/gmaps_icon_title">
     </item>
 </menu>

@@ -43,14 +43,8 @@
         android:ems="10"
         android:id="@+id/description"
         android:maxLength="750"
-        android:hint="Description"
-        android:singleLine="false" />
+        android:hint="Description"/>
 
-    <Button
-        android:text="Create!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/create"
-        android:onClick="onClickCreateEvent"/>
+
 
 </LinearLayout>

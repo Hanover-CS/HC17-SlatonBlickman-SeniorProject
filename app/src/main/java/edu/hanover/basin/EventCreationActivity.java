@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -56,7 +57,6 @@ public class EventCreationActivity extends AppCompatActivity {
     private EditText Time;
     private DatePicker date;
     private String facebook_id;
-    private Button create;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,6 @@ public class EventCreationActivity extends AppCompatActivity {
         Time = (EditText)findViewById(R.id.time);
         //duration
         date = (DatePicker)findViewById(R.id.datePicker);
-        create = (Button)findViewById(R.id.create);
 
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
@@ -89,7 +88,6 @@ public class EventCreationActivity extends AppCompatActivity {
             editTime = (String)getIntent().getExtras().get(EXTRA_TIME);
             eventID = (String)getIntent().getExtras().get(EXTRA_EVENT_ID);
 
-            create.setText("SAVE!");
             title.setText(editTitle);
             description.setText(editDesc);
             Time.setText(editTime);
@@ -123,6 +121,51 @@ public class EventCreationActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_save:
+                //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
+                Pattern pattern;
+                Matcher matcher;
+                String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+                pattern = Pattern.compile(TIME24HOURS_PATTERN);
+
+                try{
+                    JSONObject body = new JSONObject();
+
+                    body.put("facebook_created_by", facebook_id);
+                    body.put("title", title.getText());
+                    body.put("description", description.getText());
+                    body.put("lat_coord", lat);
+                    body.put("long_coord", lng);
+                    //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
+                    body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
+
+                    matcher = pattern.matcher(Time.getText());
+
+                    if(matcher.matches()) {
+                        body.put("time_start", Time.getText());
+                        request(requestMethod, url.toString(), body);
+                    }
+                    else{
+                        Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch(JSONException e){
+                    Log.e("JSON EXCEPTION", e.toString());
+                }
+
+                return true;
+            case R.id.menu_cancel:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     public void onClickCreateEvent(View v){
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
         Pattern pattern;
