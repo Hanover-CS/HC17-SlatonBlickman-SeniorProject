@@ -261,7 +261,7 @@ public class MapsActivity extends AppCompatActivity
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<EventMarker>() {
             @Override
             public void onClusterItemInfoWindowClick(EventMarker eventMarker) {
-                if(eventMarker.getID() != "-1"){
+                if(!(eventMarker.getID().equals("-1"))){
                     Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
                     intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventMarker.getID());
                     startActivity(intent);
