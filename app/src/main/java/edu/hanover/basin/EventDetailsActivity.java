@@ -7,14 +7,19 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -39,15 +44,20 @@ public class EventDetailsActivity extends AppCompatActivity {
     private static final String IS_ATTENDING = "IsAttending";
     private static final String POST_ATTENDING = "PostAttending";
     private static final String GET_ATTENDEES = "GetAttendees";
+    private static final String DELETE_ATTENDING = "DeleteAttending";
 
-    private String event_id, lat, lng;
+    private String event_id, facebook_id, lat, lng;
+    private boolean checkOff, enableEdits, enableAttending;
     private JSONObject event;
     private JSONArray attendees;
+
+    private Menu menu;
+    private MenuItem menu_checked, menu_edit, menu_delete;
+    private RelativeLayout loadingPanel;
     private TextView title, coordinator, time, date, description;
     private ProfilePictureView picture;
     private CheckBox attendingBox;
     private ListView attendeesListView;
-    private boolean checkOff;
     private ImageView event_map;
 
 
@@ -57,9 +67,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
 
         basinURL url = new basinURL();
+        enableAttending = false;
 
-        String facebook_id = Profile.getCurrentProfile().getId();
+        facebook_id = Profile.getCurrentProfile().getId();
 
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
+        loadingPanel.setVisibility(View.VISIBLE);
         event_map = (ImageView)findViewById(R.id.event_map);
         event_id = (String)getIntent().getExtras().get(EXTRA_EVENT_ID);
         title = (TextView)findViewById(R.id.title);
@@ -71,7 +84,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         attendingBox = (CheckBox)findViewById(R.id.attending);
 
         url.getIsAttendingURL(event_id, facebook_id);
-        request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
+        //request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
 
         attendingBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -95,35 +108,127 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
         //Log.e("why no event id", event_id);
-        url.getEventURL(event_id);
-        request(Request.Method.GET, url.toString(), null, GET_EVENT);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+
+        menu_edit = menu.findItem(R.id.menu_edit);
+        menu_delete = menu.findItem(R.id.menu_delete);
+        menu_checked = menu.findItem(R.id.menu_check_attending);
+
+        basinURL url = new basinURL();
+
+        url.getEventURL(event_id);
+        request(Request.Method.GET, url.toString(), null, GET_EVENT);
+        url.getIsAttendingURL(event_id, facebook_id);
+        request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
+
         return true;
     }
 
-    public void onClickEdit(View v){
-        //Log.e("event is: ", event.toString());
-        try{
-            Intent intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
-            intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);
-            intent.putExtra(EventCreationActivity.EXTRA_EVENT_ID, event.getString("_id"));
-            intent.putExtra(EventCreationActivity.EXTRA_TITLE, event.getString("title"));
-            intent.putExtra(EventCreationActivity.EXTRA_DESCRIPTION, event.getString("description"));
-            intent.putExtra(EventCreationActivity.EXTRA_TIME, event.getString("time_start"));
-            intent.putExtra(EventCreationActivity.EXTRA_DATE, event.getString("date"));
-            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getDouble("long_coord"));
-            intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getDouble("lat_coord"));
-            startActivity(intent);
-        }
-        catch(JSONException e){
-            Log.e("JSON EXCEPTION", e.toString());
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu){
+//        super.onPrepareOptionsMenu(menu);
+//
+//       try{
+//           if(event.getString("facebook_created_by").equals(facebook_id)){
+//               Log.i("Coordinator event", "Editing enabled");
+//               menu_delete.setVisible(true);
+//               menu_edit.setVisible(true);
+//               //supportInvalidateOptionsMenu();
+//           }
+//       }
+//       catch(Exception e){
+//           Log.e("MENU EXCEPTION", e.toString());
+//       }
+//
+//        return true;
+//    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_check_attending:
+                basinURL attendingURL = new basinURL();
+                JSONObject body = new JSONObject();
+                try{
+                    body.put("user_id", Profile.getCurrentProfile().getId());
+                }
+                catch(JSONException e){
+                    //Log.e("", Profile.getCurrentProfile().getId());
+                    Log.e("JSON EXCEPTION", e.toString());
+                }
+                if (!item.isChecked()) {
+                    Log.i("IsChecked", "false");
+                    attendingURL.getEventAttendeesURL(event_id);
+                    //Log.e("USER ID", Profile.getCurrentProfile().getId())
+                    request(Request.Method.POST, attendingURL.toString(), body, POST_ATTENDING);
+                    item.setIcon(R.drawable.heart_checked_icon);
+                    item.setTitle("Attending!");
+                    item.setChecked(true);
+                }
+                else
+                {
+                    Log.i("IsChecked", "true");
+                    attendingURL.getIsAttendingURL(event_id, facebook_id);
+                    request(Request.Method.DELETE, attendingURL.toString(),null, DELETE_ATTENDING);
+                    item.setIcon(R.drawable.heart_icon);
+                    item.setChecked(false);
+                }
+
+                return true;
+            case R.id.menu_profile:
+                try {
+                    intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
+                    intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, event.getString("facebook_id"));
+                    startActivity(intent);
+                }
+                catch(JSONException e){
+                    e.printStackTrace();
+                }
+                return true;
+            case R.id.menu_googlemap:
+//                intent = new Intent(LoginActivity.this, userEventsActivity.class);
+//                intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+//                startActivity(intent);
+                return true;
+            case R.id.menu_map:
+                intent = new Intent(EventDetailsActivity.this, MapsActivity.class);
+                intent.putExtra(MapsActivity.EXTRA_EVENT_LAT, lat);
+                intent.putExtra(MapsActivity.EXTRA_EVENT_LNG, lng);
+                startActivity(intent);
+                return true;
+            case R.id.menu_delete:
+
+            case R.id.menu_edit:
+                try{
+                    intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
+                    intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);
+                    intent.putExtra(EventCreationActivity.EXTRA_EVENT_ID, event.getString("_id"));
+                    intent.putExtra(EventCreationActivity.EXTRA_TITLE, event.getString("title"));
+                    intent.putExtra(EventCreationActivity.EXTRA_DESCRIPTION, event.getString("description"));
+                    intent.putExtra(EventCreationActivity.EXTRA_TIME, event.getString("time_start"));
+                    intent.putExtra(EventCreationActivity.EXTRA_DATE, event.getString("date"));
+                    intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getDouble("long_coord"));
+                    intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getDouble("lat_coord"));
+                    startActivity(intent);
+                }
+                catch(JSONException e){
+                    Log.e("JSON EXCEPTION", e.toString());
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
+
 
     public void onClickGoToMaps(View v){
         Intent intent = new Intent(EventDetailsActivity.this, MapsActivity.class);
@@ -170,9 +275,22 @@ public class EventDetailsActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             Log.i("requested url", url);
+                            Log.i("response", response.toString());
                             switch (type) {
                                 case GET_EVENT://Log.i("event response", event.toString());
                                     event = response;
+                                    if(event.getString("facebook_created_by").equals(facebook_id)){
+                                        Log.i("Coordinator event", "Editing enabled");
+                                        menu_checked.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                                        menu_delete.setVisible(true);
+                                        menu_edit.setVisible(true);
+                                        //supportInvalidateOptionsMenu();
+
+                                    }
+                                    else{
+                                        menu_edit.setVisible(false);
+                                        menu_delete.setVisible(false);
+                                    }
                                     Log.i("event response", event.toString());
                                     title.setText(event.getString("title"));
                                     picture.setProfileId(event.getString("facebook_created_by"));
@@ -182,6 +300,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     date.setText(event.getString("date"));
                                     lat = event.getString("lat_coord");
                                     lng = event.getString("long_coord");
+                                    //Log.e("Compare ids", event.getString("facebook_created_by") + " vs. " + facebook_id);
 
                                     displayMap();
 
@@ -189,12 +308,24 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     aURL.getEventAttendeesURL(event_id);
                                     request(Request.Method.GET, aURL.toString(), null, GET_ATTENDEES);
                                     break;
+                                case POST_ATTENDING:
+                                    break;
+                                case DELETE_ATTENDING:
+                                    break;
                                 case IS_ATTENDING:
-                                    if (response.getString("attending") == "true") {
+                                    if (response.getString("attending").equals("true")) {
+                                        checkOff = true;
                                         attendingBox.setChecked(true);
+                                        menu_checked.setIcon(R.drawable.heart_checked_icon);
+                                        menu_checked.setChecked(true);
+                                        menu_checked.setTitle(getResources().getString(R.string.attending_y));
                                     } else {
                                         attendingBox.setChecked(false);
+                                        menu_checked.setIcon(R.drawable.heart_icon);
+                                        menu_checked.setChecked(false);
+                                        menu_checked.setTitle(getResources().getString(R.string.attending_q));
                                     }
+                                    menu_checked.setVisible(true);
                                     break;
                                 case GET_ATTENDEES:
                                     attendees = response.getJSONArray("users");
@@ -246,6 +377,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+            loadingPanel.setVisibility(View.GONE);
+            RelativeLayout detailsLayout = (RelativeLayout)findViewById(R.id.activity_event_details);
+            detailsLayout.setVisibility(View.VISIBLE);
+
         }
     }
 
