@@ -1,14 +1,16 @@
 package edu.hanover.basin;
 
-import android.app.Activity;
-import android.app.ListActivity;
+import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -18,14 +20,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class userEventsActivity extends AppCompatActivity {
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
+public class UserEventsActivity extends AppCompatActivity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
     String fb_id;
 
@@ -48,17 +51,52 @@ public class userEventsActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_event_lists, menu);
         return true;
     }
 
-    public void onClickAddEvent(View v){
-        Intent intent = new Intent(userEventsActivity.this, EventCreationActivity.class);
-        startActivity(intent);
-    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_map:
+                if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                }
+                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+                boolean enabled = service
+                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+                // check if enabled and if not send user to the GSP settings
+                // Better solution would be to display a dialog and suggesting to
+                // go to the settings
+                if (!enabled) {
+                    DialogFragment dialogFragment = new LocationDialog();
+                    dialogFragment.show(getFragmentManager(), "locationCheck");
+                }
+
+                else{
+                    intent = new Intent(UserEventsActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+            case R.id.menu_home:
+                intent = new Intent(UserEventsActivity.this, LoginActivity.class);
+                intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private void request(String url){
         // Request a string response
