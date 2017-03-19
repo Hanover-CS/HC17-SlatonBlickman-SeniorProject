@@ -15,9 +15,13 @@
     <string name="save_icon_title">Save</string>
     <string name="delete_icon_title">Delete</string>
     <string name="cancel_icon_title">Cancel</string>
+    <string name="home_icon_title">Home</string>
     <string name="gmaps_icon_title">Google Maps</string>
     <string name="attending_q">Attending?</string>
     <string name="attending_y">Attending!</string>
+    <string name="confirm">Sure</string>
+    <string name="cancel">Cancel</string>
+    <string name="location_enabled">This application requires location services to be enabled. Will you enable it?</string>
     <string name="about">This section is about me, Slaton Blickman! Wow!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
