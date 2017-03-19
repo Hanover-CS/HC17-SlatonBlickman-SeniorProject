@@ -6,16 +6,27 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.facebook.AccessToken.getCurrentAccessToken;
 
 public class ProfileActivity extends AppCompatActivity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
@@ -25,7 +36,9 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView age;
     private TextView location;
     private RelativeLayout loadingPanel;
+    MenuItem edit_icon;
 
+    private String id;
     private User current;
 
     @Override
@@ -33,7 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        String id = (String)getIntent().getExtras().get(EXTRA_FACEBOOK_ID);
+        id = (String)getIntent().getExtras().get(EXTRA_FACEBOOK_ID);
         loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
         info = (TextView) findViewById(R.id.info);
         age = (TextView) findViewById(R.id.age);
@@ -47,17 +60,59 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        edit_icon = menu.findItem(R.id.menu_edit);
+
+        if(id.equals(getCurrentAccessToken().getUserId())){
+            edit_icon.setVisible(true);
+        }
+
         return true;
     }
 
+    private void basinRequest(){
+        basinURL url = new basinURL();
+        url.getUserURL(id, "true");
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url.toString(), null,
+                new Response.Listener<JSONObject>() {
 
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // Result handling
+                        Log.i("Volley Response", response.toString());
+                        TextView about = (TextView)findViewById(R.id.about);
+                        try{
+                            about.setText("About:\n" + response.getString("about"));
+                        }
+                        catch (JSONException e){
+                           Log.e("JSONEXCEPTION!", e.toString());
+                        }
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                error.printStackTrace();
+
+            }
+
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(this).add(jsonRequest);
+    }
     private class UpdateProfile extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... id){
             current = new User(id[0]);
             current.startRequest();
+            basinRequest();
             return "success";
         }
 
@@ -76,4 +131,6 @@ public class ProfileActivity extends AppCompatActivity {
             Log.e("UI UPDATED:", "SUCCESS");
         }
     }
+
+
 }
