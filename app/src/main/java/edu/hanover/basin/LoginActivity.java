@@ -1,16 +1,15 @@
 package edu.hanover.basin;
 
-import android.*;
 import android.Manifest;
-import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,13 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,10 +34,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
-
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
@@ -53,9 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.List;
 
 //insert javadoc stuff
 public class LoginActivity extends AppCompatActivity {
@@ -68,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private ProfilePictureView profilePic;
     private TextView info, greeting;
-    private Button profileButton;
 
     private User current;
 
@@ -121,8 +108,6 @@ public class LoginActivity extends AppCompatActivity {
         info = (TextView) findViewById(R.id.info);
         greeting = (TextView)findViewById(R.id.greeting);
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
-        profileButton = (Button)findViewById(R.id.profileButton);
-
         loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes, user_location"));
 
@@ -190,14 +175,34 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.lists_menu:
-                intent = new Intent(LoginActivity.this, userEventsActivity.class);
-                intent.putExtra(userEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+                intent = new Intent(LoginActivity.this, UserEventsActivity.class);
+                intent.putExtra(UserEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
                 startActivity(intent);
                 return true;
             case R.id.map_menu:
-                intent = new Intent(LoginActivity.this, MapsActivity.class);
-                startActivity(intent);
-                return true;
+                if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                }
+                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+                boolean enabled = service
+                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+                // check if enabled and if not send user to the GSP settings
+                // Better solution would be to display a dialog and suggesting to
+                // go to the settings
+                if (!enabled) {
+                    DialogFragment dialogFragment = new LocationDialog();
+                    dialogFragment.show(getFragmentManager(), "locationCheck");
+                }
+
+                else{
+                    intent = new Intent(LoginActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+
             default:
                 return super.onOptionsItemSelected(item);
         }
