@@ -63,12 +63,9 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".userEventsActivity"
+            android:name=".UserEventsActivity"
             android:label="@string/event_lists"
             android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.hanover.basin.LoginActivity" />
         </activity>
 
         <activity
@@ -80,18 +77,12 @@
             android:name=".EventCreationActivity"
             android:label="@string/edit_event"
             android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.hanover.basin.MapsActivity" />
         </activity>
 
         <activity
             android:name=".MapsActivity"
             android:label="@string/event_map"
             android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.hanover.basin.LoginActivity" />
         </activity>
 
     </application>
