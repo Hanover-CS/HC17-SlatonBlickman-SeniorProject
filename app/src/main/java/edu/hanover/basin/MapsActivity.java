@@ -1,27 +1,22 @@
 package edu.hanover.basin;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
-import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.event.Event;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,7 +25,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +35,9 @@ import java.util.Map;
 import com.google.android.gms.location.LocationListener;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -62,22 +59,11 @@ public class MapsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabled = service
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        // check if enabled and if not send user to the GSP settings
-        // Better solution would be to display a dialog and suggesting to
-        // go to the settings
-        if (!enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
         // Create an instance of GoogleAPIClient.
         getLocation();
 
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -87,8 +73,27 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_maps, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_lists:
+                intent = new Intent(MapsActivity.this, UserEventsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.menu_home:
+                intent = new Intent(MapsActivity.this, LoginActivity.class);
+                intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
@@ -105,22 +110,6 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        //Get event data. Locations are all that's needed for now.
-        //How do I start around a location?
-        //Will need to limit based on proximity
-        //mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        // Add a marker in Sydney and move the camera
-        //getLocation();
-
-        //mMap.setMaxZoomPreference(20.0f);
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                Log.d("", marker.getTitle());
-            }
-        });
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
 
@@ -132,12 +121,11 @@ public class MapsActivity extends AppCompatActivity
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
                 intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
+
+                intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
         });
-
-//        mClusterManager.setOnClusterItemClickListener();
-
 
     }
 
