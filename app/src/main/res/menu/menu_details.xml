@@ -33,15 +33,10 @@
         android:title="@string/lists_icon_title">
     </item>
     <item
-        android:id="@+id/menu_map"
-        android:icon="@drawable/map_icon"
-        app:showAsAction="collapseActionView"
+        android:id="@+id/menu_marker"
+        android:icon="@drawable/marker_icon"
+        android:orderInCategory="4"
+        app:showAsAction="always"
         android:title="@string/map_icon_title">
-    </item>
-    <item
-        android:id="@+id/menu_googlemap"
-        android:icon="@drawable/g_maps_icon"
-        app:showAsAction="collapseActionView"
-        android:title="@string/gmaps_icon_title">
     </item>
 </menu>

@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:weightSum="2.5"
-    tools:context="edu.hanover.basin.userEventsActivity">
+    tools:context="edu.hanover.basin.UserEventsActivity">
 
     <TextView
         android:layout_gravity="center_horizontal"

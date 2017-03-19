@@ -99,16 +99,6 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/attendees" />
 
-            <CheckBox
-                android:text="Attending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/attending"
-                android:layout_centerHorizontal="true"
-                android:textAppearance="@android:style/TextAppearance.Large"
-                android:layout_below="@+id/users_attending_list"
-                android:layout_alignParentStart="true" />
-
         </RelativeLayout>
 
         <ImageView
@@ -116,7 +106,7 @@
             android:layout_height="match_parent"
             android:id="@+id/event_map"
             android:onClick="onClickGoToMaps"
-            android:layout_margin="30dp" />
+            android:layout_margin="10dp" />
 
         <RelativeLayout
             android:id="@+id/loadingPanel"

@@ -24,13 +24,19 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_margin="16dp"/>
+    <TextView
+        android:text="About"
+        android:id="@+id/about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/picture"/>
 
     <ListView
         android:scrollbars="vertical"
         android:layout_width="fill_parent"
         android:layout_height="200dip"
         android:layout_gravity="center"
-        android:layout_below="@id/picture"
+        android:layout_below="@id/about"
         android:id="@+id/likes_list"/>
 
     <TextView
@@ -38,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:id="@+id/info"
-        android:text="Loading..."
+        android:text=""
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_toEndOf="@+id/picture" />
