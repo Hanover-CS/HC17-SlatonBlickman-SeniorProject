@@ -3,7 +3,8 @@ package edu.hanover.basin;
 import android.app.Activity;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
+import java.util.Calendar;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import static edu.hanover.basin.R.id.datePicker;
 
 public class EventCreationActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ACTIVITY_STARTED = "ActivityStarted";
     public static final String EXTRA_EVENT_LAT = "EventLat";
     public static final String EXTRA_EVENT_LNG = "EventLng";
     public static final String EXTRA_UPDATING = "EventUpdate";
@@ -43,6 +45,7 @@ public class EventCreationActivity extends AppCompatActivity {
     public static final String EXTRA_TIME = "EventTime";
     public static final String EXTRA_DATE = "EventDate";
     public static final String EXTRA_EVENT_ID = "EventID";
+
 
     private boolean updating;
     private String location;
@@ -54,7 +57,7 @@ public class EventCreationActivity extends AppCompatActivity {
 
     private EditText title;
     private EditText description;
-    private EditText Time;
+    private EditText time;
     private DatePicker date;
     private String facebook_id;
 
@@ -65,22 +68,31 @@ public class EventCreationActivity extends AppCompatActivity {
 
         facebook_id = Profile.getCurrentProfile().getId();
         title = (EditText)findViewById(R.id.title);
-        title.setText(facebook_id);
         description = (EditText)findViewById(R.id.description);
-        Time = (EditText)findViewById(R.id.time);
-        //duration
+        time = (EditText)findViewById(R.id.time);
         date = (DatePicker)findViewById(R.id.datePicker);
+        date.setMinDate(System.currentTimeMillis() - 10000);
 
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
         location = String.valueOf(lat) + ", " + String.valueOf(lng);
         updating = (Boolean)getIntent().getExtras().get(EXTRA_UPDATING);
 
-        //description.setText(location);
         url = new basinURL();
+
+    }
+
+    @Override
+    protected  void onResume(){
+        super.onResume();
 
         if(updating){
             String editTitle, editDesc, editTime, editDate;
+            int year, month, day;
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(date.getYear(), date.getMonth() + 1, date.getDayOfMonth());
+            cal.add(Calendar.DATE, 120);
 
             editDate =(String)getIntent().getExtras().get(EXTRA_DATE);
             editTitle = (String)getIntent().getExtras().get(EXTRA_TITLE);
@@ -88,9 +100,20 @@ public class EventCreationActivity extends AppCompatActivity {
             editTime = (String)getIntent().getExtras().get(EXTRA_TIME);
             eventID = (String)getIntent().getExtras().get(EXTRA_EVENT_ID);
 
+            year = Integer.parseInt(editDate.substring(5, 8));
+            month = Integer.parseInt(editDate.substring(3, 4));
+            day = Integer.parseInt(editDate.substring(0,1));
+
+            try{
+                date.updateDate(year, month, day);
+            }
+            catch(Exception e){
+                //do nothing
+            }
+
             title.setText(editTitle);
             description.setText(editDesc);
-            Time.setText(editTime);
+            time.setText(editTime);
 
             requestMethod = Request.Method.PUT;
             url.getEventURL(eventID);
@@ -100,18 +123,6 @@ public class EventCreationActivity extends AppCompatActivity {
             requestMethod = Request.Method.POST;
             url.getEventURL("");
         }
-
-
-
-        //if need to convert from string to LatLng
-//        String[] location = ((String)getIntent().getExtras().get(EXTRA_EVENT_LATLNG)).split(",");
-//        double lat = Double.parseDouble(location[0]);
-//        double lng = Double.parseDouble(location[1]);
-//        LatLng latLng = new LatLng(lat, lng);
-
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        String dateString = sdf.format(date1);
-
     }
 
     @Override
@@ -126,28 +137,7 @@ public class EventCreationActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_save:
-                try{
-                    JSONObject body = new JSONObject();
-                    body.put("facebook_created_by", facebook_id);
-                    body.put("title", title.getText());
-                    body.put("description", description.getText());
-                    body.put("lat_coord", lat);
-                    body.put("long_coord", lng);
-                    //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
-                    body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
-
-                    if(validTime()) {
-                        body.put("time_start", Time.getText());
-                        request(requestMethod, url.toString(), body);
-                    }
-                    else{
-                        Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch(JSONException e){
-                    Log.e("JSON EXCEPTION", e.toString());
-                }
-
+                createEvent();
                 return true;
             case R.id.menu_cancel:
                 finish();
@@ -163,20 +153,14 @@ public class EventCreationActivity extends AppCompatActivity {
         Matcher matcher;
         String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
         pattern = Pattern.compile(TIME24HOURS_PATTERN);
-        matcher = pattern.matcher(Time.getText());
+        matcher = pattern.matcher(time.getText());
         return matcher.matches();
     }
 
-    public void onClickCreateEvent(View v){
+    public void createEvent(){
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
-        Pattern pattern;
-        Matcher matcher;
-        String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
-        pattern = Pattern.compile(TIME24HOURS_PATTERN);
-
         try{
             JSONObject body = new JSONObject();
-
             body.put("facebook_created_by", facebook_id);
             body.put("title", title.getText());
             body.put("description", description.getText());
@@ -185,21 +169,17 @@ public class EventCreationActivity extends AppCompatActivity {
             //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
             body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
 
-            matcher = pattern.matcher(Time.getText());
-
-            if(matcher.matches()) {
-                body.put("time_start", Time.getText());
+            if(validTime()) {
+                body.put("time_start", time.getText());
                 request(requestMethod, url.toString(), body);
             }
             else{
                 Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
             }
-
         }
         catch(JSONException e){
             Log.e("JSON EXCEPTION", e.toString());
         }
-
     }
 
     private void request(int method, String url, JSONObject body){
@@ -213,8 +193,23 @@ public class EventCreationActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         //event = response;
                         try{
-                            Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
-                            finish();
+                            Intent thisIntent = getIntent();
+                            String activity;
+                            if(thisIntent != null){
+                                activity = thisIntent.getExtras().getString(EXTRA_ACTIVITY_STARTED);
+                                if(activity.equals("EventDetails")){
+                                    finish();
+                                }
+                                else{
+
+                                    Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(EventCreationActivity.this, MapsActivity.class);
+                                    intent.putExtra(MapsActivity.EXTRA_EVENT_LNG, lng);
+                                    intent.putExtra(MapsActivity.EXTRA_EVENT_LAT, lat);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                }
+                            }
                        }
 
                         catch(Exception e){
