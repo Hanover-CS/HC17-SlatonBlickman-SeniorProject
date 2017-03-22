@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Events.Activities;
 
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -25,6 +25,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import edu.hanover.basin.Events.Objects.EventsAdapter;
+import edu.hanover.basin.Map.Fragments.LocationDialog;
+import edu.hanover.basin.LoginActivity;
+import edu.hanover.basin.Map.Activities.MapsActivity;
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Utils.ArrayUtil;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 

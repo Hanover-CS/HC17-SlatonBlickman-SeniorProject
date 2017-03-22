@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Events.Objects;
 
 import android.util.Log;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class EventList {
     private ArrayList<JSONObject> eventsArrayList;
 
-    EventList(JSONArray events){
+    public EventList(JSONArray events){
         JSONObject objIn;
         eventsArrayList = new ArrayList<JSONObject>();
 

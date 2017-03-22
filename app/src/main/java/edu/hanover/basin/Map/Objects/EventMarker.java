@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Map.Objects;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;

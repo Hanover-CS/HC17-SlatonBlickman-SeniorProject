@@ -54,31 +54,31 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".Users.Activities.ProfileActivity"
             android:label="@string/user_profile"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".BasinWebTestActivity"
+            android:name=".Request.Activities.BasinWebTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserEventsActivity"
+            android:name=".Events.Activities.UserEventsActivity"
             android:label="@string/event_lists"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".Events.Activities.EventDetailsActivity"
             android:label="@string/event_details"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".EventCreationActivity"
+            android:name=".Events.Activities.EventCreationActivity"
             android:label="@string/edit_event"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".MapsActivity"
+            android:name=".Map.Activities.MapsActivity"
             android:label="@string/event_map"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ProfileEditActivity"
+            android:name=".Users.Activities.ProfileEditActivity"
             android:label="@string/edit_profile"
             android:noHistory="true"
             android:screenOrientation="portrait"/>

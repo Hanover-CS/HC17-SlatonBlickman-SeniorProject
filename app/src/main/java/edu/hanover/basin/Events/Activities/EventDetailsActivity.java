@@ -1,7 +1,5 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Events.Activities;
 
-import android.*;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,26 +18,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.Profile;
 import com.facebook.login.widget.ProfilePictureView;
@@ -51,7 +43,15 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+import edu.hanover.basin.Map.Activities.MapsActivity;
+import edu.hanover.basin.Map.Fragments.LocationDialog;
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Users.Activities.ProfileActivity;
+import edu.hanover.basin.Users.Objects.User;
+import edu.hanover.basin.Users.Objects.UsersAdapter;
+import edu.hanover.basin.Utils.ArrayUtil;
+
 import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 
 public class EventDetailsActivity extends AppCompatActivity {

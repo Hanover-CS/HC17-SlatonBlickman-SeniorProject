@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Request.Activities;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -11,15 +11,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.facebook.AccessToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinWebRequest;
+import edu.hanover.basin.Request.Objects.basinURL;
 
 public class BasinWebTestActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";

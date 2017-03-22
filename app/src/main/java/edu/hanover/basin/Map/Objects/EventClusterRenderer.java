@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Map.Objects;
 
 import android.content.Context;
 
@@ -9,15 +9,15 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
+import edu.hanover.basin.Map.Objects.EventMarker;
 
 /**
  * Created by Slaton on 3/19/2017.
  */
 
-public class EventRenderer extends DefaultClusterRenderer<EventMarker> {
-    public EventRenderer(Context context, GoogleMap map,
-                         ClusterManager<EventMarker> clusterManager) {
+public class EventClusterRenderer extends DefaultClusterRenderer<EventMarker> {
+    public EventClusterRenderer(Context context, GoogleMap map,
+                                ClusterManager<EventMarker> clusterManager) {
         super(context, map, clusterManager);
     }
 

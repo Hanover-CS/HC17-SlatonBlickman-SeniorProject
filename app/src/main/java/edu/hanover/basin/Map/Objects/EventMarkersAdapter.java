@@ -1,7 +1,6 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Map.Objects;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,10 +11,10 @@ import android.widget.TextView;
 
 import com.facebook.login.widget.ProfilePictureView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
+
+import edu.hanover.basin.Map.Objects.EventMarker;
+import edu.hanover.basin.R;
 
 /**
  * Created by Slaton on 3/19/2017.

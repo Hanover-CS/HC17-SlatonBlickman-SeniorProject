@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Events.Objects;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +13,11 @@ import com.facebook.login.widget.ProfilePictureView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+
+import edu.hanover.basin.Events.Activities.EventDetailsActivity;
+import edu.hanover.basin.R;
 
 import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
 

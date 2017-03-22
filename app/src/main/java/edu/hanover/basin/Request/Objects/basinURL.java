@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Request.Objects;
 
 import android.content.ServiceConnection;
 
@@ -15,7 +15,7 @@ public class basinURL {
     private static final String OPEN_BASINWEB = "http://vault.hanover.edu/~blickmans15/services/basinWeb/v1/index.php";
     private String buildURL = "";
 
-    basinURL(){
+    public basinURL(){
         buildURL = OPEN_BASINWEB;
     }
 

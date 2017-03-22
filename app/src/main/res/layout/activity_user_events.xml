@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:weightSum="1.1"
-    tools:context="edu.hanover.basin.UserEventsActivity">
+    tools:context="edu.hanover.basin.Events.Activities.UserEventsActivity">
 
     <LinearLayout
         android:layout_weight=".5"

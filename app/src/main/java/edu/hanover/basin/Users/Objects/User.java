@@ -1,12 +1,10 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Users.Objects;
 
-import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.util.Log;
 
 
 import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
@@ -17,8 +15,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Slaton on 11/5/2016.
@@ -36,7 +32,7 @@ public class User {
 
     private List<String> FacebookLikes = new ArrayList<>();
 
-    User(String id){
+    public User(String id){
         shouldGetLikes = true;
         this.FacebookID = id;
         Log.e("NEW USER(id):", id);
@@ -44,7 +40,7 @@ public class User {
 
     }
 
-    User(final AccessToken accessToken){
+    public User(final AccessToken accessToken){
         Log.e("NEW USER(token)", accessToken.toString());
         shouldGetLikes = true;
         requestCurrentUserInfo(accessToken);

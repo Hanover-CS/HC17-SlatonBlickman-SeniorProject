@@ -46,6 +46,14 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import edu.hanover.basin.Events.Activities.UserEventsActivity;
+import edu.hanover.basin.Map.Activities.MapsActivity;
+import edu.hanover.basin.Map.Fragments.LocationDialog;
+import edu.hanover.basin.Request.Activities.BasinWebTestActivity;
+import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Users.Activities.ProfileActivity;
+import edu.hanover.basin.Users.Objects.User;
+
 //insert javadoc stuff
 public class LoginActivity extends AppCompatActivity {
 

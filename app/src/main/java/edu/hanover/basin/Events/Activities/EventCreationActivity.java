@@ -1,20 +1,16 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Events.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
+
 import java.util.Calendar;
-import android.os.Build;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -23,7 +19,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.Profile;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,8 +26,9 @@ import org.json.JSONObject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static edu.hanover.basin.EventDetailsActivity.EXTRA_EVENT_ID;
-import static edu.hanover.basin.R.id.datePicker;
+import edu.hanover.basin.Map.Activities.MapsActivity;
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinURL;
 
 public class EventCreationActivity extends AppCompatActivity {
 
@@ -45,7 +41,6 @@ public class EventCreationActivity extends AppCompatActivity {
     public static final String EXTRA_TIME = "EventTime";
     public static final String EXTRA_DATE = "EventDate";
     public static final String EXTRA_EVENT_ID = "EventID";
-
 
     private boolean updating;
     private String location;
@@ -75,8 +70,8 @@ public class EventCreationActivity extends AppCompatActivity {
 
         lat = (Double)getIntent().getExtras().get(EXTRA_EVENT_LAT);
         lng = (Double)getIntent().getExtras().get(EXTRA_EVENT_LNG);
-        location = String.valueOf(lat) + ", " + String.valueOf(lng);
         updating = (Boolean)getIntent().getExtras().get(EXTRA_UPDATING);
+        location = String.valueOf(lat) + ", " + String.valueOf(lng);
 
         url = new basinURL();
 
@@ -108,7 +103,7 @@ public class EventCreationActivity extends AppCompatActivity {
                 date.updateDate(year, month, day);
             }
             catch(Exception e){
-                //do nothing
+                Log.e("Exception setting date", e.toString());
             }
 
             title.setText(editTitle);
@@ -117,7 +112,6 @@ public class EventCreationActivity extends AppCompatActivity {
 
             requestMethod = Request.Method.PUT;
             url.getEventURL(eventID);
-
         }
         else{
             requestMethod = Request.Method.POST;
@@ -132,9 +126,10 @@ public class EventCreationActivity extends AppCompatActivity {
         return true;
     }
 
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_save:
                 createEvent();
@@ -161,12 +156,12 @@ public class EventCreationActivity extends AppCompatActivity {
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
         try{
             JSONObject body = new JSONObject();
+
             body.put("facebook_created_by", facebook_id);
             body.put("title", title.getText());
             body.put("description", description.getText());
             body.put("lat_coord", lat);
             body.put("long_coord", lng);
-            //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
             body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
 
             if(validTime()) {

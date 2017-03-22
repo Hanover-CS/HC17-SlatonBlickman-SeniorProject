@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Utils;
 
 import android.util.Log;
 
@@ -7,11 +7,11 @@ import com.google.maps.android.clustering.Cluster;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+
+import edu.hanover.basin.Map.Objects.EventMarker;
 
 /**
  * Created by Slaton on 3/11/2016.

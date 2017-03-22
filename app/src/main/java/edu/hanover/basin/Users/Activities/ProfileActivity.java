@@ -1,6 +1,5 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Users.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,14 +19,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Users.Objects.User;
 
 import static com.facebook.AccessToken.getCurrentAccessToken;
 

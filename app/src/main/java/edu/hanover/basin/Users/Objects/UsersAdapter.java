@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Users.Objects;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import edu.hanover.basin.R;
+import edu.hanover.basin.Users.Activities.ProfileActivity;
 
 /**
  * Created by Slaton on 3/11/2017.

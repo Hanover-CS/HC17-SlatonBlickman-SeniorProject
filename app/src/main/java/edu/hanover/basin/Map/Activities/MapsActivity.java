@@ -1,22 +1,15 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Map.Activities;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -44,12 +37,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
+import edu.hanover.basin.Events.Activities.EventCreationActivity;
+import edu.hanover.basin.Events.Activities.EventDetailsActivity;
+import edu.hanover.basin.Map.Objects.EventMarker;
+import edu.hanover.basin.Map.Objects.EventMarkersAdapter;
+import edu.hanover.basin.Map.Objects.EventClusterRenderer;
+import edu.hanover.basin.Events.Activities.UserEventsActivity;
+import edu.hanover.basin.LoginActivity;
+import edu.hanover.basin.R;
+import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Utils.ArrayUtil;
+
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -134,13 +138,14 @@ public class MapsActivity extends AppCompatActivity
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
                 intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
-
+                intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "MapsActivity");
+                intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
                 intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
         });
-
     }
+
 
     @Override
     protected void onStart() {
@@ -176,7 +181,6 @@ public class MapsActivity extends AppCompatActivity
     private void getLocation(){
         createLocationRequest();
         buildGoogleApiClient();
-
     }
 
 
@@ -197,15 +201,10 @@ public class MapsActivity extends AppCompatActivity
             //add rest of markers from database
             basinURL url = new basinURL();
             url.getEventURL("");
-            if(allMarkerMap != null){
-                request(Request.Method.GET, url.toString());
-                updateUI();
-            }
+            request(Request.Method.GET, url.toString());
+            updateUI();
 
         }
-//        else{
-//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//        }
     }
 
     @Override
@@ -236,12 +235,55 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    private void showClusterListDialog(final Cluster cluster){
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(MapsActivity.this);
+        ArrayList<EventMarker> eventMarkers;
+        eventMarkers = ArrayUtil.toArrayList(cluster);
+
+        builderSingle.setNegativeButton("Back to Map", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+            }
+        });
+        builderSingle.setPositiveButton("New Event", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                Collection<EventMarker> collection = cluster.getItems();
+                EventMarker marker = collection.iterator().next();
+                LatLng position = marker.getPosition();
+                Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
+
+                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, position.latitude);
+                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, position.longitude);
+                intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
+                intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "EventDetails");
+                intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
+
+                startActivity(intent);
+            }
+        });
+        // Create the adapter to convert the array to views
+        final EventMarkersAdapter adapter = new EventMarkersAdapter(getApplicationContext(), eventMarkers);
+        builderSingle.setAdapter(adapter,  new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                EventMarker event = adapter.getItem(item);
+                Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
+                intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getID());
+                intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
+        builderSingle.show();
+    }
+
     private void setupCluster(){
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<EventMarker>(this, mMap);
-        EventRenderer eventRenderer = new EventRenderer(this, mMap, mClusterManager);
-        mClusterManager.setRenderer(eventRenderer);
+
+        mClusterManager.setRenderer(new EventClusterRenderer(this, mMap, mClusterManager));
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -249,52 +291,14 @@ public class MapsActivity extends AppCompatActivity
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
 
-        //mClusterManager.setRenderer(new EventMarkerRenderer(this, mMap, mClusterManager));
         mClusterManager
                 .setOnClusterClickListener(new ClusterManager.OnClusterClickListener<EventMarker>() {
                     @Override
                     public boolean onClusterClick(final Cluster<EventMarker> cluster) {
-                        AlertDialog.Builder builderSingle = new AlertDialog.Builder(MapsActivity.this);
-                        ArrayList<EventMarker> eventMarkers;
-                        eventMarkers = ArrayUtil.toArrayList(cluster);
-
-                        builderSingle.setNegativeButton("Back to Map", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int item) {
-                                dialog.dismiss();
-                            }
-                        });
-                        builderSingle.setPositiveButton("New Event", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int item) {
-                                Collection<EventMarker> collection = cluster.getItems();
-                                EventMarker marker = collection.iterator().next();
-                                LatLng position = marker.getPosition();
-                                Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
-                                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, position.latitude);
-                                intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, position.longitude);
-                                intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
-                                startActivity(intent);
-                            }
-                        });
-                        // Create the adapter to convert the array to views
-                        final EventMarkersAdapter adapter = new EventMarkersAdapter(getApplicationContext(), eventMarkers);
-                        builderSingle.setAdapter(adapter,  new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int item) {
-                                EventMarker event = adapter.getItem(item);
-                                Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
-                                intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getID());
-                                intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                startActivity(intent);
-                            }
-                        });
-                        builderSingle.show();
-
+                        showClusterListDialog(cluster);
                         return true;
                     }
                 });
-
 
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<EventMarker>() {
             @Override
@@ -313,21 +317,19 @@ public class MapsActivity extends AppCompatActivity
         //test location
         //mLastLatLng = new LatLng(38.713, -85.459 );
         if(mLastLatLng != null) {
+            Log.i("LAST LOCATION", mLastLatLng.toString());
+
             if(mClusterManager == null){
                 setupCluster();
             }
 
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
-            Toast.makeText(this, "location :"+ mLastLatLng, Toast.LENGTH_SHORT).show();
-            Log.i("LAST LOCATION", mLastLatLng.toString());
-
 
             if(mMe == null){
                 mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
                 mClusterManager.addItem(mMe);
             }
-
         }
         else{
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
@@ -341,8 +343,7 @@ public class MapsActivity extends AppCompatActivity
     private void addMarkers(JSONArray events){
         JSONObject event;
         Marker marker;
-        Double lat;
-        Double lng;
+        Double lat, lng;
         LatLng location;
         String title, time_date, id;
         EventMarker eventMarker;

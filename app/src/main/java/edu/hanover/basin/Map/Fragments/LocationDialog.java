@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Map.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+
+import edu.hanover.basin.R;
 
 /**
  * Created by Slaton on 3/16/2017.

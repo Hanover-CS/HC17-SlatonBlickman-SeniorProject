@@ -1,4 +1,4 @@
-package edu.hanover.basin;
+package edu.hanover.basin.Request.Objects;
 
 import android.content.Context;
 import android.util.Log;
@@ -45,12 +45,12 @@ public class basinWebRequest {
     }
 
 
-    basinWebRequest(Context context){
+    public basinWebRequest(Context context){
         this.context = context;
         toJSON("{empty: empty}");
     }
 
-    basinWebRequest(){
+    public basinWebRequest(){
         toJSON("{empty: empty}");
     }
 
