@@ -66,7 +66,7 @@ function getValidParams($route){
 function getDefaults($route){
     switch($route){
         case "/users/id":
-            $defaults = ['facebook_id' => 'false'];
+            $defaults = ['facebook_id' => 'true'];
             break;
         case "/users":
             $defaults = ['sort' => 'fname', 'direction' => 'asc'];
