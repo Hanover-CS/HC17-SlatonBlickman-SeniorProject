@@ -126,15 +126,8 @@ public class EventCreationActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_save:
-                //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
-                Pattern pattern;
-                Matcher matcher;
-                String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
-                pattern = Pattern.compile(TIME24HOURS_PATTERN);
-
                 try{
                     JSONObject body = new JSONObject();
-
                     body.put("facebook_created_by", facebook_id);
                     body.put("title", title.getText());
                     body.put("description", description.getText());
@@ -143,16 +136,13 @@ public class EventCreationActivity extends AppCompatActivity {
                     //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMMM d, yy");
                     body.put("date", (date.getMonth() + 1) + "-" + date.getDayOfMonth() + "-" + date.getYear());
 
-                    matcher = pattern.matcher(Time.getText());
-
-                    if(matcher.matches()) {
+                    if(validTime()) {
                         body.put("time_start", Time.getText());
                         request(requestMethod, url.toString(), body);
                     }
                     else{
                         Toast.makeText(this, "Time is invalid!", Toast.LENGTH_SHORT).show();
                     }
-
                 }
                 catch(JSONException e){
                     Log.e("JSON EXCEPTION", e.toString());
@@ -166,6 +156,17 @@ public class EventCreationActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private boolean validTime(){
+        //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
+        Pattern pattern;
+        Matcher matcher;
+        String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+        pattern = Pattern.compile(TIME24HOURS_PATTERN);
+        matcher = pattern.matcher(Time.getText());
+        return matcher.matches();
+    }
+
     public void onClickCreateEvent(View v){
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
         Pattern pattern;
