@@ -14,6 +14,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/about"
         android:hint="@string/edit_about"
-        android:maxLength="500"/>
+        android:maxLength="250"/>
 
 </RelativeLayout>

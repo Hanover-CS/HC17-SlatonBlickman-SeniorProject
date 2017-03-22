@@ -18,7 +18,7 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/title"
-        android:maxLength="50"
+        android:maxLength="25"
         android:hint="Title" />
 
     <EditText
@@ -27,7 +27,8 @@
         android:inputType="time"
         android:ems="10"
         android:id="@+id/time"
-        android:hint="Time" />
+        android:maxLength="5"
+        android:hint="@string/time_hint" />
 
     <DatePicker
         android:datePickerMode="spinner"
@@ -42,7 +43,7 @@
         android:inputType="textMultiLine|textPersonName"
         android:ems="10"
         android:id="@+id/description"
-        android:maxLength="750"
+        android:maxLength="250"
         android:hint="Description"/>
 
 

@@ -9,6 +9,7 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="title_activity_maps">Map</string>
     <string name="login">Login</string>
+    <string name="time_hint">00:00</string>
     <string name="profile_icon_title">User Profile</string>
     <string name="map_icon_title">Event Map</string>
     <string name="lists_icon_title">My Events</string>
