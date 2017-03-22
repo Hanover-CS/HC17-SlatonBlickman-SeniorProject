@@ -57,10 +57,12 @@ import edu.hanover.basin.Users.Objects.User;
 //insert javadoc stuff
 public class LoginActivity extends AppCompatActivity {
 
+    //Facebook variables
     private CallbackManager callbackManager;
     private AccessToken accessToken;
     private AccessTokenTracker accessTokenTracker;
 
+    //Layout and View variables
     private RelativeLayout loadingPanel, welcomePanel;
     private ScrollView infoContainer;
     private MenuItem profile_icon, map_icon, lists_icon;
@@ -68,9 +70,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProfilePictureView profilePic;
     private TextView info, greeting;
 
+    //Object variables
     private User current;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +79,8 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
 
-        loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
-        welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
-        infoContainer = (ScrollView)findViewById(R.id.infoContainer);
-        loadingPanel.setVisibility(View.VISIBLE);
-
+        //Log keyhash for the application
+        //Keyhash is necessary for Facebook to keep track of application
         try {
             PackageInfo info = getPackageManager().getPackageInfo("edu.hanover.basin", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
@@ -96,8 +94,18 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("Key hash exception", e.toString());
         }
 
-        callbackManager = CallbackManager.Factory.create();
+        loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
+        welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
+        infoContainer = (ScrollView)findViewById(R.id.infoContainer);
+        info = (TextView) findViewById(R.id.info);
+        greeting = (TextView)findViewById(R.id.greeting);
+        profilePic = (ProfilePictureView) findViewById(R.id.picture);
+        loginButton = (LoginButton)findViewById(R.id.login_button);
 
+        loadingPanel.setVisibility(View.VISIBLE);
+
+        callbackManager = CallbackManager.Factory.create();
+        //Keep track of hte current user; if the accesstoken changes then hte user has changed but probably logged out
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
@@ -116,15 +124,9 @@ public class LoginActivity extends AppCompatActivity {
         // If the access token is available already assign it.
         accessToken = AccessToken.getCurrentAccessToken();
 
-        info = (TextView) findViewById(R.id.info);
-        greeting = (TextView)findViewById(R.id.greeting);
-        profilePic = (ProfilePictureView) findViewById(R.id.picture);
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes, user_location"));
-
-
-        if(AccessToken.getCurrentAccessToken() != null){
-            (new GetCurrentUser()).execute(AccessToken.getCurrentAccessToken());
+        //if the user is logged in, get the current user from Facebook
+        if(accessToken != null){
+            (new GetCurrentUser()).execute(accessToken);
             Log.i("ACCESS TOKEN:", "NOT NULL");
         }
         else{
@@ -139,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                 loadingPanel.setVisibility(View.VISIBLE);
                 accessToken = loginResult.getAccessToken();
 
+                //user has sucessfully logged in; get user information from Facebook
                 (new GetCurrentUser()).execute(accessToken);
 
             }
@@ -151,17 +154,20 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException e) {
-                info.setText(e.toString());
+                Log.e("Login Error", (e.toString()));
                 current = null;
             }
         };
 
+        //set Facebook permisions to ask for when the user clicks the loginbutton
+        loginButton.setReadPermissions(Arrays.asList("public_profile, user_birthday, user_likes, user_location"));
+
+        //use defined callback to handle the result from Facebook Login
         loginButton.registerCallback(callbackManager, callback);
-        //info.setText("PLEASE WORK");
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
     }
@@ -207,28 +213,30 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.profile_icon:
+                //Go to current user's profile
                 intent = new Intent(LoginActivity.this, ProfileActivity.class);
                 intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
                 startActivity(intent);
                 return true;
             case R.id.lists_icon:
+                //Go to user's event lists
                 intent = new Intent(LoginActivity.this, UserEventsActivity.class);
                 intent.putExtra(UserEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
                 startActivity(intent);
                 return true;
             case R.id.map_icon:
+                //check if the user has granted access to fine_location
                 if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(this,
                             new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return true;
                 }
-                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-                boolean enabled = service
-                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-                // check if enabled and if not send user to the GSP settings
-                // Better solution would be to display a dialog and suggesting to
-                // go to the settings
+                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+                boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                // if access granted, go to
+                // if not display a dialog and suggest to go to the settings
                 if (!enabled) {
                     DialogFragment dialogFragment = new LocationDialog();
                     dialogFragment.show(getFragmentManager(), "locationCheck");
@@ -244,13 +252,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickGoToRequests(View v){
-        Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
-        intent.putExtra(BasinWebTestActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
-        startActivity(intent);
-    }
-
-    private void updateViewVisiblity(){
+    private void updateViewVisibility(){
         info.setText(getResources().getString(R.string.about));
 
         profile_icon.setVisible(true);
@@ -262,7 +264,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.e("UI UPDATED:", "SUCCESS");
     }
 
-    private void getUser( int method, JSONObject body, final int tries ){
+    private void getBasinUser( int method, JSONObject body, final int tries ){
         basinURL dbUser = new basinURL();
         String url;
         if(method == Request.Method.GET){
@@ -281,7 +283,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Result handling
                             Log.i("Volley Response", response.toString());
-                            updateViewVisiblity();
+                            updateViewVisibility();
 
 
                         }
@@ -301,7 +303,7 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e2) {
                         Log.e("JSON EXCEPTION", e2.toString());
                     }
-                    getUser(Request.Method.POST, body, tries + 1);
+                    getBasinUser(Request.Method.POST, body, tries + 1);
                     //Log.e("Volley error", Log.getStackTraceString(error));
                     error.printStackTrace();
 
@@ -334,7 +336,8 @@ public class LoginActivity extends AppCompatActivity {
             greeting.setText("Welcome, " + current.getName() + "!");
             profilePic.setProfileId(current.getFacebookID());
 
-            getUser(Request.Method.GET, null, 0);
+            //if Facebook login is successful, get the user from basinWeb
+            getBasinUser(Request.Method.GET, null, 0);
         }
 
     }

@@ -47,6 +47,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit, menu);
+
         return true;
     }
 
@@ -55,12 +56,12 @@ public class ProfileEditActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.menu_save:
+            case R.id.save_icon:
                 if(edit_about.getText().length() > 0){
                     basinRequest();
                 }
                 return true;
-            case R.id.menu_cancel:
+            case R.id.cancel_icon:
                 finish();
                 return true;
             default:

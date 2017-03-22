@@ -70,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_profile, menu);
-        edit_icon = menu.findItem(R.id.menu_edit);
+        edit_icon = menu.findItem(R.id.edit_icon);
 
         if(id.equals(getCurrentAccessToken().getUserId())){
             edit_icon.setVisible(true);
@@ -83,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.menu_edit:
+            case R.id.edit_icon:
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
                 intent.putExtra(ProfileEditActivity.EXTRA_FACEBOOK_ID, id);
                 intent.putExtra(ProfileEditActivity.EXTRA_ABOUT_TEXT, about.getText());

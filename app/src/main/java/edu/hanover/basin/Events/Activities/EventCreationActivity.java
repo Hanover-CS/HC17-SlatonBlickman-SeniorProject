@@ -123,6 +123,7 @@ public class EventCreationActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit, menu);
+
         return true;
     }
 
@@ -131,10 +132,10 @@ public class EventCreationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.menu_save:
+            case R.id.save_icon:
                 createEvent();
                 return true;
-            case R.id.menu_cancel:
+            case R.id.cancel_icon:
                 finish();
                 return true;
             default:

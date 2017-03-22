@@ -122,9 +122,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
 
-        menu_edit = menu.findItem(R.id.menu_edit);
-        menu_delete = menu.findItem(R.id.menu_delete);
-        menu_checked = menu.findItem(R.id.menu_check_attending);
+        //Save items so they can be changed later
+        menu_edit = menu.findItem(R.id.edit_icon);
+        menu_delete = menu.findItem(R.id.edit_icon);
+        menu_checked = menu.findItem(R.id.check_attending_icon);
 
         return true;
     }
@@ -135,7 +136,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.menu_check_attending:
+            case R.id.check_attending_icon:
                 basinURL attendingURL = new basinURL();
                 JSONObject body = new JSONObject();
                 try{
@@ -164,7 +165,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
 
                 return true;
-            case R.id.menu_profile:
+            case R.id.profile_icon:
                 try {
                     intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
                     intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, event.getString("facebook_id"));
@@ -174,14 +175,14 @@ public class EventDetailsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 return true;
-            case R.id.menu_marker:
+            case R.id.marker_icon:
                 if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return true;
                 }
-                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-                boolean enabled = service
-                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+                boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
                 // check if enabled and if not send user to the GSP settings
                 // Better solution would be to display a dialog and suggesting to
                 // go to the settings
@@ -197,12 +198,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 }
-            case R.id.menu_delete:
+            case R.id.delete_icon:
                 basinURL deletionUrl = new basinURL();
                 deletionUrl.getEventURL(event_id);
                 request(Request.Method.DELETE, deletionUrl.toString(), null, DELETE_EVENT);
                 return true;
-            case R.id.menu_edit:
+            case R.id.edit_icon:
                 try{
                     intent = new Intent(EventDetailsActivity.this, EventCreationActivity.class);
                     intent.putExtra(EventCreationActivity.EXTRA_UPDATING, true);

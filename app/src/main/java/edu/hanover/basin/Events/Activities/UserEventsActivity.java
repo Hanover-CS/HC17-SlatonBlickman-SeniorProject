@@ -75,10 +75,13 @@ public class UserEventsActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.menu_map:
+            case R.id.map_icon:
+                //check if the user has granted access to fine_location
                 if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return true;
                 }
+
                 LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
                 boolean enabled = service
                         .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -96,7 +99,7 @@ public class UserEventsActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 }
-            case R.id.menu_home:
+            case R.id.home_icon:
                 intent = new Intent(UserEventsActivity.this, LoginActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

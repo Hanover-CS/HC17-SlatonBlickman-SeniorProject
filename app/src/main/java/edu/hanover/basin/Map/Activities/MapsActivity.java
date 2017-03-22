@@ -91,6 +91,7 @@ public class MapsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_maps, menu);
+
         return true;
     }
 
@@ -99,11 +100,11 @@ public class MapsActivity extends AppCompatActivity
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.menu_lists:
+            case R.id.lists_icon:
                 intent = new Intent(MapsActivity.this, UserEventsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.menu_home:
+            case R.id.home_icon:
                 intent = new Intent(MapsActivity.this, LoginActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
