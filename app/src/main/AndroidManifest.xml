@@ -71,6 +71,7 @@
         <activity
             android:name=".EventCreationActivity"
             android:label="@string/edit_event"
+            android:noHistory="true"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".MapsActivity"
@@ -79,6 +80,7 @@
         <activity
             android:name=".ProfileEditActivity"
             android:label="@string/edit_profile"
+            android:noHistory="true"
             android:screenOrientation="portrait"/>
     </application>
 
