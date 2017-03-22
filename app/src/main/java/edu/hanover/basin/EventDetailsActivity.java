@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 
 public class EventDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_EVENT_ID = "EventID";
@@ -104,14 +105,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        getMenuInflater().inflate(R.menu.menu_details, menu);
-
-        menu_edit = menu.findItem(R.id.menu_edit);
-        menu_delete = menu.findItem(R.id.menu_delete);
-        menu_checked = menu.findItem(R.id.menu_check_attending);
+    protected void onResume(){
+        super.onResume();
 
         basinURL url = new basinURL();
 
@@ -120,8 +115,20 @@ public class EventDetailsActivity extends AppCompatActivity {
         url.getIsAttendingURL(event_id, facebook_id);
         request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+
+        menu_edit = menu.findItem(R.id.menu_edit);
+        menu_delete = menu.findItem(R.id.menu_delete);
+        menu_checked = menu.findItem(R.id.menu_check_attending);
+
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -206,8 +213,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                     intent.putExtra(EventCreationActivity.EXTRA_DATE, event.getString("date"));
                     intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, event.getDouble("long_coord"));
                     intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getDouble("lat_coord"));
-
-                    intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "EventDetails");
+                    intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 }
                 catch(JSONException e){
@@ -226,9 +233,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent =  new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
         intent.setPackage("com.google.android.apps.maps");
         startActivity(intent);
-
-//        intent.putExtra(MapsActivity.EXTRA_EVENT_LAT, lat);
-//        intent.putExtra(MapsActivity.EXTRA_EVENT_LNG, lng);
     }
 
     public void onClickGoToProfile(View v){
