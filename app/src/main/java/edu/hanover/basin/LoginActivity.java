@@ -49,7 +49,6 @@ import java.util.Arrays;
 import edu.hanover.basin.Events.Activities.UserEventsActivity;
 import edu.hanover.basin.Map.Activities.MapsActivity;
 import edu.hanover.basin.Map.Fragments.LocationDialog;
-import edu.hanover.basin.Request.Activities.BasinWebTestActivity;
 import edu.hanover.basin.Request.Objects.basinURL;
 import edu.hanover.basin.Users.Activities.ProfileActivity;
 import edu.hanover.basin.Users.Objects.User;
@@ -81,18 +80,18 @@ public class LoginActivity extends AppCompatActivity {
 
         //Log keyhash for the application
         //Keyhash is necessary for Facebook to keep track of application
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo("edu.hanover.basin", PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("YourKeyHash :", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-                System.out.println("YourKeyHash: "+ Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        }
-        catch (Exception e) {
-            Log.e("Key hash exception", e.toString());
-        }
+//        try {
+//            PackageInfo info = getPackageManager().getPackageInfo("edu.hanover.basin", PackageManager.GET_SIGNATURES);
+//            for (Signature signature : info.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                Log.d("YourKeyHash :", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+//                System.out.println("YourKeyHash: "+ Base64.encodeToString(md.digest(), Base64.DEFAULT));
+//            }
+//        }
+//        catch (Exception e) {
+//            Log.e("Key hash exception", e.toString());
+//        }
 
         loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
         welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
@@ -182,6 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
     protected void onStop() {
         super.onStop();
     }

@@ -92,6 +92,7 @@ public class UserEventsActivity extends AppCompatActivity {
                 if (!enabled) {
                     DialogFragment dialogFragment = new LocationDialog();
                     dialogFragment.show(getFragmentManager(), "locationCheck");
+                    return true;
                 }
 
                 else{

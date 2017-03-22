@@ -20,6 +20,7 @@ import java.util.List;
  * Created by Slaton on 11/5/2016.
  */
 
+@SuppressWarnings("ALL")
 public class User {
     private String FacebookID;
     private int id;
@@ -29,10 +30,10 @@ public class User {
     private String location;
     private String url;
     private boolean shouldGetLikes;
-
-    private List<String> FacebookLikes = new ArrayList<>();
+    private final List<String> FacebookLikes;
 
     public User(String id){
+        FacebookLikes = new ArrayList<>();
         shouldGetLikes = true;
         this.FacebookID = id;
         Log.e("NEW USER(id):", id);
@@ -41,6 +42,7 @@ public class User {
     }
 
     public User(final AccessToken accessToken){
+        FacebookLikes = new ArrayList<>();
         Log.e("NEW USER(token)", accessToken.toString());
         shouldGetLikes = true;
         requestCurrentUserInfo(accessToken);

@@ -22,6 +22,7 @@ import edu.hanover.basin.R;
 import edu.hanover.basin.Request.Objects.basinWebRequest;
 import edu.hanover.basin.Request.Objects.basinURL;
 
+@SuppressWarnings("ALL")
 public class BasinWebTestActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
     String fb_id;
@@ -108,16 +109,17 @@ public class BasinWebTestActivity extends Activity {
 
         @Override
         protected String doInBackground(String... params){
+            String r;
             Log.i("DOING IN BG:", params[0]);
             request = new basinWebRequest();
             Log.i("params", params[0]);
             switch(params[0]){
                 case "users":
-                    String k = request.GET("users");
-                    Log.i("EXECUTING FOR USERS: ", k);
-                    return k;
+                    r = request.GET("users");
+                    Log.i("EXECUTING FOR USERS: ", r);
+                    return r;
                 case "events":
-                    String r = request.GET("users/" + fb_id + "/events?facebook_id=true");
+                    r = request.GET("users/" + fb_id + "/events?facebook_id=true");
                     return r;
                 default:
                     return "no case";

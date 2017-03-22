@@ -30,6 +30,7 @@ import edu.hanover.basin.Map.Activities.MapsActivity;
 import edu.hanover.basin.R;
 import edu.hanover.basin.Request.Objects.basinURL;
 
+@SuppressWarnings("ALL")
 public class EventCreationActivity extends AppCompatActivity {
 
     public static final String EXTRA_ACTIVITY_STARTED = "ActivityStarted";

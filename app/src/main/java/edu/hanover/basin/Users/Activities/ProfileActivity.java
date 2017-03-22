@@ -145,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String results){
             ListView listView = (ListView)findViewById(R.id.likes_list);
-            listView.setAdapter(new ArrayAdapter<String>(ProfileActivity.this,
+            listView.setAdapter(new ArrayAdapter<>(ProfileActivity.this,
                     android.R.layout.simple_list_item_1,
                     current.getFacebookLikes()));
 

@@ -5,7 +5,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.util.ArrayList;
 
@@ -14,11 +13,11 @@ import java.util.ArrayList;
  */
 
 public class EventList {
-    private ArrayList<JSONObject> eventsArrayList;
+    private final ArrayList<JSONObject> eventsArrayList;
 
     public EventList(JSONArray events){
         JSONObject objIn;
-        eventsArrayList = new ArrayList<JSONObject>();
+        eventsArrayList = new ArrayList<>();
 
         try {
             for (int i = 0; i < events.length(); i++) {

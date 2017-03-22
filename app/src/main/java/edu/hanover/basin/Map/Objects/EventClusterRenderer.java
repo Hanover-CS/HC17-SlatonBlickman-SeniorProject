@@ -34,9 +34,6 @@ public class EventClusterRenderer extends DefaultClusterRenderer<EventMarker> {
 
     @Override
     protected boolean shouldRenderAsCluster(Cluster<EventMarker> cluster){
-        if(cluster.getSize() > 1){
-            return true;
-        }
-        return false;
+        return (cluster.getSize() > 1);
     }
 }

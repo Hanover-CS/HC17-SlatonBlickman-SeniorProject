@@ -34,8 +34,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import com.google.android.gms.location.LocationListener;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -66,9 +64,8 @@ public class MapsActivity extends AppCompatActivity
     private Location mLastLocation;
     private LatLng mLastLatLng;
     private GoogleApiClient mGoogleApiClient;
-    private Map<Marker, EventMarker> allMarkerMap;
     private EventMarker mMe;
-    // Declare a variable for the cluster manager.
+
     private ClusterManager<EventMarker> mClusterManager;
 
     @Override
@@ -128,7 +125,6 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        allMarkerMap =  new HashMap<>();
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
 
             @Override public void onMapLongClick(LatLng latlng){
@@ -239,6 +235,7 @@ public class MapsActivity extends AppCompatActivity
     private void showClusterListDialog(final Cluster cluster){
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(MapsActivity.this);
         ArrayList<EventMarker> eventMarkers;
+        //noinspection unchecked,unchecked
         eventMarkers = ArrayUtil.toArrayList(cluster);
 
         builderSingle.setNegativeButton("Back to Map", new DialogInterface.OnClickListener() {
@@ -250,7 +247,7 @@ public class MapsActivity extends AppCompatActivity
         builderSingle.setPositiveButton("New Event", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                Collection<EventMarker> collection = cluster.getItems();
+                @SuppressWarnings("unchecked") Collection<EventMarker> collection = cluster.getItems();
                 EventMarker marker = collection.iterator().next();
                 LatLng position = marker.getPosition();
                 Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
@@ -282,7 +279,7 @@ public class MapsActivity extends AppCompatActivity
     private void setupCluster(){
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<EventMarker>(this, mMap);
+        mClusterManager = new ClusterManager<>(this, mMap);
 
         mClusterManager.setRenderer(new EventClusterRenderer(this, mMap, mClusterManager));
 
@@ -363,7 +360,7 @@ public class MapsActivity extends AppCompatActivity
                time_date = event.getString("time_start") + ", " + event.getString("date");
 
                eventMarker = new EventMarker(lat, lng, title, time_date, id);
-               //allMarkerMap.put(marker, event);
+
                mClusterManager.addItem(eventMarker);
 
            }

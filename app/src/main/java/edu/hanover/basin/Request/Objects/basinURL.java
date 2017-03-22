@@ -1,9 +1,5 @@
 package edu.hanover.basin.Request.Objects;
 
-import android.content.ServiceConnection;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.HashMap;
 import java.util.Map;
 

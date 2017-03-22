@@ -22,7 +22,7 @@ public class ArrayUtil {
     public static ArrayList<JSONObject> toArrayList(JSONArray jsonArray){
         ArrayList<JSONObject> arrayList;
         JSONObject objIn;
-        arrayList = new ArrayList<JSONObject>();
+        arrayList = new ArrayList<>();
 
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -41,7 +41,7 @@ public class ArrayUtil {
     public static ArrayList<EventMarker> toArrayList(Cluster<EventMarker> cluster){
         ArrayList<EventMarker> arrayList;
         JSONObject objIn;
-        arrayList = new ArrayList<EventMarker>();
+        arrayList = new ArrayList<>();
         Collection<EventMarker> collection = cluster.getItems();
         //arrayList = new ArrayList<EventMarker>(Arrays.asList(collection.toArray()));
 
