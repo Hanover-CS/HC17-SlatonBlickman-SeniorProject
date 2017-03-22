@@ -17,6 +17,8 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+
 /**
  * Created by Slaton on 12/4/2016.
  */
@@ -76,6 +78,7 @@ public class EventsAdapter extends ArrayAdapter<JSONObject> {
                         Log.e("JSON EXCEPTION", e2.toString());
                     }
                 }
+                intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 v.getContext().startActivity(intent);
             }
         });
