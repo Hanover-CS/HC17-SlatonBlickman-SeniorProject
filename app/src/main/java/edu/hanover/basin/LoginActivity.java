@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -53,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
     private AccessTokenTracker accessTokenTracker;
 
     private RelativeLayout loadingPanel, welcomePanel;
+    private ScrollView infoContainer;
+    private MenuItem profile_icon, map_icon, lists_icon;
     private LoginButton loginButton;
     private ProfilePictureView profilePic;
     private TextView info, greeting;
@@ -69,36 +72,36 @@ public class LoginActivity extends AppCompatActivity {
 
         loadingPanel = (RelativeLayout)findViewById(R.id.loadingPanel);
         welcomePanel = (RelativeLayout)findViewById(R.id.welcomePanel);
+        infoContainer = (ScrollView)findViewById(R.id.infoContainer);
         loadingPanel.setVisibility(View.VISIBLE);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-
         try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "edu.hanover.basin",
-                    PackageManager.GET_SIGNATURES);
+            PackageInfo info = getPackageManager().getPackageInfo("edu.hanover.basin", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 Log.d("YourKeyHash :", Base64.encodeToString(md.digest(), Base64.DEFAULT));
                 System.out.println("YourKeyHash: "+ Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (Exception e) {
-
+        }
+        catch (Exception e) {
+            Log.e("Key hash exception", e.toString());
         }
 
         callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {
             @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                // Set the access token using
-                // currentAccessToken when it's loaded or set.
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                accessToken = currentAccessToken;
+
+                if (currentAccessToken == null) {
+                    //user is no longer logged in
+                    //restart the activity
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
 
             }
         };
@@ -113,11 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(AccessToken.getCurrentAccessToken() != null){
-//            current = new User(AccessToken.getCurrentAccessToken());
-//            displayInfo();
-//            displayLikes();
             (new GetCurrentUser()).execute(AccessToken.getCurrentAccessToken());
-            //loadingPanel.setVisibility(View.GONE);
             Log.i("ACCESS TOKEN:", "NOT NULL");
         }
         else{
@@ -130,11 +129,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 info.setText("Logging in...");
                 loadingPanel.setVisibility(View.VISIBLE);
-                AccessToken accessToken = loginResult.getAccessToken();
+                accessToken = loginResult.getAccessToken();
 
                 (new GetCurrentUser()).execute(accessToken);
-
-
 
             }
 
@@ -153,59 +150,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.registerCallback(callbackManager, callback);
         //info.setText("PLEASE WORK");
-
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.profile_menu:
-                intent = new Intent(LoginActivity.this, ProfileActivity.class);
-                intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
-                startActivity(intent);
-                return true;
-            case R.id.lists_menu:
-                intent = new Intent(LoginActivity.this, UserEventsActivity.class);
-                intent.putExtra(UserEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
-                startActivity(intent);
-                return true;
-            case R.id.map_menu:
-                if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                }
-                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-                boolean enabled = service
-                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-                // check if enabled and if not send user to the GSP settings
-                // Better solution would be to display a dialog and suggesting to
-                // go to the settings
-                if (!enabled) {
-                    DialogFragment dialogFragment = new LocationDialog();
-                    dialogFragment.show(getFragmentManager(), "locationCheck");
-                }
-
-                else{
-                    intent = new Intent(LoginActivity.this, MapsActivity.class);
-                    startActivity(intent);
-                    return true;
-                }
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -226,19 +170,71 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void onStop() {
         super.onStop();
-        //Facebook login
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
         //Facebook login
-        Bundle d = data.getExtras();
+        //Bundle d = data.getExtras();
         callbackManager.onActivityResult(requestCode, responseCode, data);
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        profile_icon = menu.findItem(R.id.profile_icon);
+        lists_icon = menu.findItem(R.id.lists_icon);
+        map_icon = menu.findItem(R.id.map_icon);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.profile_icon:
+                intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                intent.putExtra(ProfileActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+                startActivity(intent);
+                return true;
+            case R.id.lists_icon:
+                intent = new Intent(LoginActivity.this, UserEventsActivity.class);
+                intent.putExtra(UserEventsActivity.EXTRA_FACEBOOK_ID, current.getFacebookID());
+                startActivity(intent);
+                return true;
+            case R.id.map_icon:
+                if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                }
+                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+                boolean enabled = service
+                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+                // check if enabled and if not send user to the GSP settings
+                // Better solution would be to display a dialog and suggesting to
+                // go to the settings
+                if (!enabled) {
+                    DialogFragment dialogFragment = new LocationDialog();
+                    dialogFragment.show(getFragmentManager(), "locationCheck");
+                }
+                else{
+                    intent = new Intent(LoginActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     public void onClickGoToRequests(View v){
         Intent intent = new Intent(LoginActivity.this, BasinWebTestActivity.class);
@@ -246,8 +242,16 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void insertUser(String url){
+    private void updateViewVisiblity(){
+        info.setText(getResources().getString(R.string.about));
 
+        profile_icon.setVisible(true);
+        map_icon.setVisible(true);
+        lists_icon.setVisible(true);
+        infoContainer.setVisibility(View.VISIBLE);
+        welcomePanel.setVisibility(View.VISIBLE);
+        loadingPanel.setVisibility(View.GONE);
+        Log.e("UI UPDATED:", "SUCCESS");
     }
 
     private void getUser( int method, JSONObject body, final int tries ){
@@ -260,10 +264,6 @@ public class LoginActivity extends AppCompatActivity {
             url = dbUser.getUserURL("");
         }
 
-        if(body == null || body.length() == 0){
-            body = null;
-        }
-        // Request a string response
         if(tries < 3) {
             JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url, body,
                     new Response.Listener<JSONObject>() {
@@ -273,10 +273,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Result handling
                             Log.i("Volley Response", response.toString());
-                            info.setText(getResources().getString(R.string.about));
-                            welcomePanel.setVisibility(View.VISIBLE);
-                            loadingPanel.setVisibility(View.GONE);
-                            Log.e("UI UPDATED:", "SUCCESS");
+                            updateViewVisiblity();
 
 
                         }
@@ -286,6 +283,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
 
                     // Error handling
+                    //Give the request 3 tries to try to insert the user into the database
                     JSONObject body = new JSONObject();
                     String[] names = current.getName().split(" ");
                     try {
@@ -311,6 +309,7 @@ public class LoginActivity extends AppCompatActivity {
             loadingPanel.setVisibility(View.GONE);
         }
     }
+
     //For graph requests
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
 
@@ -329,6 +328,7 @@ public class LoginActivity extends AppCompatActivity {
 
             getUser(Request.Method.GET, null, 0);
         }
+
     }
 
 
