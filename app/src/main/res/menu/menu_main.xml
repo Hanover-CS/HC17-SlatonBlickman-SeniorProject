@@ -3,20 +3,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/profile_menu"
+        android:id="@+id/profile_icon"
         android:icon="@drawable/user_icon"
+        android:visible="false"
         app:showAsAction="ifRoom"
         android:title="@string/profile_icon_title">
     </item>
     <item
-        android:id="@+id/lists_menu"
+        android:id="@+id/lists_icon"
         android:icon="@drawable/list_icon_3"
+        android:visible="false"
         app:showAsAction="ifRoom"
         android:title="@string/lists_icon_title">
     </item>
     <item
-        android:id="@+id/map_menu"
+        android:id="@+id/map_icon"
         android:icon="@drawable/map_icon"
+        android:visible="false"
         app:showAsAction="ifRoom"
         android:title="@string/map_icon_title">
     </item>

@@ -19,25 +19,22 @@
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_margin="16dp"/>
+
     <TextView
-        android:text="About"
+        android:text="This user has nothing in their about section :("
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="invisible"
         android:id="@+id/about"
+        android:layout_margin="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/picture"/>
 
-    <ListView
-        android:scrollbars="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="200dip"
-        android:layout_gravity="center"
-        android:layout_below="@id/about"
-        android:id="@+id/likes_list"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,6 +61,32 @@
         android:layout_below="@id/age"
         android:layout_toEndOf="@+id/picture"
         android:text=""/>
+
+    <LinearLayout
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        android:id="@+id/listContainer"
+        android:layout_below="@id/about"
+        android:background="@drawable/solid_border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Likes"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:id="@+id/likes_list"/>
+    </LinearLayout>
 
 
 </RelativeLayout>
