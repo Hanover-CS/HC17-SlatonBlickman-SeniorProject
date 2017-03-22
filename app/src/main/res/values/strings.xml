@@ -21,8 +21,9 @@
     <string name="attending_y">Attending!</string>
     <string name="confirm">Sure</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_about">Say something about yourself</string>
     <string name="location_enabled">This application requires location services to be enabled. Will you enable it?</string>
-    <string name="about">This section is about me, Slaton Blickman! Wow!</string>
+    <string name="about">This is an application for creating and finding local events. It was created as a senior project for Hanover College\'s Computer Science department and was written by Slaton Blickman.\n\nHere\'s a few tips:\nHit the map icon to find events anywhere in the world. You can long tap the map anywhere to create a new event.\nClick on the person icon to see your user profile.\nSelect the list icon to view the events you are attending and created.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
