@@ -42,17 +42,17 @@ public class UserEventsActivity extends AppCompatActivity {
             fb_id = token.getUserId();
         }
 
-        basinURL burl = new basinURL();
-        HashMap<String, String> params = new HashMap<>();
-        params.put("facebook_id", "true");
-        burl.getUserEventsURL(fb_id, params);
-        Log.i("BASIN URL", burl.toString());
-        request(burl.toString());
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        basinURL url = new basinURL();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("facebook_id", "true");
+        url.getUserEventsURL(fb_id, params);
+        Log.i("BASIN URL", url.toString());
+        getUserEvents();
     }
 
     @Override
@@ -98,9 +98,16 @@ public class UserEventsActivity extends AppCompatActivity {
         }
     }
 
-    private void request(String url){
+    private void getUserEvents(){
         // Request a string response
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        basinURL url = new basinURL();
+        JSONObject body = new JSONObject();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("facebook_id", "true");
+        url.getUserEventsURL(fb_id, params);
+        Log.i("BASIN URL", url.toString());
+
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url.toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -139,7 +146,6 @@ public class UserEventsActivity extends AppCompatActivity {
 
         // Add the request to the queue
         Volley.newRequestQueue(this).add(stringRequest);
-
     }
 
     private void setAdapters(ArrayList<JSONObject> events, int listViewId){
