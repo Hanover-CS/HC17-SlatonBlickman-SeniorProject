@@ -2,6 +2,7 @@ package edu.hanover.basin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,30 +42,15 @@ public class EventMarkersAdapter extends ArrayAdapter<EventMarker> {
         TextView coordinator = (TextView) convertView.findViewById(R.id.coordinator);
         picture.setVisibility(View.GONE);
         coordinator.setVisibility(View.GONE );
-        // Populate the data into the template view using the data object
 
+        // Populate the data into the template view using the data object
         Log.i("Event list:", event.toString());
         title.setText(event.getTitle());
+        title.setTextColor(Color.BLACK);
+        date_time.setTextColor(Color.DKGRAY);
         date_time.setText(event.getSnippet());
 
-//            picture.setProfileId(event.getString("facebook_created_by"));
-//            picture.setPresetSize(ProfilePictureView.SMALL);
-//
-//            String coordinator_name = event.getString("fname") + " " + event.getString("lname");
-//            coordinator.setText(coordinator_name);
 
-        //date_time.setText(event.getString("time_start"));
-        date_time.setText(event.getSnippet());
-        // Return the completed view to render on screen
-
-
-//        convertView.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(final View v) {
-//                Intent intent = new Intent(v.getContext(), EventDetailsActivity.class);
-//                intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getID());
-//                v.getContext().startActivity(intent);
-//            }
-//        });
         return convertView;
     }
 }
