@@ -19,19 +19,10 @@ use \Psr\Http\Message\ResponseInterface as Response;
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
-//localhost info
-// $config['db']['host']   = "localhost";
-// $config['db']['user']   = "root";
-// $config['db']['pass']   = "";
-// $config['db']['dbname'] = "db_basin";
-
-
-//vault info
 $config['db']['host']   = "vault.hanover.edu";
 $config['db']['user']   = "blickmans15";
 $config['db']['pass']   = "HC_294541";
-$config['db']['dbname'] = "db_basin";
-
+$config['db']['dbname'] = "blickmans15";
 
 $app = new \Slim\App(["settings" => $config]);
 
@@ -108,7 +99,7 @@ $app->put('/users/{id}', function (Request $request, Response $response, $args) 
     $body = $request->getParsedBody();
     $params = $request->getQueryParams();
     $params = addDefaults("/users/id", $params);
-    if(validPUT("/users/id", $body) and validGET("/users/id", $params)){
+    if(validPUT("/users/id", $body)){
         try{
             $get_user = new dbOperation($this->db);
             $get_user->getUser($id, $params['facebook_id']);
@@ -352,6 +343,40 @@ $app->get('/events/{id}[/]', function($request, $response, $args) {
     }
     return $response;
 });   
+
+// .../events/{event_id}
+//get event at the id
+$app->delete('/events/{id}[/]', function($request, $response, $args) {
+    $id = $args["id"];
+    $params = $request->getQueryParams();
+    $params = addDefaults('/events/id', $params);
+    if(validGET("/events/id", $params)){
+        try{
+            $events_query = new dbOperation($this->db);
+            ///$results = $events_query->getEvent($id, $params);
+            $results = $events_query->deleteEvent($id);
+            if($events_query->isSuccessful()){
+                $response = $response->withJSON(["marked for deletion"=>$results], 202);
+                //$response->getBody()->write($results);
+            }
+            else{
+                $response = error($response, 404, "No event was found with that id", null);
+                //$response->getBody()->write($results);
+            }
+        }
+        catch(PDOexception $e){
+            //$response->getBody()->write($e);
+            $response = error($response, 500, $e->getMessage(), null);
+        }
+        //$this->logger->addInfo("Getting all events");
+    }
+    else{
+        $acceptedParams = [];
+        $response = error($response, 400, "Invalid parameters!", ["accepted_params" => getValidParams("/events/id")]);
+    }
+    return $response;
+});   
+
 
 //PUT .../events/id to update information
 $app->put('/events/{id}[/]', function($request, $response, $args) {

@@ -198,9 +198,10 @@ class dbOperation
     }
 
     public function deleteEvent($id){
-
-        $this->results = false;
-        return false;
+        $sql = "DELETE FROM events WHERE _id = ?";
+        $delete = $this->conn->prepare($sql);
+        $this->results = $delete->execute([$id]);
+        return $this->results;
     }
 
     public function getUserEvents($id, $params){
@@ -238,15 +239,16 @@ class dbOperation
     }
 
     public function getUserEventsAttending($id, $params){
-        $sql = "SELECT * FROM attendees 
+        $sql = "SELECT events.*, coordinator.fname, coordinator.lname FROM attendees 
                 INNER JOIN events ON attendees.event_id = events._id 
-                INNER JOIN users ON users.facebook_id = attendees.user_id ";
+                INNER JOIN users AS attendee ON attendee.facebook_id = attendees.user_id
+                INNER JOIN users AS coordinator ON events.facebook_created_by = coordinator.facebook_id ";
 
         if($params['facebook_id'] == 'true'){
-            $sql .= "WHERE users.facebook_id = ? ";
+            $sql .= "WHERE attendee.facebook_id = ? ";
         }
         else{
-            $sql .= "WHERE users._id = ? ";
+            $sql .= "WHERE attendee._id = ? ";
         }
         //echo $sql;
         $select = $this->conn->prepare($sql);
@@ -284,8 +286,8 @@ class dbOperation
     public function deleteEventAttendee($event_id, $user_id, $params){
         $sql = "DELETE FROM attendees WHERE event_id = :event_id AND user_id = :user_id";
         $vals = ["event_id" => $event_id, "user_id" => $user_id];
-        $insert = $this->conn->prepare($sql);
-        $this->results = $insert->execute($vals);
+        $delete = $this->conn->prepare($sql);
+        $this->results = $delete->execute($vals);
         return $this->results;
     }
 
