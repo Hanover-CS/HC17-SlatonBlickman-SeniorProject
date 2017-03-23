@@ -128,7 +128,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         //Save items so they can be changed later
         menu_edit = menu.findItem(R.id.edit_icon);
-        menu_delete = menu.findItem(R.id.edit_icon);
+        menu_delete = menu.findItem(R.id.delete_icon);
         menu_checked = menu.findItem(R.id.check_attending_icon);
 
         return true;
