@@ -44,7 +44,7 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 public class UserEventsActivity extends AppCompatActivity {
     /**
-     * Intent extra used for setting and getting the user Facebook ID.
+     * Field used for setting and getting the user Facebook ID.
      * Currently unused.
      * TODO: Allow use of IDs other than the current user's to get event information
      */

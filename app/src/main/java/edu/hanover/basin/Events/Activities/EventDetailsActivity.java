@@ -61,7 +61,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 @SuppressWarnings("ALL")
 public class EventDetailsActivity extends AppCompatActivity {
     /**
-     * Intent extra used for setting and gettings the event id to get detials of
+     * Field used for setting and gettings the event id to get detials of
      */
     public static final String EXTRA_EVENT_ID = "EventID";
 

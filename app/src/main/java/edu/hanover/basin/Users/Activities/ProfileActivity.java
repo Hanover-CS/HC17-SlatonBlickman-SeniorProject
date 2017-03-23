@@ -41,7 +41,7 @@ import static com.facebook.AccessToken.getCurrentAccessToken;
  */
 public class ProfileActivity extends AppCompatActivity {
     /**
-     * String for getting and putting the User's Facebook ID in intents
+     * Field for getting and putting the User's Facebook ID in intents
      */
     //Intent extra variables
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";

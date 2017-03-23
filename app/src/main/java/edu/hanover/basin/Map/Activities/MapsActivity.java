@@ -67,12 +67,12 @@ public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener, LocationListener {
     /**
-     * Intent extra used for setting initial camera position to event latitude
+     * Field used for setting initial camera position to event latitude
      */
     public static final String EXTRA_EVENT_LAT = "EventLat";
 
     /**
-     * Intent extra used for setting initial camera position to event longitude
+     * Field used for setting initial camera position to event longitude
      */
     public static final String EXTRA_EVENT_LNG = "EventLng";
 

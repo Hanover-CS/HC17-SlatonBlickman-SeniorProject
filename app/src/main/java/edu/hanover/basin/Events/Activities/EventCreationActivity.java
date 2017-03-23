@@ -41,17 +41,50 @@ import edu.hanover.basin.Request.Objects.basinURL;
 public class EventCreationActivity extends AppCompatActivity {
 
     /**
-     * Intent extras necessary for setting the defaults of the editable fields
+     * Field necessary for setting the defaults of the editable fields
      */
     public static final String EXTRA_ACTIVITY_STARTED = "ActivityStarted";
+
+    /**
+     * Field necessary for giving event location
+     */
     public static final String EXTRA_EVENT_LAT = "EventLat";
+
+    /**
+     * Field necessary for giving event location
+     */
     public static final String EXTRA_EVENT_LNG = "EventLng";
+
+    /**
+     * Field necessary to check if this is updating a previous event
+     */
     public static final String EXTRA_UPDATING = "EventUpdate";
-    public static final String EXTRA_TITLE = "EventTitle";
-    public static final String EXTRA_DESCRIPTION = "EventDesc";
-    public static final String EXTRA_TIME = "EventTime";
-    public static final String EXTRA_DATE = "EventDate";
+
+    /**
+     * Field necessary when updating
+     */
     public static final String EXTRA_EVENT_ID = "EventID";
+
+    /**
+     * Field necessary for filling default title in form
+     */
+    public static final String EXTRA_TITLE = "EventTitle";
+
+    /**
+     * Field necessary for filling default description in form
+     */
+    public static final String EXTRA_DESCRIPTION = "EventDesc";
+
+    /**
+     * Field necessary for filling default time in form
+     */
+    public static final String EXTRA_TIME = "EventTime";
+
+    /**
+     * Field necessary for filling default date in form
+     */
+    public static final String EXTRA_DATE = "EventDate";
+
 
 
     //variables for views and layouts
@@ -152,7 +185,7 @@ public class EventCreationActivity extends AppCompatActivity {
                 return true;
             case R.id.cancel_icon:
                 finish();
-                
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

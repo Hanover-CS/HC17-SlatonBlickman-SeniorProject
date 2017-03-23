@@ -34,12 +34,12 @@ import edu.hanover.basin.Users.Objects.User;
 public class ProfileEditActivity extends AppCompatActivity {
     //Intent Extras
     /**
-     * Intent extra for getting and putting the Facebook ID of the user
+     * Field for getting and putting the Facebook ID of the user
      */
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
 
     /**
-     * Intent extra for getting and putting the default text for the editText
+     *  Field for getting and putting the default text for the editText
      */
     public static final String EXTRA_ABOUT_TEXT = "AboutText";
 
