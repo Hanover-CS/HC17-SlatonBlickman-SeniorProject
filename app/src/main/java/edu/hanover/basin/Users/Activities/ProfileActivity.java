@@ -30,15 +30,30 @@ import edu.hanover.basin.Users.Objects.User;
 
 import static com.facebook.AccessToken.getCurrentAccessToken;
 
+/**
+ * Activity for displaying a basic Profile for a user including picture, name, birthday, location, about, and likes.
+ *
+ * TODO: Submit for Facebook review to be able to display likes, birthday, and location
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ * @see User
+ */
 public class ProfileActivity extends AppCompatActivity {
+    /**
+     * String for getting and putting the User's Facebook ID in intents
+     */
+    //Intent extra variables
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
 
+    //Layout and View variables
     private ProfilePictureView profilePic;
     private TextView info, age, location, about;
     private RelativeLayout loadingPanel;
     private LinearLayout listContainer;
     private MenuItem edit_icon;
 
+    //Class variables to remember
     private String id;
     private User current;
 
@@ -55,9 +70,10 @@ public class ProfileActivity extends AppCompatActivity {
         location = (TextView) findViewById(R.id.location);
         about = (TextView) findViewById(R.id.about);
         profilePic = (ProfilePictureView) findViewById(R.id.picture);
+
         profilePic.setPresetSize(ProfilePictureView.NORMAL);
 
-        Log.e("FACEBOOK ID", id);
+        Log.i("FACEBOOK ID", id);
     }
 
     @Override
@@ -88,6 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra(ProfileEditActivity.EXTRA_FACEBOOK_ID, id);
                 intent.putExtra(ProfileEditActivity.EXTRA_ABOUT_TEXT, about.getText());
                 startActivity(intent);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -95,13 +112,18 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getUserInformation(){
+        //Do a basinWebRequest to get the about field
         basinWebRequest();
+
+        //Execute AsyncTask to get user information from Facebook
         (new FacebookProfile()).execute(id);
     }
 
     private void basinWebRequest(){
         basinURL url = new basinURL();
+
         url.getUserURL(id, "true");
+
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url.toString(), null,
                 new Response.Listener<JSONObject>() {
 
@@ -137,29 +159,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... id){
+            //Construct a new user object
             current = new User(id[0]);
+            //getting likes defaults to true, so we can just start the request
             current.startRequest();
+
             return "success";
         }
 
         @Override
         protected void onPostExecute(String results){
+            //fill listview with FacebookLikes
             ListView listView = (ListView)findViewById(R.id.likes_list);
             listView.setAdapter(new ArrayAdapter<>(ProfileActivity.this,
                     android.R.layout.simple_list_item_1,
                     current.getFacebookLikes()));
 
+            //set basic profile information
             info.setText(current.getName());
             age.setText(current.getBirthday());
             profilePic.setProfileId(current.getFacebookID());
             location.setText(current.getLocation());
 
+            //show profile views and hide the loading panel
             about.setVisibility(View.VISIBLE);
             listContainer.setVisibility(View.VISIBLE);
             loadingPanel.setVisibility(View.GONE);
 
-
-            Log.e("UI UPDATED:", "SUCCESS");
+            Log.i("UI UPDATED:", "SUCCESS");
         }
     }
 

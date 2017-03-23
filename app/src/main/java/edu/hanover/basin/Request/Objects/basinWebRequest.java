@@ -20,9 +20,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by Slaton on 11/21/2016.
+ * This object was used to model URL requests in an OOP method.
+ * Responses and requests are too contextually sensitive for this to be useful,
+ * and using Volley Requests with basinURL is a friendlier practice.
+ *
+ * @author Slaton Blickman
+ * @deprecated
+ * @see basinURL
+ * @see Volley
  */
 
+@Deprecated
 public class basinWebRequest {
     private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php/";
     //FIX THE OPEN_BASINWEB to go to the correct IP when not in emulator

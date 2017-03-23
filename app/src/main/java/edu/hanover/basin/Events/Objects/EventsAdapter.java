@@ -22,15 +22,31 @@ import edu.hanover.basin.R;
 import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
 
 /**
- * Created by Slaton on 12/4/2016.
+ * A class for constructing a EventsAdapter that will be used for display of ListView items that are made from JSONObjects
+ * @author Slaton Blickman
+ * @see ArrayAdapter
  */
-
 public class EventsAdapter extends ArrayAdapter<JSONObject> {
 
+    /**
+     * basic constructor for class that just calls the super method of construction
+     * @param context the application context at the time of constructor call.
+     * @param events the JSONObjects to be processed.
+     */
     public EventsAdapter(Context context, ArrayList<JSONObject> events) {
         super(context, 0, events);
     }
 
+    /**
+     * Overrides the default getView to display EventMarker information.
+     * List items show the title, time-date, coordinator, and coordinator picture
+     * Sets the onClickListener to start EventDetailsActivity
+     *
+     * @param position the position of the item in the list
+     * @param convertView the view to be inflated as an item_event
+     * @param parent ViewGroup to use in inflater
+     * @return View
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position

@@ -12,7 +12,13 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import edu.hanover.basin.Map.Objects.EventMarker;
 
 /**
- * Created by Slaton on 3/19/2017.
+ * A custom renderer for Events on the Google Maps fragment through the ClusterManager.
+ * Overrides default behavior of Cluster and ClusterItem rendering.
+ * Changes Clusters to render for any plural size.
+ *
+ * @autor Slaton Blickman
+ * @see DefaultClusterRenderer
+ * @see ClusterManager
  */
 
 public class EventClusterRenderer extends DefaultClusterRenderer<EventMarker> {
@@ -24,7 +30,6 @@ public class EventClusterRenderer extends DefaultClusterRenderer<EventMarker> {
     @Override
     protected void onClusterItemRendered(EventMarker clusterItem, Marker marker) {
         super.onClusterItemRendered(clusterItem, marker);
-
     }
 
     @Override

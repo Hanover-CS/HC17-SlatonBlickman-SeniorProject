@@ -36,9 +36,22 @@ import edu.hanover.basin.Utils.ArrayUtil;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
+/**
+ * Activity for displaying both the created and attended events of the user.
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ */
 public class UserEventsActivity extends AppCompatActivity {
+    /**
+     * Intent extra used for setting and getting the user Facebook ID.
+     * Currently unused.
+     * TODO: Allow use of IDs other than the current user's to get event information
+     */
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
-    String fb_id;
+
+    //instance variables
+    private String fb_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +68,9 @@ public class UserEventsActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        basinURL url = new basinURL();
-        HashMap<String, String> params = new HashMap<>();
-        params.put("facebook_id", "true");
-        url.getUserEventsURL(fb_id, params);
-        Log.i("BASIN URL", url.toString());
+
+        //request the events
+        //doing this in onResume allows us to refresh the lists everytime
         getUserEvents();
     }
 
@@ -67,6 +78,7 @@ public class UserEventsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_event_lists, menu);
+
         return true;
     }
 
@@ -79,6 +91,7 @@ public class UserEventsActivity extends AppCompatActivity {
                 //check if the user has granted access to fine_location
                 if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
                     return true;
                 }
 
@@ -92,18 +105,21 @@ public class UserEventsActivity extends AppCompatActivity {
                 if (!enabled) {
                     DialogFragment dialogFragment = new LocationDialog();
                     dialogFragment.show(getFragmentManager(), "locationCheck");
+
                     return true;
                 }
 
                 else{
                     intent = new Intent(UserEventsActivity.this, MapsActivity.class);
                     startActivity(intent);
+
                     return true;
                 }
             case R.id.home_icon:
                 intent = new Intent(UserEventsActivity.this, LoginActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,12 +129,12 @@ public class UserEventsActivity extends AppCompatActivity {
     private void getUserEvents(){
         // Request a string response
         basinURL url = new basinURL();
-        JSONObject body = new JSONObject();
         HashMap<String, String> params = new HashMap<>();
+
         params.put("facebook_id", "true");
         url.getUserEventsURL(fb_id, params);
-        Log.i("BASIN URL", url.toString());
 
+        Log.i("BASIN URL", url.toString());
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url.toString(), null,
                 new Response.Listener<JSONObject>() {
 
@@ -160,6 +176,7 @@ public class UserEventsActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(stringRequest);
     }
 
+    //sets the arrayAdapters for the givn listViews
     private void setAdapters(ArrayList<JSONObject> events, int listViewId){
         // Create the adapter to convert the array to views
         EventsAdapter adapter = new EventsAdapter(this, events);

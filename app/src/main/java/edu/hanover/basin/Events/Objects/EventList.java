@@ -9,12 +9,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Slaton on 12/4/2016.
+ * Constructs an EventList object.
+ * The purpose of this was to provide an object for JSONArray conversion, but ArrayUtils methods should be used instead.
+ *
+ * @author Slaton Blickman
+ * @deprecated
  */
-
+@Deprecated
 public class EventList {
     private final ArrayList<JSONObject> eventsArrayList;
 
+    /**
+     * Constructs EventList to hold an ArrayList of JSONObjects that represent events
+     * @param events the JSONarray to be converted
+     */
     public EventList(JSONArray events){
         JSONObject objIn;
         eventsArrayList = new ArrayList<>();
@@ -32,6 +40,10 @@ public class EventList {
         }
     }
 
+    /**
+     * Gets the list of Events as an ArrayList
+     * @return ArrayList
+     */
     ArrayList<JSONObject> toArrayList(){
         return eventsArrayList;
     }

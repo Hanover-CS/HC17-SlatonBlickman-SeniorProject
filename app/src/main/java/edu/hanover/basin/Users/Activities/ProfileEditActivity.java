@@ -20,13 +20,33 @@ import org.json.JSONObject;
 
 import edu.hanover.basin.R;
 import edu.hanover.basin.Request.Objects.basinURL;
+import edu.hanover.basin.Users.Objects.User;
 
+/**
+ * Activity for handling a single editText view that will be used to edit a User's about section for their Profile.
+ *
+ * TODO: Submit for Facebook review to be able to display likes, birthday, and location
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ * @see User
+ */
 public class ProfileEditActivity extends AppCompatActivity {
+    //Intent Extras
+    /**
+     * Intent extra for getting and putting the Facebook ID of the user
+     */
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
+
+    /**
+     * Intent extra for getting and putting the default text for the editText
+     */
     public static final String EXTRA_ABOUT_TEXT = "AboutText";
 
+    //View variables
     private TextView edit_about;
 
+    //Strings to remember
     private String id;
     private String about;
 
@@ -69,11 +89,14 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+    //does a Volley JsonObjectRequest to update the about section
     private void basinRequest(){
         basinURL url = new basinURL();
         JSONObject body = new JSONObject();
 
+        //specify that we are using the Facebook_id for basinWeb
         url.getUserURL(id, "true");
+
         try{
             body.put("about", edit_about.getText());
         }
@@ -96,9 +119,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 error.printStackTrace();
-
             }
 
         });

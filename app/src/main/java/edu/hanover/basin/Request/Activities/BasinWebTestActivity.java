@@ -22,7 +22,13 @@ import edu.hanover.basin.R;
 import edu.hanover.basin.Request.Objects.basinWebRequest;
 import edu.hanover.basin.Request.Objects.basinURL;
 
+/**
+ * This activity was only used for trying different URL request methods.
+ * It should not be used and is only here for reference.
+ * @deprecated
+ */
 @SuppressWarnings("ALL")
+@Deprecated
 public class BasinWebTestActivity extends Activity {
     public static final String EXTRA_FACEBOOK_ID = "UserFacebookID";
     String fb_id;

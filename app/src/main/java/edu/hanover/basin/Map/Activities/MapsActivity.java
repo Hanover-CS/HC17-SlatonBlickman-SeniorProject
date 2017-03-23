@@ -1,5 +1,6 @@
 package edu.hanover.basin.Map.Activities;
 
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -53,10 +54,26 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
 import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 
+/**
+ * Activity for displaying the Google Maps fragment and showing baisn Events on map
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ * @see GoogleMap
+ * @see GoogleApiClient
+ * @see LocationRequest
+ */
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    /**
+     * Intent extra used for setting initial camera position to event latitude
+     */
     public static final String EXTRA_EVENT_LAT = "EventLat";
+
+    /**
+     * Intent extra used for setting initial camera position to event longitude
+     */
     public static final String EXTRA_EVENT_LNG = "EventLng";
 
     private GoogleMap mMap;
@@ -64,9 +81,9 @@ public class MapsActivity extends AppCompatActivity
     private Location mLastLocation;
     private LatLng mLastLatLng;
     private GoogleApiClient mGoogleApiClient;
-    private EventMarker mMe;
 
     private ClusterManager<EventMarker> mClusterManager;
+    private EventMarker mMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +120,7 @@ public class MapsActivity extends AppCompatActivity
                 return true;
             case R.id.home_icon:
                 intent = new Intent(MapsActivity.this, LoginActivity.class);
+                //reset backstack
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
@@ -115,8 +133,9 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
+     * Map Type is set to Terrain
+     * Sets the map onLongClick to take the user to an EventCreation Activity
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -132,12 +151,14 @@ public class MapsActivity extends AppCompatActivity
                 Intent intent = new Intent(MapsActivity.this, EventCreationActivity.class);
                 Double lat = latlng.latitude;
                 Double lng = latlng.longitude;
+
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, lat);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, lng);
                 intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
                 intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "MapsActivity");
                 intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
                 intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
                 startActivity(intent);
             }
         });
@@ -181,7 +202,11 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
-
+    /**
+     * onConnected handles tasks to do when the connection to GoogleAPIClient is established
+     * Used to set the last known location, begin requests for basin events, and update map UI
+     * @param connectionHint
+     */
     @Override
     public void onConnected(Bundle connectionHint) {
         try {
@@ -198,7 +223,8 @@ public class MapsActivity extends AppCompatActivity
             //add rest of markers from database
             basinURL url = new basinURL();
             url.getEventURL("");
-            request(Request.Method.GET, url.toString());
+            getMarkersFromBasinWeb();
+
             updateUI();
 
         }
@@ -215,10 +241,13 @@ public class MapsActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Updates last known location and map UI when location is changed
+     * @param location new location
+     */
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
     }
 
@@ -232,11 +261,10 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    //builds simple dialog with the dialog contents set a ListView of EventMarkers
     private void showClusterListDialog(final Cluster cluster){
+        ArrayList<EventMarker> eventMarkers = ArrayUtil.toArrayList(cluster);
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(MapsActivity.this);
-        ArrayList<EventMarker> eventMarkers;
-        //noinspection unchecked,unchecked
-        eventMarkers = ArrayUtil.toArrayList(cluster);
 
         builderSingle.setNegativeButton("Back to Map", new DialogInterface.OnClickListener() {
             @Override
@@ -247,15 +275,17 @@ public class MapsActivity extends AppCompatActivity
         builderSingle.setPositiveButton("New Event", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
+                //Use the first item in the cluster to get the position to add a new event at
                 @SuppressWarnings("unchecked") Collection<EventMarker> collection = cluster.getItems();
                 EventMarker marker = collection.iterator().next();
                 LatLng position = marker.getPosition();
+
                 Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
 
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, position.latitude);
                 intent.putExtra(EventCreationActivity.EXTRA_EVENT_LNG, position.longitude);
                 intent.putExtra(EventCreationActivity.EXTRA_UPDATING, false);
-                intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "EventDetails");
+                intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "MapsActivity");
                 intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
 
                 startActivity(intent);
@@ -264,15 +294,18 @@ public class MapsActivity extends AppCompatActivity
         // Create the adapter to convert the array to views
         final EventMarkersAdapter adapter = new EventMarkersAdapter(getApplicationContext(), eventMarkers);
         builderSingle.setAdapter(adapter,  new DialogInterface.OnClickListener() {
+            //take the user to the eventDetails screen on list item click
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 EventMarker event = adapter.getItem(item);
                 Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
                 intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, event.getID());
                 intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
                 startActivity(intent);
             }
         });
+
         builderSingle.show();
     }
 
@@ -281,6 +314,7 @@ public class MapsActivity extends AppCompatActivity
         // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<>(this, mMap);
 
+        //Set the renderer to the one we have created
         mClusterManager.setRenderer(new EventClusterRenderer(this, mMap, mClusterManager));
 
         // Point the map's listeners at the listeners implemented by the cluster
@@ -289,6 +323,7 @@ public class MapsActivity extends AppCompatActivity
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
 
+        //set onClickMethods
         mClusterManager
                 .setOnClusterClickListener(new ClusterManager.OnClusterClickListener<EventMarker>() {
                     @Override
@@ -301,10 +336,12 @@ public class MapsActivity extends AppCompatActivity
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<EventMarker>() {
             @Override
             public void onClusterItemInfoWindowClick(EventMarker eventMarker) {
+                //-1 is not a valid for Event Details and also is the ID of the "Me" marker
                 if(!(eventMarker.getID().equals("-1"))){
                     Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
                     intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventMarker.getID());
                     intent.setFlags(FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
                     startActivity(intent);
                 }
             }
@@ -317,19 +354,23 @@ public class MapsActivity extends AppCompatActivity
         if(mLastLatLng != null) {
             Log.i("LAST LOCATION", mLastLatLng.toString());
 
+            //setup the clusterManager if we haven't
             if(mClusterManager == null){
                 setupCluster();
             }
 
+            //we don't need constant location updates
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
 
+            //if there is no me marker, add one!
             if(mMe == null){
                 mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
                 mClusterManager.addItem(mMe);
             }
         }
         else{
+            //For some reason we can't get the last known location, so let's use the default and update the UI with that
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
             mLastLatLng = new LatLng(38.713, -85.459 ); //Default is Hanover
             updateUI();
@@ -346,10 +387,15 @@ public class MapsActivity extends AppCompatActivity
         String title, time_date, id;
         EventMarker eventMarker;
 
-        mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
-        mClusterManager.addItem(mMe);
+
+        //We may have cleared the map, so readd the me marker if it's not set
+        if(mMe == null){
+            mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
+            mClusterManager.addItem(mMe);
+        }
 
         try{
+            //iterate over the JSONArray to get event information and create eventMarkers from them
            for(int i = 0; i < events.length(); i++){
                event = events.getJSONObject(i);
                lat = event.getDouble("lat_coord");
@@ -370,9 +416,12 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-    private void request(int method, String url){
+    private void getMarkersFromBasinWeb(){
         // Request a jsonObject response
-        JsonObjectRequest objRequest = new JsonObjectRequest(method, url, null,
+        int method = Request.Method.GET;
+        basinURL url = new basinURL();
+        url.getEventURL("");
+        JsonObjectRequest objRequest = new JsonObjectRequest(method, url.toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override

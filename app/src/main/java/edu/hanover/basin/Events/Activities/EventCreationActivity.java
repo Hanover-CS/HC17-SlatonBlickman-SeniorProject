@@ -30,9 +30,19 @@ import edu.hanover.basin.Map.Activities.MapsActivity;
 import edu.hanover.basin.R;
 import edu.hanover.basin.Request.Objects.basinURL;
 
+/**
+ * Activity for editing or creating a new activity.
+ * If an event id is passed in, it will update that one. If not, it will create a new event.
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ */
 @SuppressWarnings("ALL")
 public class EventCreationActivity extends AppCompatActivity {
 
+    /**
+     * Intent extras necessary for setting the defaults of the editable fields
+     */
     public static final String EXTRA_ACTIVITY_STARTED = "ActivityStarted";
     public static final String EXTRA_EVENT_LAT = "EventLat";
     public static final String EXTRA_EVENT_LNG = "EventLng";
@@ -43,19 +53,20 @@ public class EventCreationActivity extends AppCompatActivity {
     public static final String EXTRA_DATE = "EventDate";
     public static final String EXTRA_EVENT_ID = "EventID";
 
-    private boolean updating;
-    private String location;
-    private double lat;
-    private double lng;
-    private int requestMethod;
-    private basinURL url;
-    private String eventID;
 
+    //variables for views and layouts
     private EditText title;
     private EditText description;
     private EditText time;
     private DatePicker date;
-    private String facebook_id;
+
+    //instance variables
+    private boolean updating;
+    private String location, eventID, facebook_id; //bad coding: inconsistent naming
+    private double lat, lng;
+    private int requestMethod;
+    private basinURL url;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +97,7 @@ public class EventCreationActivity extends AppCompatActivity {
             String editTitle, editDesc, editTime, editDate;
             int year, month, day;
 
+            //get the minimimum date throigh a calendar instance
             Calendar cal = Calendar.getInstance();
             cal.set(date.getYear(), date.getMonth() + 1, date.getDayOfMonth());
             cal.add(Calendar.DATE, 120);
@@ -96,6 +108,7 @@ public class EventCreationActivity extends AppCompatActivity {
             editTime = (String)getIntent().getExtras().get(EXTRA_TIME);
             eventID = (String)getIntent().getExtras().get(EXTRA_EVENT_ID);
 
+            //editDate should have format "11-11-2011"
             year = Integer.parseInt(editDate.substring(5, 8));
             month = Integer.parseInt(editDate.substring(3, 4));
             day = Integer.parseInt(editDate.substring(0,1));
@@ -135,9 +148,11 @@ public class EventCreationActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.save_icon:
                 createEvent();
+
                 return true;
             case R.id.cancel_icon:
                 finish();
+                
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,6 +166,7 @@ public class EventCreationActivity extends AppCompatActivity {
         String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
         pattern = Pattern.compile(TIME24HOURS_PATTERN);
         matcher = pattern.matcher(time.getText());
+
         return matcher.matches();
     }
 

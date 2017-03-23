@@ -51,10 +51,21 @@ import edu.hanover.basin.Utils.ImageUtil;
 
 import static android.content.Intent.FLAG_ACTIVITY_NO_HISTORY;
 
+/**
+ * Activity for displays event details including:
+ * coordinator (name, picture), event (title, time, date, description), and map location
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ */
 @SuppressWarnings("ALL")
 public class EventDetailsActivity extends AppCompatActivity {
+    /**
+     * Intent extra used for setting and gettings the event id to get detials of
+     */
     public static final String EXTRA_EVENT_ID = "EventID";
 
+    //variables to easily determine how to respond to the requests made
     private static final String GET_EVENT = "GetEvent";
     private static final String DELETE_EVENT = "DeleteEvent";
     private static final String IS_ATTENDING = "IsAttending";
@@ -62,22 +73,22 @@ public class EventDetailsActivity extends AppCompatActivity {
     private static final String GET_ATTENDEES = "GetAttendees";
     private static final String DELETE_ATTENDING = "DeleteAttending";
 
-    private String event_id, facebook_id, lat, lng;
-    private JSONObject event;
-    private JSONArray attendees;
-
+    //variables for the layouts and views
     private MenuItem menu_checked, menu_edit, menu_delete;
     private RelativeLayout loadingPanel;
     private TextView title, coordinator, time, date, description;
     private ProfilePictureView picture;
     private ImageView event_map;
 
+    //instance variables
+    private String event_id, facebook_id, lat, lng;
+    private JSONObject event;
+    private JSONArray attendees;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-
-        basinURL url = new basinURL();
 
         facebook_id = Profile.getCurrentProfile().getId();
 
@@ -92,9 +103,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         time = (TextView) findViewById(R.id.time);
         date = (TextView) findViewById(R.id.date);
 
-        url.getIsAttendingURL(event_id, facebook_id);
-        //request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
-
     }
 
     @Override
@@ -103,8 +111,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         basinURL url = new basinURL();
 
+        //request the event details
         url.getEventURL(event_id);
         request(Request.Method.GET, url.toString(), null, GET_EVENT);
+
+        //also request whether or not hte user is attending the event
         url.getIsAttendingURL(event_id, facebook_id);
         request(Request.Method.GET, url.toString(), null, IS_ATTENDING);
 
@@ -142,16 +153,18 @@ public class EventDetailsActivity extends AppCompatActivity {
                 if (!item.isChecked()) {
                     Log.i("IsChecked", "false");
                     attendingURL.getEventAttendeesURL(event_id);
-                    //Log.e("USER ID", Profile.getCurrentProfile().getId())
+
+                    //add them to attending list
                     request(Request.Method.POST, attendingURL.toString(), body, POST_ATTENDING);
                     item.setIcon(R.drawable.heart_checked_icon);
                     item.setTitle("Attending!");
                     item.setChecked(true);
                 }
-                else
-                {
+                else {
                     Log.i("IsChecked", "true");
                     attendingURL.getIsAttendingURL(event_id, facebook_id);
+
+                    //delete them from the attending list
                     request(Request.Method.DELETE, attendingURL.toString(),null, DELETE_ATTENDING);
                     item.setIcon(R.drawable.heart_icon);
                     item.setChecked(false);
@@ -167,10 +180,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                 catch(JSONException e){
                     e.printStackTrace();
                 }
+
                 return true;
             case R.id.marker_icon:
                 if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
                     return true;
                 }
 
@@ -182,6 +197,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 if (!enabled) {
                     DialogFragment dialogFragment = new LocationDialog();
                     dialogFragment.show(getFragmentManager(), "locationCheck");
+
                     return true;
                 }
                 else{
@@ -190,11 +206,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                     intent.putExtra(MapsActivity.EXTRA_EVENT_LNG, lng);
                     startActivity(intent);
                 }
+
                 return true;
             case R.id.delete_icon:
                 basinURL deletionUrl = new basinURL();
                 deletionUrl.getEventURL(event_id);
                 request(Request.Method.DELETE, deletionUrl.toString(), null, DELETE_EVENT);
+
                 return true;
             case R.id.edit_icon:
                 try{
@@ -209,6 +227,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     intent.putExtra(EventCreationActivity.EXTRA_EVENT_LAT, event.getDouble("lat_coord"));
                     intent.putExtra(EventCreationActivity.EXTRA_ACTIVITY_STARTED, "EventDetails");
                     intent.setFlags(FLAG_ACTIVITY_NO_HISTORY);
+
                     startActivity(intent);
                 }
                 catch(JSONException e){
@@ -221,6 +240,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Starts Google Maps appplication to get direction to the event on click
+     * @param v the view that was clicked
+     */
     public void onClickGoToMaps(View v){
         String geoUri = "http://maps.google.com/maps?q=loc:"
                 + lat + "," + lng + " (" + title.getText() + ")";
@@ -229,6 +252,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Starts ProfileActivity for the coordinator
+     * @param v the view that was clicked
+     */
     public void onClickGoToProfile(View v){
         try {
             Intent intent = new Intent(EventDetailsActivity.this, ProfileActivity.class);
@@ -247,12 +274,16 @@ public class EventDetailsActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+    //Prepares the map image to be shown on screen
     private void displayMap(){
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
         int height = size.y;
+
+        //the size of the image should be the width rounded down and divided by 2
+        //we will scale it up to twice the size for a higher resolution in the url
         int widthRounded = (width - (width % 10))/ 2;
         int heightRounded = (height - (height % 10)) / 2;
 
@@ -261,10 +292,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                 + "&zoom=15&size=" + widthRounded + "x" + widthRounded
                 + "&scale=2&sensor=false&markers=label:Here%7C"
                 + lat + "," + lng
-                +"&key=AIzaSyD8qiL5jZfvZmJCyNKM1GrfQAe-vgKHauQ"
-                ;
-        new DownloadImageTask(event_map)
-                .execute(map_url);
+                +"&key=AIzaSyD8qiL5jZfvZmJCyNKM1GrfQAe-vgKHauQ";
+
+        (new DownloadImageTask(event_map)).execute(map_url);
     }
 
     private void request(final int method, final String url, JSONObject body, final String type) {
@@ -279,6 +309,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                             Log.i("response", response.toString());
                             switch (type) {
                                 case GET_EVENT:
+                                    //set details information
                                     event = response;
                                     if(event.getString("facebook_created_by").equals(facebook_id)){
                                         Log.i("Coordinator event", "Editing enabled");
@@ -313,8 +344,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     finish();
                                     break;
                                 case POST_ATTENDING:
+                                    //Should handle icon setting's in the menu in here instead eventually
                                     break;
                                 case DELETE_ATTENDING:
+                                    //Should handle icon setting's in the menu in here instead eventually
                                     break;
                                 case IS_ATTENDING:
                                     if (response.getString("attending").equals("true")) {
@@ -330,6 +363,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     menu_checked.setVisible(true);
                                     break;
                                 case GET_ATTENDEES:
+                                    //show the list for the attendees
                                     attendees = response.getJSONArray("users");
                                     ArrayList<JSONObject> arrayListAttendees = ArrayUtil.toArrayList(attendees);
                                     setAdapters(arrayListAttendees, R.id.users_attending_list);
@@ -356,6 +390,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(stringRequest);
     }
 
+    //Downloads an image from a given URL
+    //can no longer find source for this on the web?
     private final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         final ImageView bmImage;
 
@@ -368,23 +404,25 @@ public class EventDetailsActivity extends AppCompatActivity {
             Log.i("MAP URL", urldisplay);
             Bitmap mIcon11 = null;
             try {
+                //read from steam
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.toString());
                 e.printStackTrace();
             }
+
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
-            //bmImage.setImageBitmap(result);
+            //set imageView to be the roundedImage of the map
             bmImage.setImageDrawable(
                     ImageUtil.createRoundedBitmapDrawableWithBorder(getApplicationContext(),result));
             loadingPanel.setVisibility(View.GONE);
+            //show the details layout and make the loading icon invisible
             RelativeLayout detailsLayout = (RelativeLayout)findViewById(R.id.activity_event_details);
             detailsLayout.setVisibility(View.VISIBLE);
-
         }
     }
 

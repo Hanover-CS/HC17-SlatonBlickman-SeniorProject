@@ -53,7 +53,17 @@ import edu.hanover.basin.Request.Objects.basinURL;
 import edu.hanover.basin.Users.Activities.ProfileActivity;
 import edu.hanover.basin.Users.Objects.User;
 
-//insert javadoc stuff
+/**
+ * Activity for logging into Facebook and basin
+ *
+ * This activity implements the Facebook login button.
+ * It will check for an existing basin user with the given Facebook ID.
+ * A POST to insert the user will be made if the GET returns a 404.
+ *
+ * @author Slaton Blickman
+ * @see AppCompatActivity
+ * @see User
+ */
 public class LoginActivity extends AppCompatActivity {
 
     //Facebook variables
@@ -192,7 +202,6 @@ public class LoginActivity extends AppCompatActivity {
         //Facebook login
         //Bundle d = data.getExtras();
         callbackManager.onActivityResult(requestCode, responseCode, data);
-
     }
 
     @Override
@@ -240,6 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (!enabled) {
                     DialogFragment dialogFragment = new LocationDialog();
                     dialogFragment.show(getFragmentManager(), "locationCheck");
+                    return true;
                 }
                 else{
                     intent = new Intent(LoginActivity.this, MapsActivity.class);
@@ -261,31 +271,30 @@ public class LoginActivity extends AppCompatActivity {
         infoContainer.setVisibility(View.VISIBLE);
         welcomePanel.setVisibility(View.VISIBLE);
         loadingPanel.setVisibility(View.GONE);
-        Log.e("UI UPDATED:", "SUCCESS");
+        Log.i("UI UPDATED:", "SUCCESS");
     }
 
     private void getBasinUser( int method, JSONObject body, final int tries ){
-        basinURL dbUser = new basinURL();
-        String url;
+        basinURL url = new basinURL();
+
+        //Change the url to use an ID if GET, else (on POST) use a URL with no specific id
         if(method == Request.Method.GET){
-            url = dbUser.getUserURL(current.getFacebookID(), "true");
+            url.getUserURL(current.getFacebookID(), "true");
         }
         else{
-            url = dbUser.getUserURL("");
+            url.getUserURL("");
         }
 
         if(tries < 3) {
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url, body,
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(method, url.toString(), body,
                     new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
-
                             // Result handling
                             Log.i("Volley Response", response.toString());
+                            //Update views to show and hide loading stuff
                             updateViewVisibility();
-
-
                         }
                     }, new Response.ErrorListener() {
 
@@ -296,6 +305,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Give the request 3 tries to try to insert the user into the database
                     JSONObject body = new JSONObject();
                     String[] names = current.getName().split(" ");
+
                     try {
                         body.put("fname", names[0]);
                         body.put("lname", names[1]);
@@ -303,6 +313,7 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e2) {
                         Log.e("JSON EXCEPTION", e2.toString());
                     }
+
                     getBasinUser(Request.Method.POST, body, tries + 1);
                     //Log.e("Volley error", Log.getStackTraceString(error));
                     error.printStackTrace();
@@ -320,19 +331,23 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    //For graph requests
+    //Private class for handling Facebook Graph Responses as an AsyncTask
     private class GetCurrentUser extends AsyncTask<AccessToken, Void, String>{
 
         @Override
         protected String doInBackground(AccessToken... params){
+            //construct a new empty user Object with the given id from the given accessToken
             current = new User(params[0].getUserId());
+            //This activity does not need likes
             current.doLikes(false);
+            //Begin requesting data for User
             current.startRequest();
             return "success";
         }
 
         @Override
         protected void onPostExecute(String results){
+            //Set welcome message
             greeting.setText("Welcome, " + current.getName() + "!");
             profilePic.setProfileId(current.getFacebookID());
 

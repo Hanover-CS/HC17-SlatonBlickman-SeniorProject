@@ -9,12 +9,25 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
 /**
+ * A class to hold utilities for use with Images
+ *
+ *
  * Created by Slaton on 3/22/2017.
  */
 
 public class ImageUtil {
 
-    //src: https://android--examples.blogspot.com/2015/11/android-how-to-create-circular.html
+    /**
+     * Returns a Drawable object with a white circular border to use in ImageViews through imageView.setDrawable()
+     * The original bitmap will be unaffected.
+     *
+     * src: https://android--examples.blogspot.com/2015/11/android-how-to-create-circular.html
+     *
+     * @param context the application context at the time of function call. Necessary for getting system resources
+     * @param bitmap the original bitmap that will be converted to a RoundedBitMapDrawable
+     * @return RoundedBitmapDrawable
+     * @see RoundedBitmapDrawable
+     */
     public static RoundedBitmapDrawable createRoundedBitmapDrawableWithBorder(Context context, Bitmap bitmap){
         int bitmapWidth = bitmap.getWidth();
         int bitmapHeight = bitmap.getHeight();

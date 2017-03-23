@@ -17,15 +17,32 @@ import edu.hanover.basin.Map.Objects.EventMarker;
 import edu.hanover.basin.R;
 
 /**
- * Created by Slaton on 3/19/2017.
+ * A class for constructing a EventMarkerAdapter that will be used for display of ListView items that are EventMarkers
+ * @author Slaton Blickman
+ * @see ArrayAdapter
  */
-
 public class EventMarkersAdapter extends ArrayAdapter<EventMarker> {
 
+    /**
+     * basic constructor for class that just calls the super method of construction
+     * @param context the application context at the time of constructor call.
+     * @param events the EventMarkers to be processed.
+     */
     public EventMarkersAdapter(Context context, ArrayList<EventMarker> events) {
         super(context, 0, events);
     }
 
+    /**
+     * Overrides the default getView to display EventMarker information.
+     * Uses the same layout as EventsAdapter but hides the coordinator information
+     * and changes the TextColors to work with the dialogue it should be shown in.
+     * Sets the onClickListener for the item to start EventDetailsActivity
+     *
+     * @param position the position of the item in the list
+     * @param convertView the view to be inflated as an item_event
+     * @param parent ViewGroup to use in inflater
+     * @return View
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -48,7 +65,6 @@ public class EventMarkersAdapter extends ArrayAdapter<EventMarker> {
         title.setTextColor(Color.BLACK);
         date_time.setTextColor(Color.DKGRAY);
         date_time.setText(event.getSnippet());
-
 
         return convertView;
     }
