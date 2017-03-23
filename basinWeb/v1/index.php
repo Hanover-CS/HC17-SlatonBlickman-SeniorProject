@@ -141,7 +141,7 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
     }
     else{
         $acceptedParams = ["accepted_params" => getValidParams("/users")];
-        $response = error($response, 400, "Invalid parameters!", $accepted_params);
+        $response = error($response, 400, "Invalid parameters!", $acceptedParams);
     }
 
     return $response;
