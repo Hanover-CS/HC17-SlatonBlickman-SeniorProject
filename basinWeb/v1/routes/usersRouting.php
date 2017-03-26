@@ -56,25 +56,33 @@ $app->post('/users[/]', function (Request $request, Response $response, $args) {
 
     if(validPOST('/users', $body)){
         try{
-            $user_insert = new dbOperation($this->db);
-            $results = $user_insert->insertUser($body);
-            //give back a link to the user
-            $user_uri = $request->getUri() . $body['facebook_id'] . '?facebook_id=true'; 
 
-            if($user_insert->isSuccessful()){
-                $body = ["success" => true, "location" => $user_uri];
-                $response = $response->withJSON($body, 201);
-            }
+            $user_insert = new dbOperation($this->db);
+            $user_insert->getUser($body["facebook_id"], "true");
+            if(!$user_insert->isSuccessful()) {
+                $results = $user_insert->insertUser($body);
+                //give back a link to the user
+                $user_uri = $request->getUri() . $body['facebook_id'] . '?facebook_id=true'; 
+
+                if($user_insert->isSuccessful()){
+                    $body = ["success" => true, "link" => $user_uri];
+                    $response = $response->withJSON($body, 201);
+                }
+                else{
+                    $response = error($response, 500, "Problem inserting user", ["success" => $results]);
+                }  
+            } 
             else{
-                $response = error($response, 500, "Problem inserting user", ["success" => $results]);
-            }   
+                $response = error($response, 409, "Resource already exists", null);
+            }
         }
         catch(PDOexception $e){
             $response = error($response, 500, $e->getMessage(), []);
         }
     }
     else{
-        $response = error($response, 400, "Invalid body!", ["accepted_body" => "facebook_id, fname, lname" ]);
+        $accepted =  ["facebook_id, fname, lname" ];
+        $response = error($response, 400, "Invalid body!", ["accepted" => $accepted, "given" => $body]);
     }
     //$this->logger->addInfo("Getting all users");
 
