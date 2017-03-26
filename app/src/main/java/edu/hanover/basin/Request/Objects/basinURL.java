@@ -24,6 +24,13 @@ public class basinURL {
     }
 
     /**
+     * Gets the full URL for basinWeb
+     * @return
+     */
+    public String getBasinWebURL(){
+        return OPEN_BASINWEB;
+    }
+    /**
      * Gets a URL for a particular event.
      * A URL for all events can be done by passing in an empty string.
      * @param id the event id to query in basinWeb
@@ -49,6 +56,7 @@ public class basinURL {
     public String getUserURL(String id, String is_Facebook_id){
         if(!(is_Facebook_id.equals("true") || is_Facebook_id.equals("false"))){
             Log.e("Invalid parameter", is_Facebook_id);
+            throw new IllegalArgumentException("is_facebook_id must be 'true' or 'false'");
         }
         buildURL = OPEN_BASINWEB + "/users/" + id + "?facebook_id=" + is_Facebook_id;
         return buildURL;
@@ -72,6 +80,10 @@ public class basinURL {
      * @return String representing the URL
      */
     public String getUserEventsURL(String user_id, HashMap<String, String> params){
+        if(user_id.equals("")){
+            throw new IllegalArgumentException("user_id cannot be empty string");
+        }
+
         buildURL = getUserURL(user_id) + "/events";
         if(!params.isEmpty()) {
             buildURL += "?";
@@ -93,7 +105,12 @@ public class basinURL {
      * @return String representing the URL
      */
     public String getEventAttendeesURL(String event_id){
-        buildURL = getEventURL(event_id) + "/attendees";
+        if(event_id.equals("")){
+            throw new IllegalArgumentException("event_id cannot be an empty string");
+        }
+        else{
+            buildURL = getEventURL(event_id) + "/attendees";
+        }
         return buildURL;
     }
 
@@ -104,6 +121,9 @@ public class basinURL {
      * @return String representing the URL
      */
     public String getIsAttendingURL(String event_id, String user_id){
+        if(event_id.equals("") || user_id.equals("")){
+            throw new IllegalArgumentException("ids cannot be empty");
+        }
         buildURL = getEventAttendeesURL(event_id) + "/" + user_id;
         return buildURL;
     }
