@@ -51,6 +51,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     private String about;
 
 
+    /**
+     * Gets the id and about section from the intent.
+     * Initializes about text to be the data from the intent.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,11 @@ public class ProfileEditActivity extends AppCompatActivity {
         edit_about.setText(about);
     }
 
+    /**
+     * Inflate the menu laying using menu_edit.xml
+     * @param menu
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -71,10 +81,17 @@ public class ProfileEditActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handles the clicks of hte menu items.
+     * Does the following:
+     * (save_icon) Executes a request to basinWeb to update the user's information
+     * (cancel_icon) finishes the current Activity so that it closes.
+     * @param item menuItem that was clicked
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.save_icon:
                 if(edit_about.getText().length() > 0){
