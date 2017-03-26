@@ -9,7 +9,7 @@ import edu.hanover.basin.Request.Objects.basinURL;
 import static org.junit.Assert.*;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ *  Unit tests for basinURL class, which will execute on the development machine (host).
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
@@ -19,7 +19,6 @@ public class basinUrlUnitTest {
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
-
 
     @Test
     public void UserUrl_isCorrect(){
@@ -52,11 +51,9 @@ public class basinUrlUnitTest {
         basinURL url = new basinURL();
 
         url.getEventAttendeesURL("1");
-
         assertEquals(url.toString(), basinWeb + "/events/1/attendees");
 
         url.getIsAttendingURL("1", "2");
-
         assertEquals(url.toString(), basinWeb  + "/events/1/attendees/2");
     }
 
