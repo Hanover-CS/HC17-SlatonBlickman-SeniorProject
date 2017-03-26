@@ -101,6 +101,11 @@ public class EventCreationActivity extends AppCompatActivity {
     private basinURL url;
 
 
+    /**
+     * Sets private variables for views and layouts.
+     * Gets values from intents passed in that indicate non-user specified information: location and whether this is updates an already created event.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,9 @@ public class EventCreationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Prepoluates editable fields if this Activity is used to update an event
+     */
     @Override
     protected  void onResume(){
         super.onResume();
@@ -157,15 +165,22 @@ public class EventCreationActivity extends AppCompatActivity {
             description.setText(editDesc);
             time.setText(editTime);
 
+            //set variables to identify the later request to be a PUT for an event
             requestMethod = Request.Method.PUT;
             url.getEventURL(eventID);
         }
         else{
+            //set variables to identify the later request to be a POST to create a new event
             requestMethod = Request.Method.POST;
             url.getEventURL("");
         }
     }
 
+    /**
+     * Inflates the menu layout to use menu_edit.xml
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -175,6 +190,14 @@ public class EventCreationActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Handles on click of menu items.
+     * Does the following:
+     * (save_icon) Calls private function to validate fields and send request to update/create event
+     * (cancel_icon) Finish current activity
+     * @param item MenuItem clicked
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -192,6 +215,7 @@ public class EventCreationActivity extends AppCompatActivity {
         }
     }
 
+    //use regex to validate the time format
     private boolean validTime(){
         //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
         Pattern pattern;
@@ -203,8 +227,7 @@ public class EventCreationActivity extends AppCompatActivity {
         return matcher.matches();
     }
 
-    public void createEvent(){
-        //regex reference http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
+    private void createEvent(){
         try{
             JSONObject body = new JSONObject();
 
@@ -232,7 +255,7 @@ public class EventCreationActivity extends AppCompatActivity {
         // Request a string response
         Log.i("Requesting: ", url);
         Log.i("Body:", body.toString());
-        JsonObjectRequest stringRequest = new JsonObjectRequest(method, url, body,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, body,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -242,11 +265,14 @@ public class EventCreationActivity extends AppCompatActivity {
                             Intent thisIntent = getIntent();
                             String activity;
                             if(thisIntent != null){
+                                //do different actions depending on previous activity
                                 activity = thisIntent.getExtras().getString(EXTRA_ACTIVITY_STARTED);
+
                                 if(activity.equals("EventDetails")){
                                     finish();
                                 }
                                 else{
+                                    //go to the location on hte map of hte new activity
 
                                     Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(EventCreationActivity.this, MapsActivity.class);
@@ -273,7 +299,7 @@ public class EventCreationActivity extends AppCompatActivity {
         });
 
         // Add the request to the queue
-        Volley.newRequestQueue(this).add(stringRequest);
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
 
     }
 
