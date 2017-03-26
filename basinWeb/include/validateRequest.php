@@ -54,7 +54,7 @@ function getDefaults($route){
             $defaults = ['sort' => 'fname', 'direction' => 'asc'];
             break;
         case "/users/id/events":
-            $defaults = ['created' => 'true', 'attending' => 'true', 'facebook_id' => 'false'];
+            $defaults = ['created' => 'true', 'attending' => 'true', 'facebook_id' => 'true'];
             break;
         case "/events":
             $defaults = [];
@@ -146,7 +146,7 @@ function validPOST($route, $body){
             return false;
             break;
         case "/users":
-            $validBody = ['facebook_id', 'fname', 'lname'];;
+            $validBody = ['facebook_id', 'fname', 'lname'];
             break;
         case "/events":
             $validBody = ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date'];
