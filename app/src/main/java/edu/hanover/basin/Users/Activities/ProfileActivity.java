@@ -57,6 +57,10 @@ public class ProfileActivity extends AppCompatActivity {
     private String id;
     private User current;
 
+    /**
+     * Sets id to the be the id received through EXTRA_FACEBOOK_ID and sets the profilePicture given the id
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +80,21 @@ public class ProfileActivity extends AppCompatActivity {
         Log.i("FACEBOOK ID", id);
     }
 
+    /**
+     * Updates the user information on resume
+     */
     @Override
     protected void onResume(){
         super.onResume();
         getUserInformation();
     }
 
+    /**
+     * Inflates the menu to use menu_profile.xml for layout.
+     * If the id is the same as the user's using the application, display the edit icon
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -95,6 +108,13 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handles click events for menu items.
+     * Does the following:
+     * (edit_icon) Starts ProfileEditActivity to edit the about section
+     * @param item menu item
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
