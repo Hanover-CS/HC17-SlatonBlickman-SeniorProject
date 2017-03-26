@@ -299,6 +299,7 @@ class dbOperation
         $sql = $sql_vals . $sql_vars;
         $insert = $this->conn->prepare($sql);
         $this->results = $insert->execute($body);
+        $this->results = $this->conn->lastInsertId();
 
         return $this->results;
     }

@@ -55,18 +55,25 @@ $app->post('/events[/]', function($request, $response, $args) {
     if(validPOST("/events", $body)){
         try{
             $events_query = new dbOperation($this->db);
-            $results = $events_query->insertEvent($body);
-
+            $events_query->getUser($body["facebook_created_by"], "true");
             if($events_query->isSuccessful()){
-                $results = ["success" => $results];
-                $response = $response->withJSON($results, 201);
+                $results = $events_query->insertEvent($body);
+
+                if($events_query->isSuccessful()){
+
+                    $results = ["success" => $results, "link" => "/events/" . $results];
+                    $response = $response->withJSON($results, 201);
+                }
+                else{
+                    $response = error($response, 500, "Unknown problem when executing POST", null);
+                }
             }
             else{
-                $response = error($response, 500, "Unknown problem when executing POST", null);
+                $response = error($response, 404, "No user with that facebook id was found", null);
             }
         }
         catch(PDOexception $e){
-            $response = error($response, 500, $e->getMessage(), null);
+            $response = error($response, 409, $e->getMessage(), null);
         }
         //$this->logger->addInfo("adding new user");
     }
@@ -128,10 +135,10 @@ $app->delete('/events/{id}[/]', function($request, $response, $args) {
     if(validDELETE("events/id", $params) and validGET("/events/id", $params)){
         try{
             $events_query = new dbOperation($this->db);
-            ///$results = $events_query->getEvent($id, $params);
-            $results = $events_query->deleteEvent($id);
 
+            $events_query->getEvent($id);
             if($events_query->isSuccessful()){
+                $results = $events_query->deleteEvent($id);
                 $response = $response->withJSON(["marked for deletion"=>$results], 202);
                 //$response->getBody()->write($results);
             }

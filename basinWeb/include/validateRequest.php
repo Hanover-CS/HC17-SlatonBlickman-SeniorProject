@@ -141,6 +141,7 @@ function validGET($route, $params){
 * @return boolean whether $body is valid or not
 */
 function validPOST($route, $body){
+    $validBody = [];
     switch($route){
         case "/users/id":
             return false;
@@ -160,6 +161,9 @@ function validPOST($route, $body){
         default:
             return false;
             break;
+    }
+    if(sizeof($body) != sizeof($validBody)){
+        return false;
     }
     return validateBody($body, $validBody);
 }
