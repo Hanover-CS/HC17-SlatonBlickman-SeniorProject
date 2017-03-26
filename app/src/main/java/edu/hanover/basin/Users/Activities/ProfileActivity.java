@@ -112,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
      * Handles click events for menu items.
      * Does the following:
      * (edit_icon) Starts ProfileEditActivity to edit the about section
-     * @param item menu item
+     * @param item menuItem clicked
      * @return boolean for success
      */
     @Override
