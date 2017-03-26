@@ -72,7 +72,8 @@ $container['db'] = function ($c) {
 * TODO: Return list of links to all available routes 
 */
 $app->get('[/]', function($request, $response, $args) {
-    //$query_c = new dbOperation($this->db);
+   $query = new dbOperation($this->db);
+   $query->resetTables();
    $response->getBody()->write( "Default page for http requests");
 }); 
 
