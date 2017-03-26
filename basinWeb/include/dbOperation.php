@@ -53,6 +53,18 @@ class dbOperation
      */
 
     /**
+    * Reset all the tables for testing in db_basin_test
+    */
+    public function resetTables(){
+        //$database = $this->conn->query('select database()')->fetchColumn();
+        $database = "no";
+        if($database == "db_basin_test"){
+            $this->results = true;
+        }
+        $this->results = false;
+    }
+
+    /**
     * Function to determine if the last query was successfully completed
     * @return boolean for succesful query
     */
