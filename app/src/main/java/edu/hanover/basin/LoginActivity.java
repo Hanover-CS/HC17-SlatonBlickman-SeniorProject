@@ -82,6 +82,12 @@ public class LoginActivity extends AppCompatActivity {
     //Object variables
     private User current;
 
+    /**
+     * This overrides the default onCreate method to do a number of things such as:
+     * Initialize the Facebook SDK, register the call back methods for the login button,
+     * handling AccessToken changes, and show the loading icon
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +181,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, callback);
     }
 
+    /**
+     * Stop access token tracking when activity is destroyed
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -196,6 +205,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    /**
+     * This can get extra data from the result of the login if needed.
+     * Currently does nothing but register it with the callBackManager and call its super method.
+     * @param requestCode
+     * @param responseCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
@@ -204,6 +220,11 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, responseCode, data);
     }
 
+    /**
+     * Inflates the menu to use menu_main.xml and saves references to menu items for later
+     * @param menu
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -216,6 +237,15 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handles what to do on menu item clicks.
+     * Currently does the following:
+     * (profile_icon) Starts ProfileActivity for the current user.
+     * (lists_icon) Starts UserEventsActivity for the current user.
+     * (map_icon) Checks permissions for FINE_LOCATION and GPS enabled before starting MapsActivity
+     * @param item menu item to check for
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -274,6 +304,8 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("UI UPDATED:", "SUCCESS");
     }
 
+    //private method to get the basinUser given a few parameters
+    //we can use to try and get the user from basin web or add them if a 404 is received
     private void getBasinUser( int method, JSONObject body, final int tries ){
         basinURL url = new basinURL();
 
