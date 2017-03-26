@@ -9,7 +9,7 @@ require "./unitTests/App.php";
 * Class for doing unit tests on basinWeb routes.
 * followed this guide for installation and instruction:
 * https://medium.com/@Andela/writing-testable-api-apps-in-slim-framework-29905970941b#.g3hj5rjsh
-* Need to have an empty database tables. To import the tables, execute '../include/db_basin_import.sql' in your database
+* Need to have an empty database tables. To import the tables, execute "../include/db_basin_import.sql" in your database
 */
 class routeTest extends PHPUnit_Framework_TestCase
 {
@@ -78,7 +78,7 @@ class routeTest extends PHPUnit_Framework_TestCase
 	    $this->printMsg("contains array of users");
 	    $this->assertSame("array", gettype($result["users"]));
 
-	    $this->printMsg("only has one key 'users'");
+	    $this->printMsg("only has one key users");
 	    $this->assertTrue(count($result) == 1);
 
 	}
@@ -204,7 +204,7 @@ class routeTest extends PHPUnit_Framework_TestCase
 	    $this->printMsg("contains array of events");
 	    $this->assertSame("array", gettype($result["events"]));
 
-	    $this->printMsg("only has one key 'events'");
+	    $this->printMsg("only has one key events");
 	    $this->assertTrue(count($result) == 1);
 
     }
@@ -214,15 +214,15 @@ class routeTest extends PHPUnit_Framework_TestCase
 
     	$uri = "/events/";
     	$fb = "0";
-    	// Accepted body: ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date'];
+    	// Accepted body: ["facebook_created_by", "lat_coord", "long_coord", "description",  "time_start", "title", "date"];
 
     	$this->printMsg("with invalid body");
     	$body = ["junk" => "asd"];
     	$response = $this->getResponseResult("POST", $uri, $body);
     	$this->assertSame($response->getStatusCode(), 400);
 
-    	$body = ["facebook_created_by" => "11", 'lat_coord' => 87.0, 'long_coord' => 87.0, 
-    		'description' => "testing",  'time_start' => "01:00", 'title' => "webtest", 'date' => "03-03-03"];
+    	$body = ["facebook_created_by" => "11", "lat_coord" => 87.0, "long_coord" => 87.0, 
+    		"description" => "testing",  "time_start" => "01:00", "title" => "webtest", "date" => "03-03-03"];
     	$this->body = $body;
     	$this->printMsg("with invalid facebook id");
     	$response = $this->getResponseResult("POST", $uri, $body);
@@ -268,7 +268,7 @@ class routeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testPUTEvent(){
-		//Accepted body: ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date']
+		//Accepted body: ["facebook_created_by", "lat_coord", "long_coord", "description",  "time_start", "title", "date"]
         $this->printMsg("TEST PUT /event/{id}");
 
     	if($this->eventLink == null){
@@ -283,8 +283,8 @@ class routeTest extends PHPUnit_Framework_TestCase
 
     	// $uri = "/events/57";
 
-    	$body = ["facebook_created_by" => "0", 'lat_coord' => 87.0, 'long_coord' => 87.0, 
-    		'description' => "testing",  'time_start' => "01:00", 'title' => "webtest", 'date' => "03-03-03"];
+    	$body = ["facebook_created_by" => "0", "lat_coord" => 87.0, "long_coord" => 87.0, 
+    		"description" => "testing",  "time_start" => "01:00", "title" => "webtest", "date" => "03-03-03"];
 
         $invalidBody = $body;
         $invalidBody["junk"] = "asda";

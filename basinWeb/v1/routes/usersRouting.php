@@ -1,6 +1,6 @@
 <?php
 
-require_once 'helper.php';
+require_once "helper.php";
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -13,12 +13,12 @@ use \Psr\Http\Message\ResponseInterface as Response;
 /**
 * GET: Handles the route for getting an array of all users
 * /users or /users/
-* Accepted paramaters: ['sort' => ['_id', 'facebook_id', 'fname', 'lname', 'nickname'], 'direction' => ['asc', 'desc']]
+* Accepted paramaters: ["sort" => ["_id", "facebook_id", "fname", "lname", "nickname"], "direction" => ["asc", "desc"]]
 */
-$app->get('/users[/]', function (Request $request, Response $response, $args) {
+$app->get("/users[/]", function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
     //defaults for /users will indicate sorting field and direction
-    $params = addDefaults('/users', $params);
+    $params = addDefaults("/users", $params);
 
     if(validGET("/users", $params)){
         try{
@@ -48,13 +48,13 @@ $app->get('/users[/]', function (Request $request, Response $response, $args) {
 
 /**
 * POST: Handles route for adding a new user
-* Accepted body: ['facebook_id', 'fname', 'lname']
+* Accepted body: ["facebook_id", "fname", "lname"]
 * TODO: Implement check to make sure htere are not two users with the same Facebook ID
 */
-$app->post('/users[/]', function (Request $request, Response $response, $args) {
+$app->post("/users[/]", function (Request $request, Response $response, $args) {
     $body = $request->getParsedBody();
 
-    if(validPOST('/users', $body)){
+    if(validPOST("/users", $body)){
         try{
 
             $user_insert = new dbOperation($this->db);
@@ -62,7 +62,7 @@ $app->post('/users[/]', function (Request $request, Response $response, $args) {
             if(!$user_insert->isSuccessful()) {
                 $results = $user_insert->insertUser($body);
                 //give back a link to the user
-                $user_uri = $request->getUri() . $body['facebook_id'] . '?facebook_id=true'; 
+                $user_uri = $request->getUri() . $body["facebook_id"] . "?facebook_id=true"; 
 
                 if($user_insert->isSuccessful()){
                     $body = ["success" => true, "link" => $user_uri];
@@ -96,8 +96,8 @@ $app->post('/users[/]', function (Request $request, Response $response, $args) {
 * 
 * Accepted parameter: facebook_id : true/false
 */
-$app->get('/users/{id}[/]', function (Request $request, Response $response, $args) {
-    $id = $args['id'];
+$app->get("/users/{id}[/]", function (Request $request, Response $response, $args) {
+    $id = $args["id"];
     $params = $request->getQueryParams();
 
     //add some default parameters if they are not specified
@@ -106,7 +106,7 @@ $app->get('/users/{id}[/]', function (Request $request, Response $response, $arg
     $params = addDefaults("/users/id", $params);
     $method = $request->getMethod();
 
-    //ensure we didn't get any unexpected parameters with the request
+    //ensure we didn"t get any unexpected parameters with the request
     if(validGET("/users/id", $params)){
         try{
             $user_query = new dbOperation($this->db); 
@@ -139,8 +139,8 @@ $app->get('/users/{id}[/]', function (Request $request, Response $response, $arg
 * Accepted parameter: facebook_id => true/false
 * Accepted body: ["fname", "lname", "about", "nickname"]
 */
-$app->put('/users/{id}', function (Request $request, Response $response, $args) {
-    $id = $args['id'];
+$app->put("/users/{id}", function (Request $request, Response $response, $args) {
+    $id = $args["id"];
     $body = $request->getParsedBody();
     $params = $request->getQueryParams();
     //set facebook_id to true unless parameter says otherwise
@@ -150,11 +150,11 @@ $app->put('/users/{id}', function (Request $request, Response $response, $args) 
     if(validPUT("/users/id", $body)){
         try{
             $get_user = new dbOperation($this->db);
-            $get_user->getUser($id, $params['facebook_id']);
+            $get_user->getUser($id, $params["facebook_id"]);
 
            	//user must exist before updating
             if($get_user->isSuccessful()){
-                $user_update = $get_user; //rename object for sake of readability; we don't really need to create a new object for this
+                $user_update = $get_user; //rename object for sake of readability; we don"t really need to create a new object for this
                 $results = $user_update->updateUser($id, $body, $params["facebook_id"]); 
 
                 if($user_update->isSuccessful()){
@@ -187,8 +187,8 @@ $app->put('/users/{id}', function (Request $request, Response $response, $args) 
 * 
 * Accepted parameter: facebook_id => true/false
 */
-$app->delete('/users/{id}', function (Request $request, Response $response, $args) {
-    $id = $args['id'];
+$app->delete("/users/{id}", function (Request $request, Response $response, $args) {
+    $id = $args["id"];
     $body = $request->getParsedBody();
     $params = $request->getQueryParams();
     //default facebook_id to true
@@ -229,20 +229,20 @@ $app->delete('/users/{id}', function (Request $request, Response $response, $arg
 
 
 /**
-* GET: Handles route for getting a user's events.
-* Accepted params: ['created' => ['true', 'false'], 'attending' => ['true', 'false'], 'facebook_id' => ['true', 'false']]
+* GET: Handles route for getting a user"s events.
+* Accepted params: ["created" => ["true", "false"], "attending" => ["true", "false"], "facebook_id" => ["true", "false"]]
 * TODO: Implement check to make sure htere are not two users with the same Facebook ID
 */
-$app->get('/users/{id}/events[/]', function (Request $request, Response $response, $args) {
-    $id = $args['id'];
+$app->get("/users/{id}/events[/]", function (Request $request, Response $response, $args) {
+    $id = $args["id"];
     $params = $request->getQueryParams();
-    $method = $request->getMethod(); //this line isn't used anywhere
+    $method = $request->getMethod(); //this line isn"t used anywhere
     $params = addDefaults("/users/id/events", $params);
 
     if(validGET("/users/id/events", $params)){
         try{
             $user_query = new dbOperation($this->db); 
-            $user_query->getUser($id, $params['facebook_id']);
+            $user_query->getUser($id, $params["facebook_id"]);
 
             if($user_query->isSuccessful()){
                 $results = $user_query->getUserEvents($id, $params);

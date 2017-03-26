@@ -1,6 +1,6 @@
 <?php
 
-require_once 'helper.php';
+require_once "helper.php";
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -13,9 +13,9 @@ use \Psr\Http\Message\ResponseInterface as Response;
 * GET: Handles route for getting all events
 * Accepted params: None
 */
-$app->get('/events[/]', function($request, $response, $args) {
+$app->get("/events[/]", function($request, $response, $args) {
     $params = $request->getQueryParams();
-    $params = addDefaults('/events', $params);
+    $params = addDefaults("/events", $params);
 
     if(validGET("/events", $params)){
         try{
@@ -46,10 +46,10 @@ $app->get('/events[/]', function($request, $response, $args) {
 /**
 * POST: Handles route for adding a new event
 * Accepted params: none
-* Accepted body: ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date'];
+* Accepted body: ["facebook_created_by", "lat_coord", "long_coord", "description",  "time_start", "title", "date"];
 * TODO: Serve back link to event created in response
 */
-$app->post('/events[/]', function($request, $response, $args) {
+$app->post("/events[/]", function($request, $response, $args) {
     $body = $request->getParsedBody();
 
     if(validPOST("/events", $body)){
@@ -90,10 +90,10 @@ $app->post('/events[/]', function($request, $response, $args) {
 * GET: Handles route for getting an event
 * Accepted params: none
 */
-$app->get('/events/{id}[/]', function($request, $response, $args) {
+$app->get("/events/{id}[/]", function($request, $response, $args) {
     $id = $args["id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
 
     if(validGET("/events/id", $params)){
         try{
@@ -126,10 +126,10 @@ $app->get('/events/{id}[/]', function($request, $response, $args) {
 * DELETE: Handles route for deleting an event
 * Accepted params: none
 */
-$app->delete('/events/{id}[/]', function($request, $response, $args) {
+$app->delete("/events/{id}[/]", function($request, $response, $args) {
     $id = $args["id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
 
 
     if(validDELETE("events/id", $params) and validGET("/events/id", $params)){
@@ -165,9 +165,9 @@ $app->delete('/events/{id}[/]', function($request, $response, $args) {
 /**
 * PUT: Handles route for updating an event
 * Accepted params: none
-* Accepted body: ['facebook_created_by', 'lat_coord', 'long_coord', 'description',  'time_start', 'title', 'date']
+* Accepted body: ["facebook_created_by", "lat_coord", "long_coord", "description",  "time_start", "title", "date"]
 */
-$app->put('/events/{id}[/]', function($request, $response, $args) {
+$app->put("/events/{id}[/]", function($request, $response, $args) {
     $body = $request->getParsedBody();
     $id = $args["id"];
 

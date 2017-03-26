@@ -1,6 +1,6 @@
 <?php
 
-require_once 'helper.php';
+require_once "helper.php";
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -11,13 +11,13 @@ use \Psr\Http\Message\ResponseInterface as Response;
 /**
 * POST: Handles route for adding a new attendee to an event
 * Accepted params: none 
-* Accepted body: ['user_id'] 
+* Accepted body: ["user_id"] 
 * NOTE: user_id MUST be a facebook id or the response will 404
 */
-$app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
+$app->post("/events/{id}/attendees[/]", function($request, $response, $args) {
     $id = $args["id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
     $body = $request->getParsedBody();
 
     if(validPOST("/events/id/attendees", $body)){
@@ -25,13 +25,13 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
             //check if that user and event exist
             $events_query = new dbOperation($this->db);
             $users_query = new dbOperation($this->db);
-            $user_results = $users_query->getUser($body['user_id'], 'true');
+            $user_results = $users_query->getUser($body["user_id"], "true");
             $event_results = $events_query->getEvent($id, $params);
 
             if($events_query->isSuccessful() && $users_query->isSuccessful()){
                 $insert_attendee = $events_query;
                 $results = $insert_attendee->insertEventAttendee($id, $body);
-                $results = ["success" => $results, "link" => $request->getUri()]; //I'm not sure this getUri does anything useful
+                $results = ["success" => $results, "link" => $request->getUri()]; //I"m not sure this getUri does anything useful
 
                 if($insert_attendee->isSuccessful()){
                      $response = $response->withJSON($results, 200);
@@ -67,11 +67,11 @@ $app->post('/events/{id}/attendees[/]', function($request, $response, $args) {
 * Accepted params: none 
 * returns list of users as JSON objects
 */
-$app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
+$app->get("/events/{id}/attendees[/]", function($request, $response, $args) {
     //$query_c = new dbOperation($this->db);
     $id = $args["id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
 
     if(validGET("/events/id", $params)){
         try{
@@ -108,12 +108,12 @@ $app->get('/events/{id}/attendees[/]', function($request, $response, $args) {
 * Accepted params: none 
 * returns JSON object holding a boolean indicating true for attending and false otherwise
 */
-$app->get('/events/{event_id}/attendees/{user_id}[/]', function($request, $response, $args) {
+$app->get("/events/{event_id}/attendees/{user_id}[/]", function($request, $response, $args) {
     //$query_c = new dbOperation($this->db);
     $event_id = $args["event_id"];
     $user_id = $args["user_id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
 
     if(validGET("/events/id", $params)){
         try{
@@ -121,7 +121,7 @@ $app->get('/events/{event_id}/attendees/{user_id}[/]', function($request, $respo
             $query->getEvent($event_id, $params);
 
             if($query->isSuccessful()){
-                $query->getUser($user_id, 'true');
+                $query->getUser($user_id, "true");
                 $query->isSuccessful();
 
                 if($query->isSuccessful()){
@@ -154,15 +154,15 @@ $app->get('/events/{event_id}/attendees/{user_id}[/]', function($request, $respo
 
 
 /**
-* DELETE: Handles route for deleting a user's attendance of an event
+* DELETE: Handles route for deleting a user"s attendance of an event
 * Accepted params: none 
 */
-$app->delete('/events/{event_id}/attendees/{user_id}[/]', function($request, $response, $args) {
+$app->delete("/events/{event_id}/attendees/{user_id}[/]", function($request, $response, $args) {
     //$query_c = new dbOperation($this->db);
     $event_id = $args["event_id"];
     $user_id = $args["user_id"];
     $params = $request->getQueryParams();
-    $params = addDefaults('/events/id', $params);
+    $params = addDefaults("/events/id", $params);
 
     if(validGET("/events/id", $params)){
         try{
@@ -170,7 +170,7 @@ $app->delete('/events/{event_id}/attendees/{user_id}[/]', function($request, $re
             $query->getEvent($event_id, $params);
 
             if($query->isSuccessful()){
-                $query->getUser($user_id, 'true');
+                $query->getUser($user_id, "true");
 
                 if($query->isSuccessful()){
                     $results = $query->deleteEventAttendee($event_id, $user_id, $params);
