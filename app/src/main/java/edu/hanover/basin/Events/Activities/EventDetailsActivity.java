@@ -85,6 +85,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     private JSONObject event;
     private JSONArray attendees;
 
+    /**
+     * Sets constants to use for other functions
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +109,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Makes requests to basinWeb for event details and attending status for the current user.
+     * Doing this in onResume() allows the page to be refreshed on back button use
+     */
     @Override
     protected void onResume(){
         super.onResume();
@@ -121,6 +129,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Inflate the menu to use menu_details.xml snad save references to edit_icon, delete_icon, and check_attending_icon to set their attributes later
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,7 +147,17 @@ public class EventDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-
+    /**
+     * Handles on click of the menu items.
+     * Does the following:
+     * (check_attending_icon) Sets the checked state to the inverse of what it was and sends a request to update the attending status in basinWeb
+     * (profile_icon) Starts ProfileActivity for the event coordinator
+     * (marker_icon) Starts MapsActivity with the Map position at the current event
+     * (delete_icon) Makes a request to basinWeb to delete the current event and finishes this activity
+     * (edit_icon) Starts EventCreationActivity with data prepopulated by this event.
+     * @param item MenuItem selected
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -267,6 +290,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //abstracts populating the listview for attendees
     private void setAdapters(ArrayList<JSONObject> arrayList, int listViewId){
         UsersAdapter adapter = new UsersAdapter(this, arrayList);
         // Attach the adapter to a ListView
