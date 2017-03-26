@@ -85,6 +85,11 @@ public class MapsActivity extends AppCompatActivity
     private ClusterManager<EventMarker> mClusterManager;
     private EventMarker mMe;
 
+    /**
+     * Overrides onCreate to create an instance of GoogleAPIClient and get the location.
+     * Gets the map fragment.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +106,11 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Inflates menu layout to use menu_maps.xml
+     * @param menu menu to inflate
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -109,6 +119,14 @@ public class MapsActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Handles on click event for menu items.
+     * Does the following:
+     * (lists_icon) Starts activity UserEventsActivity for the current user.
+     * (home_icon) Starts LoginActivity and clears the backstack until the last time LoginActivity was started
+     * @param item MenuItem clicked
+     * @return boolean for success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -165,18 +183,27 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Connect to GoogleApiClient onStart
+     */
     @Override
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
     }
 
+    /**
+     * Disconnect from GoogleApiClient onStop
+     */
     @Override
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
     }
 
+    /**
+     * Remove location updates onPause
+     */
     @Override
     protected void onPause(){
         super.onPause();
@@ -230,11 +257,19 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Does nothing but needed for GoogleApiClient
+     * @param i
+     */
     @Override
     public void onConnectionSuspended(int i){
 
     }
 
+    /**
+     * Build the GoogleApiClient again if connection failed
+     * @param result ConnectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult result){
         buildGoogleApiClient();
@@ -251,6 +286,7 @@ public class MapsActivity extends AppCompatActivity
         updateUI();
     }
 
+    //build hte GoogleApiClient to use location services
     private void buildGoogleApiClient(){
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
