@@ -46,9 +46,6 @@ public class basinURL {
      * A URL for all users can be done by passing in an empty string.
      * Doesn't throw an exception here, but basinWeb will error.
      *
-     * TODO: Throw exception for invalid paramater of is_facebook_id
-     * TODO: Implement another getUserURL with is_facebook_id as a proper boolean
-     *
      * @param id the user id to query in basinWeb
      * @param is_Facebook_id a string that should have value "true" or "false" to use the id as the Facebook_ID
      * @return String representing the URL
