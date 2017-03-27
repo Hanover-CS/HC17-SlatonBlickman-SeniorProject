@@ -67,15 +67,17 @@ $container['db'] = function ($c) {
  * ROUTES
 */
 
-/**
-* GET: returns the default page. 
-* TODO: Return list of links to all available routes 
-*/
-$app->get('[/]', function($request, $response, $args) {
-   $query = new dbOperation($this->db);
-   $query->resetTables();
-   $response->getBody()->write( "Default page for http requests");
-}); 
+// /**
+// * GET: returns the default page. 
+// * TODO: Return list of links to all available routes 
+// */
+// $app->get('[/]', function($request, $response, $args) {
+//    $query = new dbOperation($this->db);
+//    $query->resetTables();
+//    $response->getBody()->write( "Default page for http requests");
+// }); 
+
+require_once './routes/indexRouting.php';
 
 require_once './routes/usersRouting.php';
  
