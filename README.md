@@ -3,7 +3,9 @@ Slaton Blickman Senior Project Repository
 
 Hello! Thanks for stopping by. This is my senior project for Winter 2017 at Hanover College.
 
-This repository should really be separated into two distinct repositories, the basinWeb web application and basin Android application, but it currently exists in one for the sake of this as a senior project.
+This repository should really be separated into two distinct repositories, the basinWeb web application and basin Android application, but it currently exists in one for the sake of this as a senior project. 
+
+If you have any questions, please contact me at gitslaton on Github or blickmans15@hanover.edu
 
 ## basinWeb
 
@@ -56,6 +58,8 @@ There is too much to explain through this README, so please the basinDocs for fu
 
 You can open the /basinDocs/index.html to view the documentation for this code or go to http://vault.hanover.edu/~blickmans15/services/basinDocs/ if you are on Hanover College's network.
 
+To run the unit tests, look for the green "Run" triangle at that top and switch from "app" to "basin in app." Hit "Run".
+The only class that can be unit tested in this manner is basinURL. Instrument tests for the UI through Espresso testing framework are in the works but were beyond the scope of the timeline for this project.
 
 
 Credit to Evan Miller for the basin logo.
