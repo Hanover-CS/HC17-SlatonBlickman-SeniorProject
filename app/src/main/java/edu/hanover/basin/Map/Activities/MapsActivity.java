@@ -84,6 +84,7 @@ public class MapsActivity extends AppCompatActivity
 
     private ClusterManager<EventMarker> mClusterManager;
     private EventMarker mMe;
+    private LatLng mMeLocation;
 
     /**
      * Overrides onCreate to create an instance of GoogleAPIClient and get the location.
@@ -244,6 +245,7 @@ public class MapsActivity extends AppCompatActivity
             Log.e("Security exception", e.toString());
         }
 
+
         if (mLastLocation != null) {
             mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
@@ -253,6 +255,7 @@ public class MapsActivity extends AppCompatActivity
             getMarkersFromBasinWeb();
 
             updateUI();
+
 
         }
     }
@@ -399,16 +402,13 @@ public class MapsActivity extends AppCompatActivity
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
 
-            //if there is no me marker, add one!
-            if(mMe == null){
-                mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
-                mClusterManager.addItem(mMe);
-            }
         }
         else{
             //For some reason we can't get the last known location, so let's use the default and update the UI with that
             Toast.makeText(this, "No location; using default", Toast.LENGTH_SHORT).show();
             mLastLatLng = new LatLng(38.713, -85.459 ); //Default is Hanover
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLastLatLng, 17f));
+
             updateUI();
         }
 
@@ -422,13 +422,6 @@ public class MapsActivity extends AppCompatActivity
         LatLng location;
         String title, time_date, id;
         EventMarker eventMarker;
-
-
-        //We may have cleared the map, so readd the me marker if it's not set
-        if(mMe == null){
-            mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
-            mClusterManager.addItem(mMe);
-        }
 
         try{
             //iterate over the JSONArray to get event information and create eventMarkers from them
@@ -446,6 +439,12 @@ public class MapsActivity extends AppCompatActivity
                mClusterManager.addItem(eventMarker);
 
            }
+
+            //if there is no me marker, add one!
+            if(mMe == null){
+                mMe = new EventMarker(mLastLatLng.latitude, mLastLatLng.longitude, "Me", "", "-1");
+                mClusterManager.addItem(mMe);
+            }
         }
         catch(JSONException e){
            Log.e("ERROR ADDING MARKERS", e.toString());
@@ -466,7 +465,7 @@ public class MapsActivity extends AppCompatActivity
                         try{
                             Log.i("event response", response.toString());
                             JSONArray events = response.getJSONArray("events");
-                            if(mClusterManager.getMarkerCollection().getMarkers().size() != events.length()){
+                            if(mClusterManager.getMarkerCollection().getMarkers().size() - 1 != events.length()){
                                 mClusterManager.clearItems();
                                 addMarkers(events);
                             }
@@ -482,7 +481,7 @@ public class MapsActivity extends AppCompatActivity
                                 Log.i("LATLNG FOR EVENT", startLocation.toString());
                             }
                             catch(Exception e){
-                                Log.i("SOME LATLNG", e.toString());
+                                //Log.i("SOME LATLNG", e.toString());
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLastLatLng, 17f));
                             }
 
