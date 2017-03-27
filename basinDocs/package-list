@@ -1,0 +1,11 @@
+edu.hanover.basin
+edu.hanover.basin.Events.Activities
+edu.hanover.basin.Events.Objects
+edu.hanover.basin.Map.Activities
+edu.hanover.basin.Map.Fragments
+edu.hanover.basin.Map.Objects
+edu.hanover.basin.Request.Activities
+edu.hanover.basin.Request.Objects
+edu.hanover.basin.Users.Activities
+edu.hanover.basin.Users.Objects
+edu.hanover.basin.Utils
