@@ -5,7 +5,7 @@ import com.google.maps.android.clustering.ClusterItem;
 
 /**
  * An object that implements ClusterItems as basin Events to hold extra information
- * @autor Slaton Blickman
+ * @author Slaton Blickman
  * @see ClusterItem
  */
 

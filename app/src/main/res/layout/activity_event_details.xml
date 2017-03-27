@@ -24,7 +24,7 @@
             tools:context="edu.hanover.basin.Events.Activities.EventDetailsActivity">
 
             <TextView
-                android:text="Title"
+                android:text="@string/title_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -32,7 +32,7 @@
                 android:textAppearance="@android:style/TextAppearance.Large" />
 
             <TextView
-                android:text="Coordinator"
+                android:text="@string/coordinator_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/coordinator"
@@ -48,14 +48,14 @@
                 android:layout_below="@+id/title" />
 
             <TextView
-                android:text="Time "
+                android:text="@string/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/time"
                 android:layout_below="@+id/title" />
 
             <TextView
-                android:text="Date "
+                android:text="@string/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/date"
@@ -63,7 +63,7 @@
                 android:layout_centerVertical="true" />
 
             <TextView
-                android:text="Description"
+                android:text="@string/description_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -82,7 +82,7 @@
                 android:layout_centerVertical="true" />
 
             <TextView
-                android:text="Attendees"
+                android:text="@string/attendees"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/attendees"
@@ -104,7 +104,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Google Maps Location"
+            android:contentDescription="@string/image_maps_description"
             android:id="@+id/event_map"
             android:onClick="onClickGoToMaps"
             android:layout_margin="10dp" />

@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * @author Slaton Blickman
  * @deprecated
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class EventList {
     private final ArrayList<JSONObject> eventsArrayList;

@@ -26,7 +26,7 @@
             android:layout_weight=".25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Created Events"
+            android:text="@string/created_events"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <ListView
@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Attended Events"
+        android:text="@string/attended_events"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 

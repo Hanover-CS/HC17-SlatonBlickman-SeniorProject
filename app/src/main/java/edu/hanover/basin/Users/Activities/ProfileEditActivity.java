@@ -54,7 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     /**
      * Gets the id and about section from the intent.
      * Initializes about text to be the data from the intent.
-     * @param savedInstanceState
+     * @param savedInstanceState bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     /**
      * Inflate the menu laying using menu_edit.xml
-     * @param menu
+     * @param menu menu to inflate
      * @return true
      */
     @Override

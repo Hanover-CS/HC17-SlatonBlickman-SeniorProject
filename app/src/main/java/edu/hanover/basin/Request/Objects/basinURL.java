@@ -25,7 +25,7 @@ public class basinURL {
 
     /**
      * Gets the full URL for basinWeb
-     * @return
+     * @return String for url up to index.php
      */
     public String getBasinWebURL(){
         return OPEN_BASINWEB;

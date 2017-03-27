@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * Sets id to the be the id received through EXTRA_FACEBOOK_ID and sets the profilePicture given the id
-     * @param savedInstanceState
+     * @param savedInstanceState bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
     /**
      * Inflates the menu to use menu_profile.xml for layout.
      * If the id is the same as the user's using the application, display the edit icon
-     * @param menu
-     * @return
+     * @param menu menu to inflate
+     * @return true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

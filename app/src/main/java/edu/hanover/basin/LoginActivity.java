@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
      * This overrides the default onCreate method to do a number of things such as:
      * Initialize the Facebook SDK, register the call back methods for the login button,
      * handling AccessToken changes, and show the loading icon
-     * @param savedInstanceState
+     * @param savedInstanceState bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
-                info.setText("Logging in...");
+                info.setText(getResources().getString(R.string.login_wait));
                 loadingPanel.setVisibility(View.VISIBLE);
                 accessToken = loginResult.getAccessToken();
 
@@ -163,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                info.setText("Login Failed");
+                info.setText(getResources().getString(R.string.login_failed));
                 current = null;
             }
 
@@ -208,9 +208,9 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * This can get extra data from the result of the login if needed.
      * Currently does nothing but register it with the callBackManager and call its super method.
-     * @param requestCode
-     * @param responseCode
-     * @param data
+     * @param requestCode int
+     * @param responseCode int
+     * @param data Intent
      */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent data) {
@@ -222,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Inflates the menu to use menu_main.xml and saves references to menu items for later
-     * @param menu
+     * @param menu menu to inflate
      * @return true
      */
     @Override
@@ -358,7 +358,7 @@ public class LoginActivity extends AppCompatActivity {
             Volley.newRequestQueue(this).add(jsonRequest);
         }
         else{
-            info.setText("Something went wrong during login :(");
+            info.setText(getResources().getString(R.string.login_error));
             loadingPanel.setVisibility(View.GONE);
         }
     }

@@ -25,7 +25,7 @@ public class LocationDialog extends DialogFragment {
      * Sets Positive button to take user to Location Settings on positive Click.
      * Does nothing otherwise.
      *
-     * @param savedInstanceState
+     * @param savedInstanceState bundle
      * @return Dialog
      */
     @Override

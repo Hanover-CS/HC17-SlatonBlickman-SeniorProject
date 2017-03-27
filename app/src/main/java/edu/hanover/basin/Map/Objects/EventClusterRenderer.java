@@ -16,7 +16,7 @@ import edu.hanover.basin.Map.Objects.EventMarker;
  * Overrides default behavior of Cluster and ClusterItem rendering.
  * Changes Clusters to render for any plural size.
  *
- * @autor Slaton Blickman
+ * @author Slaton Blickman
  * @see DefaultClusterRenderer
  * @see ClusterManager
  */

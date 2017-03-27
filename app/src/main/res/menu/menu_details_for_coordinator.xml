@@ -8,7 +8,7 @@
         android:checked="false"
         android:checkable="true"
         app:showAsAction="always|withText"
-        android:title="Attending?"/>
+        android:title="@string/attending_q"/>
     <item
         android:id="@+id/delete_icon"
         android:icon="@drawable/trash_icon"

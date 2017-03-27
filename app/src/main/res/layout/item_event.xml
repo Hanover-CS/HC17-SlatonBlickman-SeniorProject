@@ -5,7 +5,7 @@
     android:layout_margin="5dp" >
 
     <TextView
-        android:text="Title here"
+        android:text="@string/title_hint"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         android:layout_alignParentEnd="true"/>
 
     <TextView
-        android:text="Coordinator name"
+        android:text="@string/coordinator_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/coordinator"
@@ -30,7 +30,7 @@
         android:layout_toStartOf="@+id/picture"/>
 
     <TextView
-        android:text="Date and Time"
+        android:text="@string/time"
         android:id="@+id/date_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

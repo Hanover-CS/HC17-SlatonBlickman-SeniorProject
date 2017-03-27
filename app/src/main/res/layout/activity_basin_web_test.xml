@@ -16,14 +16,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Results"
+        android:text="@string/results"
         android:id="@+id/results"/>
         </ScrollView>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get all basin users"
+        android:text="@string/get_all_users"
         android:onClick="onClickUsers"
         android:id="@+id/button_users"
         android:layout_below="@+id/scroll"
@@ -32,7 +32,7 @@
 
 
     <Button
-        android:text="GET MY EVENTS"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button_users"
@@ -43,7 +43,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Volley test"
+        android:text=""
         android:layout_below = "@+id/button_myevents"
         android:onClick="onClickVolley"/>
 </RelativeLayout>

@@ -56,7 +56,6 @@ public class ArrayUtil {
      */
     public static ArrayList<EventMarker> toArrayList(Cluster<EventMarker> cluster){
         ArrayList<EventMarker> arrayList;
-        JSONObject objIn;
 
         arrayList = new ArrayList<>();
         Collection<EventMarker> collection = cluster.getItems();

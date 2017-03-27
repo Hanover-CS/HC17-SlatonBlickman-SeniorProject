@@ -30,6 +30,7 @@ import java.net.URL;
  * @see Volley
  */
 
+@SuppressWarnings("ALL")
 @Deprecated
 public class basinWebRequest {
     private static final String OPEN_BASINWEB = "http://10.0.2.2/basinWeb/v1/index.php/";

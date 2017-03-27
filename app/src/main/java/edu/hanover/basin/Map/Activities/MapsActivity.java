@@ -88,7 +88,7 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Overrides onCreate to create an instance of GoogleAPIClient and get the location.
      * Gets the map fragment.
-     * @param savedInstanceState
+     * @param savedInstanceState bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +232,7 @@ public class MapsActivity extends AppCompatActivity
     /**
      * onConnected handles tasks to do when the connection to GoogleAPIClient is established
      * Used to set the last known location, begin requests for basin events, and update map UI
-     * @param connectionHint
+     * @param connectionHint bundle
      */
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -259,7 +259,7 @@ public class MapsActivity extends AppCompatActivity
 
     /**
      * Does nothing but needed for GoogleApiClient
-     * @param i
+     * @param i int
      */
     @Override
     public void onConnectionSuspended(int i){
