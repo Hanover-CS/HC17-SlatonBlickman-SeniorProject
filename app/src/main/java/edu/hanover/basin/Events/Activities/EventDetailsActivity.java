@@ -441,8 +441,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap result) {
             //set imageView to be the roundedImage of the map
-            bmImage.setImageDrawable(
-                    ImageUtil.createRoundedBitmapDrawableWithBorder(getApplicationContext(),result));
+            if(result != null){
+                bmImage.setImageDrawable(
+                        ImageUtil.createRoundedBitmapDrawableWithBorder(getApplicationContext(),result));
+            }
             loadingPanel.setVisibility(View.GONE);
             //show the details layout and make the loading icon invisible
             RelativeLayout detailsLayout = (RelativeLayout)findViewById(R.id.activity_event_details);
