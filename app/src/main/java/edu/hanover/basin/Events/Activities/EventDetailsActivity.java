@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -295,6 +296,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         UsersAdapter adapter = new UsersAdapter(this, arrayList);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(listViewId);
+
         listView.setAdapter(adapter);
     }
 
@@ -308,8 +310,8 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         //the size of the image should be the width rounded down and divided by 2
         //we will scale it up to twice the size for a higher resolution in the url
-        int widthRounded = (width - (width % 10))/ 2;
-        int heightRounded = (height - (height % 10)) / 2;
+        int widthRounded = (width - (width % 10))/ 6;
+        int heightRounded = (height - (height % 10)) / 6;
 
         String map_url = "http://maps.google.com/maps/api/staticmap?center="
                 + lat + "," + lng
@@ -441,8 +443,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap result) {
             //set imageView to be the roundedImage of the map
-            bmImage.setImageDrawable(
-                    ImageUtil.createRoundedBitmapDrawableWithBorder(getApplicationContext(),result));
+            if(result != null){
+                bmImage.setImageDrawable(
+                        ImageUtil.createRoundedBitmapDrawableWithBorder(getApplicationContext(),result));
+            }
             loadingPanel.setVisibility(View.GONE);
             //show the details layout and make the loading icon invisible
             RelativeLayout detailsLayout = (RelativeLayout)findViewById(R.id.activity_event_details);
