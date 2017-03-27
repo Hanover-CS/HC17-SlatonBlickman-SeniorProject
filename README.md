@@ -30,7 +30,10 @@ And that's it. It should be good to go.
 Before running the unit tests for basinWeb, I suggest creating a test database to work with and follow the same steps above. You will have to edit testDatabaseKeys.php in /basinWeb/unitTests/. You may want to manually clear the table data before each round of testing just in case.  It is preferred not to run tests against the released database so as not to cause erroneous inserts, deletes, updates, etc.
 
 To run the unit tests, open your terminal and navigate to /basinWeb/.
-Run the following command: ./vendor/bin/phpunit ./unitTests/routeTest.php
+Run the following command:
+```
+./vendor/bin/phpunit ./unitTests/routeTest.php
+```
 
 This will exexcute the routeTest class that extends PHPUnit testing framework on App.php (Slim app turned testable php class). Any changes made in the routes in v1/routes will be reflected in App.php
 
