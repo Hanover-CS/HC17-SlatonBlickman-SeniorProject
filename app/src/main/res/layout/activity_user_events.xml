@@ -9,41 +9,61 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:weightSum="2.5"
-    tools:context="edu.hanover.basin.userEventsActivity">
+    android:weightSum="1.1"
+    tools:context="edu.hanover.basin.Events.Activities.UserEventsActivity">
 
+    <LinearLayout
+        android:layout_weight=".5"
+        android:layout_margin="10dp"
+        android:background="@drawable/solid_border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_weight=".25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/created_events"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <ListView
+            android:layout_margin="10dp"
+            android:layout_weight=".45"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:scrollbars="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="130dp"
+            android:id="@+id/created_list" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight=".5"
+        android:layout_margin="10dp"
+        android:background="@drawable/solid_border"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
     <TextView
+        android:layout_weight=".25"
+        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Created Events"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <ListView
-        android:scrollbars="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="130dp"
-        android:id="@+id/created_list"
-        android:layout_weight="1"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Attended Events"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:layout_marginTop="5dp"
+        android:text="@string/attended_events"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 
     <ListView
+        android:layout_weight=".45"
+        android:layout_margin="10dp"
         android:scrollbars="vertical"
         android:layout_width="fill_parent"
         android:layout_height="200dip"
-        android:id="@+id/attended_list"
-        android:layout_weight="1"/>
-
-    <Button
-        android:text="Add Event"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_add_event"
-        android:onClick="onClickAddEvent" />
+        android:id="@+id/attended_list" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,6 +1,22 @@
 {
+	"name" : "blickman/slim-basin-web",
+	"authors" : [
+		{
+			"name" : "Blickman",
+			"email" : "blickmans15@hanover.edu"
+		}
+	],
     "require": {
         "slim/slim": "^3.0",
         "monolog/monolog": "^1.21"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "5.7.*"
+    },  
+    "autoload": {
+        "psr-7": {
+            "blickman\\unitTestAPI\\" : "unitTests"
+        }
     }
 }

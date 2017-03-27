@@ -5,22 +5,23 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-feature android:name="android.hardware.location.gps" />
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality. 
     -->
-
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/basin_cropped"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/NewAppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
@@ -43,40 +44,44 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name=".ProfileActivity"
+            android:name=".Users.Activities.ProfileActivity"
+            android:label="@string/user_profile"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name=".BasinWebTestActivity"
+            android:name=".Request.Activities.BasinWebTestActivity"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name=".userEventsActivity"
+            android:name=".Events.Activities.UserEventsActivity"
+            android:label="@string/event_lists"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Events.Activities.EventDetailsActivity"
+            android:label="@string/event_details"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".EventDetailsActivity" />
-
-        <activity android:name=".EventCreationActivity" />
-
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.hanover.basin.LoginActivity" />
-        </activity>
-
+            android:name=".Events.Activities.EventCreationActivity"
+            android:label="@string/edit_event"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Map.Activities.MapsActivity"
+            android:label="@string/event_map"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Users.Activities.ProfileEditActivity"
+            android:label="@string/edit_profile"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

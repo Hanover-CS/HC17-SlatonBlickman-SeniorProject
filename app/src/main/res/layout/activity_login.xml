@@ -1,72 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/loginGroup">
+    android:orientation="vertical"
+    android:id="@+id/loginGroup"
+    android:weightSum="1">
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
 
-    <com.facebook.login.widget.ProfilePictureView
-        android:id="@+id/picture"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/welcomePanel"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight=".3">
+
+        <com.facebook.login.widget.ProfilePictureView
+            android:id="@+id/picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:id="@+id/greeting"
+            android:text=""
+            android:layout_gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/picture" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:background="@drawable/solid_border"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/infoContainer"
+        android:layout_weight=".3"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/info"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </ScrollView>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
-        android:layout_width="200sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_below="@id/picture"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_margin="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:id="@+id/info"
-        android:text="Please login..."
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/picture" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/profileButton"
-        android:layout_below="@id/info"
-        android:text="View My Profile"
-        android:layout_toEndOf="@+id/picture"
-        android:onClick="onClickViewProfile"/>
-
-    <Button
-        android:text="basinWeb Tests"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileButton"
-        android:layout_toEndOf="@+id/picture"
-        android:onClick="onClickGoToRequests"
-        android:id="@+id/basinWebTests" />
-
-    <Button
-        android:text="VIEW MY EVENTS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/basinWebTests"
-        android:layout_toEndOf="@+id/picture"
-        android:id="@+id/button_event"
-        android:onClick="onClickMyEvents"/>
-
-    <Button
-        android:text="VIEW EVENT MAP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_event"
-        android:layout_toEndOf="@+id/login_button"
-        android:id="@+id/button_maps"
-        android:onClick="onClickMyMap"/>
-
-</RelativeLayout>
+</LinearLayout>
