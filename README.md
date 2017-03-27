@@ -7,7 +7,7 @@ This repository should really be separated into two distinct repositories, the b
 
 ## basinWeb
 
-The first part of this project is the basinWeb web application implemented through Slim PHP microframework. I aimed to make the HTTP request routing to reflect RESTful design principles.
+The first part of this project is the basinWeb web application implemented through Slim PHP microframework (https://www.slimframework.com/). I aimed to make the HTTP request routing to reflect RESTful design principles.
 Its purpose is to be the intermediary service between the MYSQL database tables needed for basin. This means that change can be made to the database tables or Android application without wreaking too much havoc.
 
 If you are on the Hanover College campus network, you can access basinWeb through http://vault.hanover.edu/~blickmans15/services/basinWeb/index.php
@@ -37,7 +37,7 @@ This will exexcute the routeTest class that extends PHPUnit testing framework on
 Once I can figure out how to make phpDocumentor agree with Slim, a link to the documentation will be here.
 
 
-##basin 
+## basin 
 
 basin (lower-case intentional) is a facebook-integrated Android application for creating and attending events around the world. It is currently under review by Facebook to allow users to get more information about each other during application use. In the future, I also hope to enable basin events to be simultaneously shared and created on Facebook as well as opening messaging through user profile pages. Check this README for future updates on this process!
 
@@ -55,7 +55,7 @@ You can open the /basinDocs/index.html to view the documentation for this code o
 
 
 
-
+Credit to Evan Miller for the basin logo.
 
 
 
